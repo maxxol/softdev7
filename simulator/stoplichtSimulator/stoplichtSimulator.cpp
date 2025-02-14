@@ -2,13 +2,13 @@
 //
 
 #include <iostream>
-#include <conio.h>  // Windows-only for non-blocking input
+#include <conio.h>  //keypress detector
 
 class Car {
 public:
     int posX;
     int posY;
-    Car(int X, int Y) { // Constructor with parameters
+    Car(int X, int Y) { //constructor
         posX = X;
         posY = Y;
     }
@@ -25,6 +25,8 @@ public:
             break;
         case 'w':
             posX--;
+            break;
+        case 'x': //stop moving
             break;
         default:
             std::cout << "Invalid\n";
@@ -43,18 +45,19 @@ Car car(0, 0);
 
 int main() {
     Car car(0, 0);
-    char direction = 'n';  // Default direction
+    char direction = 'n';  //default
 
     while (true) {
-        if (_kbhit()) {  // Check if a key was pressed
-            char key = _getch();  // Read the key
+        if (_kbhit()) {  //kbhit = keyboardhit
+            char key = _getch();  //which key
             if (key == 'w') direction = 'n';  
             if (key == 'a') direction = 'w';  
             if (key == 's') direction = 's';  
             if (key == 'd') direction = 'e';  
+            if (key == 'x') direction = 'x';
         }
 
-        car.drive(direction);  // Move in the current direction
+        car.drive(direction);  //move car
         std::cout << "X,Y: " << car.posX << " " << car.posY << std::endl;
         
     }
