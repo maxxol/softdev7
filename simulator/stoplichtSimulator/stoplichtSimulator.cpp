@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <conio.h>  //keypress detector
+#include <raylib.h>
 
 class Car {
 public:
@@ -46,8 +47,14 @@ Car car(0, 0);
 int main() {
     Car car(0, 0);
     char direction = 'n';  //default
+    const int screenWidth = 800;
+    const int screenHeight = 450;
 
-    while (true) {
+    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+
+    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    while (!WindowShouldClose())    // Detect window close button or ESC key
+    {
         if (_kbhit()) {  //kbhit = keyboardhit
             char key = _getch();  //which key
             if (key == 'w') direction = 'n';  
@@ -60,7 +67,33 @@ int main() {
         car.drive(direction);  //move car
         std::cout << "X,Y: " << car.posX << " " << car.posY << std::endl;
         
+    
+    
+    //--------------------------------------------------------------------------------------
+
+    // Main game loop
+    
+        // Update
+        //----------------------------------------------------------------------------------
+        // TODO: Update your variables here
+        //----------------------------------------------------------------------------------
+
+        // Draw
+        //----------------------------------------------------------------------------------
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+
+        DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
+
+        EndDrawing();
+        //----------------------------------------------------------------------------------
     }
+
+    // De-Initialization
+    //--------------------------------------------------------------------------------------
+    CloseWindow();        // Close window and OpenGL context
+    //--------------------------------------------------------------------------------------
 
     return 0;
 }
