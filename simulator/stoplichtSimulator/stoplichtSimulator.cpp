@@ -9,23 +9,25 @@ class Car {
 public:
     int posX;
     int posY;
+    int carSpeed;
     Car(int X, int Y) { //constructor
         posX = X;
         posY = Y;
+        carSpeed = 4;
     }
     void drive(char dir) {
         switch (dir) {
         case 'n':
-            posY++;
+            posY-=carSpeed;
             break;
         case 'e':
-            posX++;
+            posX+=carSpeed;
             break;
         case 's':
-            posY--;
+            posY+=carSpeed;
             break;
         case 'w':
-            posX--;
+            posX-=carSpeed;
             break;
         case 'x': //stop moving
             break;
@@ -83,8 +85,9 @@ int main() {
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
+        Vector2 ballPosition = { car.posX,car.posY };
+        DrawCircleV(ballPosition, 50, MAROON);
 
-        DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
