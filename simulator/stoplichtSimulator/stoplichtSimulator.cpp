@@ -54,7 +54,7 @@ int main() {
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    SetTargetFPS(60);               // 60 hz
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         if (_kbhit()) {  //kbhit = keyboardhit
