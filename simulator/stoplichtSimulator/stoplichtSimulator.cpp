@@ -4,6 +4,41 @@
 #include <iostream>
 #include <conio.h>  //keypress detector
 #include <raylib.h>
+#include <list>
+
+class Simulator {
+public:
+
+};
+
+class Trafic {
+public:
+    std::list<Car> cars;
+    std::list<Pedestrian> pedestrians;
+    std::list<Cyclist> cyclists;
+};
+
+class Pedestrian {
+    int posX;
+    int posY;
+    int pedSpeed;
+    Pedestrian(int X, int Y) { //constructor
+        posX = X;
+        posY = Y;
+        pedSpeed = 1;
+    }
+};
+
+class Cyclist {
+    int posX;
+    int posY;
+    int cycSpeed;
+    Cyclist(int X, int Y) { //constructor
+        posX = X;
+        posY = Y;
+        cycSpeed = 2;
+    }
+};
 
 class Car {
 public:
@@ -18,16 +53,16 @@ public:
     void drive(char dir) {
         switch (dir) {
         case 'n':
-            posY-=carSpeed;
+            posY -= carSpeed;
             break;
         case 'e':
-            posX+=carSpeed;
+            posX += carSpeed;
             break;
         case 's':
-            posY+=carSpeed;
+            posY += carSpeed;
             break;
         case 'w':
-            posX-=carSpeed;
+            posX -= carSpeed;
             break;
         case 'x': //stop moving
             break;
@@ -59,29 +94,29 @@ int main() {
     {
         if (_kbhit()) {  //kbhit = keyboardhit
             char key = _getch();  //which key
-            if (key == 'w') direction = 'n';  
-            if (key == 'a') direction = 'w';  
-            if (key == 's') direction = 's';  
-            if (key == 'd') direction = 'e';  
+            if (key == 'w') direction = 'n';
+            if (key == 'a') direction = 'w';
+            if (key == 's') direction = 's';
+            if (key == 'd') direction = 'e';
             if (key == 'x') direction = 'x';
         }
 
         car.drive(direction);  //move car
         std::cout << "X,Y: " << car.posX << " " << car.posY << std::endl;
-        
-    
-    
-    //--------------------------------------------------------------------------------------
 
-    // Main game loop
-    
-        // Update
-        //----------------------------------------------------------------------------------
-        // TODO: Update your variables here
-        //----------------------------------------------------------------------------------
 
-        // Draw
-        //----------------------------------------------------------------------------------
+
+        //--------------------------------------------------------------------------------------
+
+        // Main game loop
+
+            // Update
+            //----------------------------------------------------------------------------------
+            // TODO: Update your variables here
+            //----------------------------------------------------------------------------------
+
+            // Draw
+            //----------------------------------------------------------------------------------
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
