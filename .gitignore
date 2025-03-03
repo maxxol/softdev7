@@ -132,7 +132,7 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
-
+.vs/
 # Chutzpah Test files
 _Chutzpah*
 
@@ -152,6 +152,9 @@ ipch/
 *.vsp
 *.vspx
 *.sap
+*.vcxproj
+*.filters
+*.user
 
 # Visual Studio Trace Files
 *.e2e
