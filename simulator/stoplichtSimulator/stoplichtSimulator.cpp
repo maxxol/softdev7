@@ -2,10 +2,37 @@
 //
 
 #include <iostream>
-#include <conio.h>  //keypress detector
 #include <raylib.h>
+#include <list>
+#include<string>
 
-class Car {
+
+class RoadUser {
+
+};
+class Pedestrian : public RoadUser {
+    int posX;
+    int posY;
+    int pedSpeed;
+    Pedestrian(int X, int Y) { //constructor
+        posX = X;
+        posY = Y;
+        pedSpeed = 1;
+    }
+};
+
+class Cyclist : public RoadUser {
+    int posX;
+    int posY;
+    int cycSpeed;
+    Cyclist(int X, int Y) { //constructor
+        posX = X;
+        posY = Y;
+        cycSpeed = 2;
+    }
+};
+
+class Car : public RoadUser {
 public:
     int posX;
     int posY;
@@ -18,16 +45,16 @@ public:
     void drive(char dir) {
         switch (dir) {
         case 'n':
-            posY-=carSpeed;
+            posY -= carSpeed;
             break;
         case 'e':
-            posX+=carSpeed;
+            posX += carSpeed;
             break;
         case 's':
-            posY+=carSpeed;
+            posY += carSpeed;
             break;
         case 'w':
-            posX-=carSpeed;
+            posX -= carSpeed;
             break;
         case 'x': //stop moving
             break;
@@ -36,6 +63,17 @@ public:
             break;
         }
     }
+};
+
+class Simulator {
+public:
+
+};
+
+class Lane {
+public:
+    std::string laneID;
+    std::list<RoadUser*> laneUsers;
 };
 
 class Light {
@@ -47,46 +85,43 @@ public:
 Car car(0, 0);
 
 int main() {
-    Car car(0, 0);
-    char direction = 'n';  //default
-    const int screenWidth = 800;
-    const int screenHeight = 450;
 
+    char direction = 'n';  //default
+    const int screenWidth = 1920;
+    const int screenHeight = 1080;
+    Car car(screenWidth / 2, screenHeight / 2);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
-    SetTargetFPS(60);               // 60 hz
-    while (!WindowShouldClose())    // Detect window close button or ESC key
-    {
-        if (_kbhit()) {  //kbhit = keyboardhit
-            char key = _getch();  //which key
-            if (key == 'w') direction = 'n';  
-            if (key == 'a') direction = 'w';  
-            if (key == 's') direction = 's';  
-            if (key == 'd') direction = 'e';  
-            if (key == 'x') direction = 'x';
-        }
+    SetTargetFPS(30);               // hz
+    while (!WindowShouldClose()) {
+        // Raylib input handling (no need for _kbhit() or _getch())
+        if (IsKeyDown(KEY_W)) direction = 'n';
+        if (IsKeyDown(KEY_A)) direction = 'w';
+        if (IsKeyDown(KEY_S)) direction = 's';
+        if (IsKeyDown(KEY_D)) direction = 'e';
+        if (IsKeyDown(KEY_X)) direction = 'x';
 
         car.drive(direction);  //move car
         std::cout << "X,Y: " << car.posX << " " << car.posY << std::endl;
-        
-    
-    
-    //--------------------------------------------------------------------------------------
 
-    // Main game loop
-    
-        // Update
-        //----------------------------------------------------------------------------------
-        // TODO: Update your variables here
-        //----------------------------------------------------------------------------------
 
-        // Draw
-        //----------------------------------------------------------------------------------
+
+        //--------------------------------------------------------------------------------------
+
+        // Main game loop
+
+            // Update
+            //----------------------------------------------------------------------------------
+            // TODO: Update your variables here
+            //----------------------------------------------------------------------------------
+
+            // Draw
+            //----------------------------------------------------------------------------------
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
         Vector2 ballPosition = { car.posX,car.posY };
-        DrawCircleV(ballPosition, 50, MAROON);
+        DrawCircleV(ballPosition, 30, MAROON);
 
 
         EndDrawing();
