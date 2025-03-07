@@ -91,7 +91,10 @@ int main() {
     const int screenHeight = 1080;
     Car car(screenWidth / 2, screenHeight / 2);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
-
+    Texture2D image = LoadTexture("../Images/Kruispunt.png");
+    Image kruispunt = LoadImage("Images/Kruispunt.png");
+    
+   // Texture2D background = LoadTexture("kruispunt.png");
     SetTargetFPS(30);               // hz
     while (!WindowShouldClose()) {
         // Raylib input handling (no need for _kbhit() or _getch())
@@ -105,7 +108,7 @@ int main() {
         std::cout << "X,Y: " << car.posX << " " << car.posY << std::endl;
 
 
-
+        BeginTextureMode(image);
         //--------------------------------------------------------------------------------------
 
         // Main game loop
@@ -120,6 +123,7 @@ int main() {
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
+        DrawTexture(image, 0, 0, WHITE);
         Vector2 ballPosition = { car.posX,car.posY };
         DrawCircleV(ballPosition, 30, MAROON);
 
