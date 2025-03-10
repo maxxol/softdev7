@@ -65,21 +65,21 @@ public:
     }
 };
 
-class Simulator {
-public:
-
-};
-
 class Lane {
 public:
     std::string laneID;
     std::list<RoadUser*> laneUsers;
+
+
+    struct CheckPointNode {int x, y; bool occupied;};
+    std::list<CheckPointNode> checkPointNodes;
+    
 };
 
-class Light {
+class TrafficLight {
 public:
-    std::string color;
-    std::string lane;
+    char color;
+    std::string trafficLightID;
 };
 
 Car car(0, 0);
