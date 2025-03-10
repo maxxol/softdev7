@@ -68,8 +68,41 @@ public:
             break;
         }
     }
-    void driveToNextCheckPoint() { //automatically drives to next node in lane
+    void driveToNextCheckNode(CheckPointNode node1, CheckPointNode node2) { //automatically drives to next node in lane
+        int xDiff = node2.x - posX;
+        int yDiff = node2.y - posY;
 
+        char dir;
+        while (true) {
+            if (xDiff > 3) { dir = 'e'; break; }
+            if (xDiff < -3) { dir = 'w'; break; }
+            if (yDiff > 3) { dir = 's'; break; }
+            if (yDiff < -3) { dir = 'n'; break; }
+            else { dir = 'x'; break; }
+             
+        }
+
+
+        switch (dir) {
+        case 'n':
+            posY -= carSpeed;
+            break;
+        case 'e':
+            posX += carSpeed;
+            break;
+        case 's':
+            posY += carSpeed;
+            break;
+        case 'w':
+            posX -= carSpeed;
+            break;
+        case 'x': //stop moving
+            std::cout << "arrived at target" << std::endl;
+            break;
+        default:
+            std::cout << "Invalid\n";
+            break;
+        }
     }
 };
 
@@ -97,8 +130,8 @@ public:
 
 
 //---------------------------------testing setup-------------------------- 
-CheckPointNode node1 = CheckPointNode(1920-300, 1080/2, false);
-CheckPointNode node2 = CheckPointNode(300, 1080/2, false);
+CheckPointNode node1 = CheckPointNode(1920-300, 1080-300, false);
+CheckPointNode node2 = CheckPointNode(200, 1080-900, false);
 
 std::vector<CheckPointNode> testLaneCheckpoints = {node1,node2};
 Lane testLane("test lane", testLaneCheckpoints);
@@ -110,7 +143,7 @@ int main() {
     char direction = 'n';  //default
     const int screenWidth = 1920;
     const int screenHeight = 1080;
-    Car car(screenWidth / 2, screenHeight / 2);
+    Car car(testLane.checkPointNodes[0].x, testLane.checkPointNodes[0].y);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
     SetTargetFPS(60);               // hz
@@ -122,7 +155,8 @@ int main() {
         if (IsKeyDown(KEY_D)) direction = 'e';
         if (IsKeyDown(KEY_X)) direction = 'x';
 
-        car.driveManual(direction);  //move car
+        car.driveToNextCheckNode(testLane.checkPointNodes[0], testLane.checkPointNodes[1]);
+        //car.driveManual(direction);  //move car
         std::cout << "X,Y: " << car.posX << " " << car.posY << std::endl;
 
 
@@ -146,8 +180,8 @@ int main() {
         Vector2 testnode2 = { testLane.checkPointNodes[1].x,testLane.checkPointNodes[1].y };
 
         DrawCircleV(ballPosition, 30, MAROON); //draw the circles
-        DrawCircleV(testnode1, 30, GREEN);
-        DrawCircleV(testnode2, 30, GREEN);
+        DrawCircleV(testnode1, 10, GREEN);
+        DrawCircleV(testnode2, 10, GREEN);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
