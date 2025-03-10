@@ -6,16 +6,16 @@
 #include <vector>
 #include<string>
 
-struct CheckPointNode {
-    int x, y; bool occupied;
+struct CheckPointNode { //lanes are composed of these nodes. you can view the lane as lines connecting these dots(nodes).
+    int x, y; bool occupied; 
     CheckPointNode(int x_, int y_, bool occupied_)
         : x(x_), y(y_), occupied(occupied_) {}
 };
 
-class RoadUser {
+class RoadUser { //parent class for all road using entities, allows for bike lanes, car lanes and sidewalks to use the same function. see implementation of addRoadUserToLane in the lanes class.
 
 };
-class Pedestrian : public RoadUser {
+class Pedestrian : public RoadUser { // walky boi
     int posX;
     int posY;
     int pedSpeed;
@@ -26,7 +26,7 @@ class Pedestrian : public RoadUser {
     }
 };
 
-class Cyclist : public RoadUser {
+class Cyclist : public RoadUser { //bikey boi
     int posX;
     int posY;
     int cycSpeed;
@@ -37,7 +37,7 @@ class Cyclist : public RoadUser {
     }
 };
 
-class Car : public RoadUser {
+class Car : public RoadUser { //drivey boi
 public:
     int posX;
     int posY;
@@ -47,7 +47,7 @@ public:
         posY = Y;
         carSpeed = 4;
     }
-    void drive(char dir) {
+    void driveManual(char dir) {//controlled using wasdx
         switch (dir) {
         case 'n':
             posY -= carSpeed;
@@ -68,35 +68,41 @@ public:
             break;
         }
     }
-};
+    void driveToNextCheckPoint() { //automatically drives to next node in lane
 
-class Lane {
-public:
-    std::string laneID;
-    std::vector<RoadUser*> laneUsers;
-
-    std::vector<CheckPointNode> checkPointNodes;
-    
-    Lane(std::string laneID_, std::vector<CheckPointNode> checkPointNodes_) {
-        laneID = laneID_;
-        checkPointNodes = checkPointNodes_;
     }
 };
 
-class TrafficLight {
+class Lane { //a lane of the road that contains road users. a lane is composed of nodes.
+public:
+    std::string laneID; //the id for this lane
+    std::vector<RoadUser*> laneUsers; //everyone currently using this lane
+    std::vector<CheckPointNode> checkPointNodes; //the nodes that make up the path of the lane
+    
+    Lane(std::string laneID_, std::vector<CheckPointNode> checkPointNodes_) { //constructor
+        laneID = laneID_;
+        checkPointNodes = checkPointNodes_;
+    }
+
+    void addRoadUserToLane(RoadUser* roadUser) { //adds a new road user in the laneUsers vector
+        laneUsers.push_back(roadUser);
+    }
+};
+
+class TrafficLight {// traffic light unfinished
 public:
     char color;
     std::string trafficLightID;
 };
 
 
-
+//---------------------------------testing setup-------------------------- 
 CheckPointNode node1 = CheckPointNode(1920-300, 1080/2, false);
 CheckPointNode node2 = CheckPointNode(300, 1080/2, false);
 
 std::vector<CheckPointNode> testLaneCheckpoints = {node1,node2};
 Lane testLane("test lane", testLaneCheckpoints);
-Car car(0, 0);
+//------------------------------------------------------------------
 
 
 int main() {
@@ -116,7 +122,7 @@ int main() {
         if (IsKeyDown(KEY_D)) direction = 'e';
         if (IsKeyDown(KEY_X)) direction = 'x';
 
-        car.drive(direction);  //move car
+        car.driveManual(direction);  //move car
         std::cout << "X,Y: " << car.posX << " " << car.posY << std::endl;
 
 
@@ -135,13 +141,13 @@ int main() {
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
-        Vector2 ballPosition = { car.posX,car.posY };
-        Vector2 ballPosition2 = { testLane.checkPointNodes[0].x,testLane.checkPointNodes[0].y};
-        Vector2 ballPosition3 = { testLane.checkPointNodes[1].x,testLane.checkPointNodes[1].y };
+        Vector2 ballPosition = { car.posX,car.posY };  //create circle data
+        Vector2 testnode1 = { testLane.checkPointNodes[0].x,testLane.checkPointNodes[0].y};
+        Vector2 testnode2 = { testLane.checkPointNodes[1].x,testLane.checkPointNodes[1].y };
 
-        DrawCircleV(ballPosition, 30, MAROON);
-        DrawCircleV(ballPosition2, 30, MAROON);
-        DrawCircleV(ballPosition3, 30, MAROON);
+        DrawCircleV(ballPosition, 30, MAROON); //draw the circles
+        DrawCircleV(testnode1, 30, GREEN);
+        DrawCircleV(testnode2, 30, GREEN);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
