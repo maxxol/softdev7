@@ -3,9 +3,14 @@
 
 #include <iostream>
 #include <raylib.h>
-#include <list>
+#include <vector>
 #include<string>
 
+struct CheckPointNode {
+    int x, y; bool occupied;
+    CheckPointNode(int x_, int y_, bool occupied_)
+        : x(x_), y(y_), occupied(occupied_) {}
+};
 
 class RoadUser {
 
@@ -68,12 +73,14 @@ public:
 class Lane {
 public:
     std::string laneID;
-    std::list<RoadUser*> laneUsers;
+    std::vector<RoadUser*> laneUsers;
 
-
-    struct CheckPointNode {int x, y; bool occupied;};
-    std::list<CheckPointNode> checkPointNodes;
+    std::vector<CheckPointNode> checkPointNodes;
     
+    Lane(std::string laneID_, std::vector<CheckPointNode> checkPointNodes_) {
+        laneID = laneID_;
+        checkPointNodes = checkPointNodes_;
+    }
 };
 
 class TrafficLight {
@@ -82,7 +89,15 @@ public:
     std::string trafficLightID;
 };
 
+
+
+CheckPointNode node1 = CheckPointNode(1920-300, 1080/2, false);
+CheckPointNode node2 = CheckPointNode(300, 1080/2, false);
+
+std::vector<CheckPointNode> testLaneCheckpoints = {node1,node2};
+Lane testLane("test lane", testLaneCheckpoints);
 Car car(0, 0);
+
 
 int main() {
 
@@ -92,7 +107,7 @@ int main() {
     Car car(screenWidth / 2, screenHeight / 2);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
-    SetTargetFPS(30);               // hz
+    SetTargetFPS(60);               // hz
     while (!WindowShouldClose()) {
         // Raylib input handling (no need for _kbhit() or _getch())
         if (IsKeyDown(KEY_W)) direction = 'n';
@@ -121,8 +136,12 @@ int main() {
 
         ClearBackground(RAYWHITE);
         Vector2 ballPosition = { car.posX,car.posY };
-        DrawCircleV(ballPosition, 30, MAROON);
+        Vector2 ballPosition2 = { testLane.checkPointNodes[0].x,testLane.checkPointNodes[0].y};
+        Vector2 ballPosition3 = { testLane.checkPointNodes[1].x,testLane.checkPointNodes[1].y };
 
+        DrawCircleV(ballPosition, 30, MAROON);
+        DrawCircleV(ballPosition2, 30, MAROON);
+        DrawCircleV(ballPosition3, 30, MAROON);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
