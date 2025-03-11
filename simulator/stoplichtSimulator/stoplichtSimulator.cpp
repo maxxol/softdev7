@@ -13,7 +13,43 @@ struct CheckPointNode { //lanes are composed of these nodes. you can view the la
 };
 
 class RoadUser { //parent class for all road using entities, allows for bike lanes, car lanes and sidewalks to use the same function. see implementation of addRoadUserToLane in the lanes class.
+public:
+     void moveToNextCheckNode(CheckPointNode node1, CheckPointNode node2,int& posX,int& posY, int roadUserSpeed) { //automatically drives to next node in lane
+        int xDiff = node2.x - posX;
+        int yDiff = node2.y - posY;
 
+        char dir;
+        while (true) {
+            if (xDiff > 3) { dir = 'e'; break; }
+            if (xDiff < -3) { dir = 'w'; break; }
+            if (yDiff > 3) { dir = 's'; break; }
+            if (yDiff < -3) { dir = 'n'; break; }
+            else { dir = 'x'; break; }
+             
+        }
+
+
+        switch (dir) {
+        case 'n':
+            posY -= roadUserSpeed;
+            break;
+        case 'e':
+            posX += roadUserSpeed;
+            break;
+        case 's':
+            posY += roadUserSpeed;
+            break;
+        case 'w':
+            posX -= roadUserSpeed;
+            break;
+        case 'x': //stop moving
+            std::cout << "arrived at target" << std::endl;
+            break;
+        default:
+            std::cout << "Invalid\n";
+            break;
+        }
+    }
 };
 class Pedestrian : public RoadUser { // walky boi
     int posX;
@@ -68,42 +104,7 @@ public:
             break;
         }
     }
-    void driveToNextCheckNode(CheckPointNode node1, CheckPointNode node2) { //automatically drives to next node in lane
-        int xDiff = node2.x - posX;
-        int yDiff = node2.y - posY;
-
-        char dir;
-        while (true) {
-            if (xDiff > 3) { dir = 'e'; break; }
-            if (xDiff < -3) { dir = 'w'; break; }
-            if (yDiff > 3) { dir = 's'; break; }
-            if (yDiff < -3) { dir = 'n'; break; }
-            else { dir = 'x'; break; }
-             
-        }
-
-
-        switch (dir) {
-        case 'n':
-            posY -= carSpeed;
-            break;
-        case 'e':
-            posX += carSpeed;
-            break;
-        case 's':
-            posY += carSpeed;
-            break;
-        case 'w':
-            posX -= carSpeed;
-            break;
-        case 'x': //stop moving
-            std::cout << "arrived at target" << std::endl;
-            break;
-        default:
-            std::cout << "Invalid\n";
-            break;
-        }
-    }
+    
 };
 
 class Lane { //a lane of the road that contains road users. a lane is composed of nodes.
@@ -155,7 +156,7 @@ int main() {
         if (IsKeyDown(KEY_D)) direction = 'e';
         if (IsKeyDown(KEY_X)) direction = 'x';
 
-        car.driveToNextCheckNode(testLane.checkPointNodes[0], testLane.checkPointNodes[1]);
+        car.moveToNextCheckNode(testLane.checkPointNodes[0], testLane.checkPointNodes[1],car.posX, car.posY, car.carSpeed);
         //car.driveManual(direction);  //move car
         std::cout << "X,Y: " << car.posX << " " << car.posY << std::endl;
 
