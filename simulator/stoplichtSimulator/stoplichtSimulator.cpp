@@ -17,38 +17,33 @@ public:
      void moveToNextCheckNode(CheckPointNode node1, CheckPointNode node2,int& posX,int& posY, int roadUserSpeed) { //automatically drives to next node in lane
         int xDiff = node2.x - posX;
         int yDiff = node2.y - posY;
+        //std::cout << "diffs: " << xDiff << yDiff << std::endl;
 
+        int totalDiff = xDiff + yDiff;
+
+        double directionDiffRatio = 0;
+        try {
+            directionDiffRatio = double(xDiff) / double(totalDiff);
+        }
+        catch(int err){
+            double directionDiffRatio = 0;
+            std::cout << "error: " << err << std::endl;
+        }
+
+
+
+        posX += (xDiff > 0) ? int(directionDiffRatio * roadUserSpeed)
+            : (xDiff < 0) ? -int(directionDiffRatio * roadUserSpeed)
+            : 0;
+
+        posY += (yDiff > 0) ? int((1 - directionDiffRatio) * roadUserSpeed)
+            : (yDiff < 0) ? -int((1 - directionDiffRatio) * roadUserSpeed)
+            : 0;
+        //std::cout << "ratio: " << directionDiffRatio << std::endl;
         char dir;
-        while (true) {
-            if (xDiff > 3) { dir = 'e'; break; }
-            if (xDiff < -3) { dir = 'w'; break; }
-            if (yDiff > 3) { dir = 's'; break; }
-            if (yDiff < -3) { dir = 'n'; break; }
-            else { dir = 'x'; break; }
-             
-        }
+        
 
 
-        switch (dir) {
-        case 'n':
-            posY -= roadUserSpeed;
-            break;
-        case 'e':
-            posX += roadUserSpeed;
-            break;
-        case 's':
-            posY += roadUserSpeed;
-            break;
-        case 'w':
-            posX -= roadUserSpeed;
-            break;
-        case 'x': //stop moving
-            std::cout << "arrived at target" << std::endl;
-            break;
-        default:
-            std::cout << "Invalid\n";
-            break;
-        }
     }
 };
 class Pedestrian : public RoadUser { // walky boi
@@ -104,7 +99,7 @@ public:
             break;
         }
     }
-    
+   
 };
 
 class Lane { //a lane of the road that contains road users. a lane is composed of nodes.
@@ -131,8 +126,8 @@ public:
 
 
 //---------------------------------testing setup-------------------------- 
-CheckPointNode node1 = CheckPointNode(1920-300, 1080-300, false);
-CheckPointNode node2 = CheckPointNode(200, 1080-900, false);
+CheckPointNode node2 = CheckPointNode(1920-300, 1080-300, false);
+CheckPointNode node1 = CheckPointNode(200, 1080-900, false);
 
 std::vector<CheckPointNode> testLaneCheckpoints = {node1,node2};
 Lane testLane("test lane", testLaneCheckpoints);
@@ -158,7 +153,7 @@ int main() {
 
         car.moveToNextCheckNode(testLane.checkPointNodes[0], testLane.checkPointNodes[1],car.posX, car.posY, car.carSpeed);
         //car.driveManual(direction);  //move car
-        std::cout << "X,Y: " << car.posX << " " << car.posY << std::endl;
+        //std::cout << "X,Y: " << car.posX << " " << car.posY << std::endl;
 
 
 
