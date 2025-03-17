@@ -23,23 +23,26 @@ public:
 
         double directionDiffRatio = 0;
         try {
-            directionDiffRatio = double(xDiff) / double(totalDiff);
+            directionDiffRatio = double(xDiff) / double(totalDiff); //decides the angle of movement for diagonal paths
         }
-        catch(int err){
+        catch(int err){ 
             double directionDiffRatio = 0;
             std::cout << "error: " << err << std::endl;
         }
 
 
-
-        posX += (xDiff > 0) ? int(directionDiffRatio * roadUserSpeed)
-            : (xDiff < 0) ? -int(directionDiffRatio * roadUserSpeed)
+        //doing the actual movement
+        posX += (xDiff > 0) ? int(directionDiffRatio * roadUserSpeed) //go right
+            : (xDiff < 0) ? -int(directionDiffRatio * roadUserSpeed) //go left
             : 0;
 
-        posY += (yDiff > 0) ? int((1 - directionDiffRatio) * roadUserSpeed)
-            : (yDiff < 0) ? -int((1 - directionDiffRatio) * roadUserSpeed)
+        posY += (yDiff > 0) ? int((1 - directionDiffRatio) * roadUserSpeed)//go down(+y means down in screen dimensions)
+            : (yDiff < 0) ? -int((1 - directionDiffRatio) * roadUserSpeed)//go up
             : 0;
-        //std::cout << "ratio: " << directionDiffRatio << std::endl;
+  
+        if (abs(xDiff) < roadUserSpeed && abs(yDiff) < roadUserSpeed) { //less than 1 frame away from arriving (this helps in edge cases where a fast vehicle could skip over the node and forever vibrates around it)
+            std::cout << "ARRIVED\n";
+        }
         char dir;
         
 
