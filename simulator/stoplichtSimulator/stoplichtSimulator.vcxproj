@@ -133,6 +133,9 @@
   <ItemGroup>
     <ClCompile Include="stoplichtSimulator.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\..\..\Afbeeldingen\Kruispunt.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

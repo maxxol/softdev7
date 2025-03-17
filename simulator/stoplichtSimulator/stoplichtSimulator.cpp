@@ -145,7 +145,15 @@ int main() {
     Car car(testLane.checkPointNodes[0].x, testLane.checkPointNodes[0].y);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
-    SetTargetFPS(60);               // hz
+    SetWindowState(FLAG_WINDOW_RESIZABLE);    
+    RenderTexture2D tex = LoadRenderTexture(screenWidth, screenHeight);
+    Texture2D image = LoadTexture("../Images/Kruispunt.png");
+    Image kruispunt = LoadImage("Images/Kruispunt.png");
+    
+   
+   // Texture2D background = LoadTexture("kruispunt.png");
+    SetTargetFPS(30);               // hz
+
     while (!WindowShouldClose()) {
         // Raylib input handling (no need for _kbhit() or _getch())
         if (IsKeyDown(KEY_W)) direction = 'n';
@@ -159,7 +167,17 @@ int main() {
         //std::cout << "X,Y: " << car.posX << " " << car.posY << std::endl;
 
 
-
+        BeginTextureMode(tex);
+        ClearBackground(RAYWHITE);
+       // DrawRectangle(screenWidth / 2 - 128, screenHeight / 2 - 128, 256, 256, BLACK);
+        //DrawRectangle(screenWidth / 2 - 112, screenHeight / 2 - 112, 224, 224, RAYWHITE);
+        //DrawText("raylib", screenWidth / 2 - 44, screenHeight / 2 + 48, 50, BLACK);
+        DrawTexture(image, 0, 0, WHITE);
+       
+        Vector2 ballPosition = { car.posX,car.posY };
+        DrawCircleV(ballPosition, 30, MAROON);
+        // We need to end the texture mode separately
+        EndTextureMode();
         //--------------------------------------------------------------------------------------
 
         // Main game loop
@@ -173,7 +191,16 @@ int main() {
             //----------------------------------------------------------------------------------
         BeginDrawing();
 
-        ClearBackground(RAYWHITE);
+        //ClearBackground(RAYWHITE);
+        
+        DrawTexturePro(
+            tex.texture,
+            Rectangle{ 0, 0, static_cast<float>(tex.texture.width), static_cast<float>(-tex.texture.height) },
+            Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) },
+            Vector2{ 0, 0 },
+            0,
+            WHITE);
+
         Vector2 ballPosition = { car.posX,car.posY };  //create circle data
         Vector2 testnode1 = { testLane.checkPointNodes[0].x,testLane.checkPointNodes[0].y};
         Vector2 testnode2 = { testLane.checkPointNodes[1].x,testLane.checkPointNodes[1].y };
@@ -183,8 +210,11 @@ int main() {
         DrawCircleV(testnode2, 10, GREEN);
 
         EndDrawing();
+
         //----------------------------------------------------------------------------------
     }
+    // Unload the texture handle again to make a clean exit.
+    UnloadRenderTexture(tex);
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
