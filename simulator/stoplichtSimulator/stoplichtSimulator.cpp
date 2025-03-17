@@ -173,9 +173,7 @@ int main() {
         //DrawRectangle(screenWidth / 2 - 112, screenHeight / 2 - 112, 224, 224, RAYWHITE);
         //DrawText("raylib", screenWidth / 2 - 44, screenHeight / 2 + 48, 50, BLACK);
         DrawTexture(image, 0, 0, WHITE);
-       
-        Vector2 ballPosition = { car.posX,car.posY };
-        DrawCircleV(ballPosition, 30, MAROON);
+
         // We need to end the texture mode separately
         EndTextureMode();
         //--------------------------------------------------------------------------------------
