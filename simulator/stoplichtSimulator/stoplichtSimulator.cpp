@@ -91,9 +91,12 @@ int main() {
     const int screenHeight = 1080;
     Car car(screenWidth / 2, screenHeight / 2);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+    SetWindowState(FLAG_WINDOW_RESIZABLE);    
+    RenderTexture2D tex = LoadRenderTexture(screenWidth, screenHeight);
     Texture2D image = LoadTexture("../Images/Kruispunt.png");
     Image kruispunt = LoadImage("Images/Kruispunt.png");
     
+   
    // Texture2D background = LoadTexture("kruispunt.png");
     SetTargetFPS(30);               // hz
     while (!WindowShouldClose()) {
@@ -108,7 +111,17 @@ int main() {
         std::cout << "X,Y: " << car.posX << " " << car.posY << std::endl;
 
 
-        BeginTextureMode(image);
+        BeginTextureMode(tex);
+        ClearBackground(RAYWHITE);
+       // DrawRectangle(screenWidth / 2 - 128, screenHeight / 2 - 128, 256, 256, BLACK);
+        //DrawRectangle(screenWidth / 2 - 112, screenHeight / 2 - 112, 224, 224, RAYWHITE);
+        //DrawText("raylib", screenWidth / 2 - 44, screenHeight / 2 + 48, 50, BLACK);
+        DrawTexture(image, 0, 0, WHITE);
+       
+        Vector2 ballPosition = { car.posX,car.posY };
+        DrawCircleV(ballPosition, 30, MAROON);
+        // We need to end the texture mode separately
+        EndTextureMode();
         //--------------------------------------------------------------------------------------
 
         // Main game loop
@@ -121,16 +134,21 @@ int main() {
             // Draw
             //----------------------------------------------------------------------------------
         BeginDrawing();
-
-        ClearBackground(RAYWHITE);
-        DrawTexture(image, 0, 0, WHITE);
-        Vector2 ballPosition = { car.posX,car.posY };
-        DrawCircleV(ballPosition, 30, MAROON);
-
-
+        //ClearBackground(RAYWHITE);
+        
+        DrawTexturePro(
+            tex.texture,
+            Rectangle{ 0, 0, static_cast<float>(tex.texture.width), static_cast<float>(-tex.texture.height) },
+            Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) },
+            Vector2{ 0, 0 },
+            0,
+            WHITE);
         EndDrawing();
+
         //----------------------------------------------------------------------------------
     }
+    // Unload the texture handle again to make a clean exit.
+    UnloadRenderTexture(tex);
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
