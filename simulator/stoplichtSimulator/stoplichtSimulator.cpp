@@ -49,6 +49,7 @@ public:
 
     }
 };
+
 class Pedestrian : public RoadUser { // walky boi
     int posX;
     int posY;
