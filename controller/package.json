@@ -1,0 +1,20 @@
+{
+  "name": "hello_js",
+  "version": "1.0.0",
+  "description": "This is a ZeroMQ test",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "main": "nodemon index.js",
+    "simulator": "nodemon ./test_connection/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^3.1.9",
+    "zeromq": "^6.3.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
