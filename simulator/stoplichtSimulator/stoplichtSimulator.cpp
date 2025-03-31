@@ -227,7 +227,7 @@ int main() {
         DrawTexture(kruispunt, screenWidth / 2 - kruispunt.width / 2, screenHeight / 2 - kruispunt.height / 2 - 40, WHITE);
         DrawRectangleLines(screenWidth / 2 - kruispunt.width / 2, screenHeight / 2 - kruispunt.height / 2 - 40, kruispunt.width, kruispunt.height, DARKGRAY);
        
-        Vector2 ballPosition = { car.posX,car.posY };
+        Vector2 ballPosition = { car1.posX,car1.posY };
         DrawCircleV(ballPosition, 30, MAROON);
        
 
