@@ -184,8 +184,13 @@ int main() {
 
     SetWindowState(FLAG_WINDOW_RESIZABLE);    
     RenderTexture2D tex = LoadRenderTexture(screenWidth, screenHeight);
-    Texture2D image = LoadTexture("../Images/Kruispunt.png");
-    Image kruispunt = LoadImage("Images/Kruispunt.png");
+
+    Image  imag = LoadImage("../Images/Kruispunt.png");
+    // ImageFlipHorizontal(&imag);
+    ImageResize(&imag, screenWidth, screenHeight);
+    Texture2D  kruispunt = LoadTextureFromImage(imag);
+    UnloadImage(imag);
+
     int testcariterator1 = 0;
     int testcariterator2 = 1;
 
@@ -194,7 +199,7 @@ int main() {
     SetTargetFPS(120);               // hz
 
     while (!WindowShouldClose()) {
-        // Raylib input handling (no need for _kbhit() or _getch())
+        //  Raylib input handling (no need for _kbhit() or _getch())
         if (IsKeyDown(KEY_W)) direction = 'n';
         if (IsKeyDown(KEY_A)) direction = 'w';
         if (IsKeyDown(KEY_S)) direction = 's';
@@ -217,7 +222,14 @@ int main() {
        // DrawRectangle(screenWidth / 2 - 128, screenHeight / 2 - 128, 256, 256, BLACK);
         //DrawRectangle(screenWidth / 2 - 112, screenHeight / 2 - 112, 224, 224, RAYWHITE);
         //DrawText("raylib", screenWidth / 2 - 44, screenHeight / 2 + 48, 50, BLACK);
-        DrawTexture(image, 0, 0, WHITE);
+
+        //DrawTexture(imag, 0, 0, WHITE);
+        DrawTexture(kruispunt, screenWidth / 2 - kruispunt.width / 2, screenHeight / 2 - kruispunt.height / 2 - 40, WHITE);
+        DrawRectangleLines(screenWidth / 2 - kruispunt.width / 2, screenHeight / 2 - kruispunt.height / 2 - 40, kruispunt.width, kruispunt.height, DARKGRAY);
+       
+        Vector2 ballPosition = { car.posX,car.posY };
+        DrawCircleV(ballPosition, 30, MAROON);
+       
 
         // We need to end the texture mode separately
         EndTextureMode();
@@ -234,8 +246,10 @@ int main() {
             //----------------------------------------------------------------------------------
         BeginDrawing();
 
-        //ClearBackground(RAYWHITE);
-        
+        ClearBackground(RAYWHITE);
+        //DrawTexture(kruispunt, screenWidth/2 - kruispunt.width/2, screenHeight/2 - kruispunt.height/2 - 40, WHITE);
+        //DrawRectangleLines(screenWidth / 2 - kruispunt.width / 2, screenHeight / 2 - kruispunt.height / 2 - 40, kruispunt.width, kruispunt.height, DARKGRAY);
+
         DrawTexturePro(
             tex.texture,
             Rectangle{ 0, 0, static_cast<float>(tex.texture.width), static_cast<float>(-tex.texture.height) },
@@ -269,6 +283,7 @@ int main() {
     }
     // Unload the texture handle again to make a clean exit.
     UnloadRenderTexture(tex);
+    UnloadTexture(kruispunt);
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
