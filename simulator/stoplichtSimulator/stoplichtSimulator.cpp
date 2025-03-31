@@ -4,8 +4,8 @@
 #include <iostream>
 #include <raylib.h>
 #include <vector>
-#include<string>
-
+#include <string>
+#include <thread>
 struct CheckPointNode { //lanes are composed of these nodes. you can view the lane as lines connecting these dots(nodes).
     int x, y; bool occupied; 
     CheckPointNode(int x_, int y_, bool occupied_)
@@ -14,40 +14,72 @@ struct CheckPointNode { //lanes are composed of these nodes. you can view the la
 
 class RoadUser { //parent class for all road using entities, allows for bike lanes, car lanes and sidewalks to use the same function. see implementation of addRoadUserToLane in the lanes class.
 public:
-     void moveToNextCheckNode(CheckPointNode node1, CheckPointNode node2,int& posX,int& posY, int roadUserSpeed) { //automatically drives to next node in lane
-        int xDiff = node2.x - posX;
-        int yDiff = node2.y - posY;
-        //std::cout << "diffs: " << xDiff << yDiff << std::endl;
+    int moveToNextCheckNode(int& posX, int& posY, int roadUserSpeed, std::vector<CheckPointNode> checkPointNodes, int& iterator) { //automatically drives to next node in lane
+        int xDiff = checkPointNodes[iterator+1].x - posX;
+        int yDiff = checkPointNodes[iterator+1].y - posY;
 
-        int totalDiff = xDiff + yDiff;
+        // Compute the distance
+        double distance = sqrt(xDiff * xDiff + yDiff * yDiff);
 
-        double directionDiffRatio = 0;
-        try {
-            directionDiffRatio = double(xDiff) / double(totalDiff); //decides the angle of movement for diagonal paths
-        }
-        catch(int err){ 
-            double directionDiffRatio = 0;
-            std::cout << "error: " << err << std::endl;
+        // Prevent division by zero & check if already at the target
+        if (distance < 1) {
+            posX = checkPointNodes[iterator+1].x;
+            posY = checkPointNodes[iterator+1].y;
+            return iterator+1;
         }
 
+        // Normalize and scale by speed
+        double moveX = (xDiff / distance) * roadUserSpeed;
+        double moveY = (yDiff / distance) * roadUserSpeed;
 
-        //doing the actual movement
-        posX += (xDiff > 0) ? int(directionDiffRatio * roadUserSpeed) //go right
-            : (xDiff < 0) ? -int(directionDiffRatio * roadUserSpeed) //go left
-            : 0;
+        // Apply movement
+        posX += round(moveX);
+        posY += round(moveY);
 
-        posY += (yDiff > 0) ? int((1 - directionDiffRatio) * roadUserSpeed)//go down(+y means down in screen dimensions)
-            : (yDiff < 0) ? -int((1 - directionDiffRatio) * roadUserSpeed)//go up
-            : 0;
-  
-        if (abs(xDiff) < roadUserSpeed && abs(yDiff) < roadUserSpeed) { //less than 1 frame away from arriving (this helps in edge cases where a fast vehicle could skip over the node and forever vibrates around it)
-            std::cout << "ARRIVED\n";
-        }
-        char dir;
+        // Ensure we don't overshoot the target
+        if (abs(checkPointNodes[iterator+1].x - posX) < roadUserSpeed && abs(checkPointNodes[iterator+1].y - posY) < roadUserSpeed) {
+            posX = checkPointNodes[iterator+1].x;
+            posY = checkPointNodes[iterator+1].y;
+            return iterator + 1;
+            }
+        else{ return iterator; }
         
-
-
+        
     }
+    //    int xDiff;
+    //    int yDiff;
+    //    try {
+    //        xDiff = checkPointNodes[iterator+1].x - posX;
+    //        yDiff = checkPointNodes[iterator+1].y - posY;
+    //    }
+    //    catch (const std::out_of_range& e) {
+    //        return -1;
+    //    }
+
+    //        //std::cout << checkPointNodes[iterator + 1].x << " " << checkPointNodes[iterator + 1].y << std::endl;
+    //        //std::cout << "diffs: " << xDiff << yDiff << std::endl;
+
+    //        int totalDiff = abs(xDiff) + abs(yDiff);
+
+
+    //        double directionDiffRatio = 0;
+    //        directionDiffRatio = (totalDiff == 0) ? 0.5 : double(abs(xDiff)) / double(totalDiff);
+
+    //        posX += (xDiff > 0) ? int(directionDiffRatio * roadUserSpeed)
+    //            : (xDiff < 0) ? -int(directionDiffRatio * roadUserSpeed)
+    //            : 0;
+
+    //        posY += (yDiff > 0) ? int((1.0 - directionDiffRatio) * roadUserSpeed)
+    //            : (yDiff < 0) ? -int((1.0 - directionDiffRatio) * roadUserSpeed)
+    //            : 0;
+
+
+    //        if (abs(xDiff) < roadUserSpeed && abs(yDiff) < roadUserSpeed) { //less than 1 frame away from arriving (this helps in edge cases where a fast vehicle could skip over the node and forever vibrates around it)
+    //            std::cout << "ARRIVED: " << iterator + 1 << std::endl;
+    //            return iterator+1;
+    //    }
+    //        return iterator;
+    //}
 };
 class Pedestrian : public RoadUser { // walky boi
     int posX;
@@ -79,7 +111,7 @@ public:
     Car(int X, int Y) { //constructor
         posX = X;
         posY = Y;
-        carSpeed = 4;
+        carSpeed = 2;
     }
     void driveManual(char dir) {//controlled using wasdx
         switch (dir) {
@@ -129,10 +161,13 @@ public:
 
 
 //---------------------------------testing setup-------------------------- 
-CheckPointNode node2 = CheckPointNode(1920-300, 1080-300, false);
-CheckPointNode node1 = CheckPointNode(200, 1080-900, false);
+CheckPointNode node1 = CheckPointNode(1920-400, 1080-650, false);
+CheckPointNode node2 = CheckPointNode(1920 - 990, 1080 - 660, false);
+CheckPointNode node3 = CheckPointNode(1920 - 1200, 1080 - 650, false);
+CheckPointNode node4 = CheckPointNode(1920 - 1300, 1080 - 200, false);
 
-std::vector<CheckPointNode> testLaneCheckpoints = {node1,node2};
+
+std::vector<CheckPointNode> testLaneCheckpoints = {node1,node2,node3,node4};
 Lane testLane("test lane", testLaneCheckpoints);
 //------------------------------------------------------------------
 
@@ -142,17 +177,21 @@ int main() {
     char direction = 'n';  //default
     const int screenWidth = 1920;
     const int screenHeight = 1080;
-    Car car(testLane.checkPointNodes[0].x, testLane.checkPointNodes[0].y);
+    Car car1(testLane.checkPointNodes[0].x, testLane.checkPointNodes[0].y);
+    Car car2(testLane.checkPointNodes[1].x, testLane.checkPointNodes[1].y);
+
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
     SetWindowState(FLAG_WINDOW_RESIZABLE);    
     RenderTexture2D tex = LoadRenderTexture(screenWidth, screenHeight);
     Texture2D image = LoadTexture("../Images/Kruispunt.png");
     Image kruispunt = LoadImage("Images/Kruispunt.png");
-    
+    int testcariterator1 = 0;
+    int testcariterator2 = 1;
+
    
    // Texture2D background = LoadTexture("kruispunt.png");
-    SetTargetFPS(30);               // hz
+    SetTargetFPS(120);               // hz
 
     while (!WindowShouldClose()) {
         // Raylib input handling (no need for _kbhit() or _getch())
@@ -162,7 +201,13 @@ int main() {
         if (IsKeyDown(KEY_D)) direction = 'e';
         if (IsKeyDown(KEY_X)) direction = 'x';
 
-        car.moveToNextCheckNode(testLane.checkPointNodes[0], testLane.checkPointNodes[1],car.posX, car.posY, car.carSpeed);
+
+        if(testcariterator1 < testLane.checkPointNodes.size()-1){
+            testcariterator1 = car1.moveToNextCheckNode(car1.posX, car1.posY, car1.carSpeed, testLane.checkPointNodes, testcariterator1);
+        }
+        if (testcariterator2 < testLane.checkPointNodes.size() - 1) {
+            testcariterator2 = car2.moveToNextCheckNode(car2.posX, car2.posY, car2.carSpeed, testLane.checkPointNodes, testcariterator2);
+        }
         //car.driveManual(direction);  //move car
         //std::cout << "X,Y: " << car.posX << " " << car.posY << std::endl;
 
@@ -199,13 +244,24 @@ int main() {
             0,
             WHITE);
 
-        Vector2 ballPosition = { car.posX,car.posY };  //create circle data
+        Vector2 ballPosition1= { car1.posX,car1.posY };  //create circle data
+        Vector2 ballPosition2 = { car2.posX,car2.posY };  //create circle data
+
         Vector2 testnode1 = { testLane.checkPointNodes[0].x,testLane.checkPointNodes[0].y};
         Vector2 testnode2 = { testLane.checkPointNodes[1].x,testLane.checkPointNodes[1].y };
+        Vector2 testnode3 = { testLane.checkPointNodes[2].x,testLane.checkPointNodes[2].y };
+        Vector2 testnode4 = { testLane.checkPointNodes[3].x,testLane.checkPointNodes[3].y };
 
-        DrawCircleV(ballPosition, 30, MAROON); //draw the circles
+
+        DrawCircleV(ballPosition1, 30, MAROON); //draw the circles
+        DrawCircleV(ballPosition2, 30, MAROON); //draw the circles
+
         DrawCircleV(testnode1, 10, GREEN);
         DrawCircleV(testnode2, 10, GREEN);
+        DrawCircleV(testnode3, 10, GREEN);
+        DrawCircleV(testnode4, 10, GREEN);
+
+
 
         EndDrawing();
 
