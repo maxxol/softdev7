@@ -3,6 +3,10 @@
 
 raylib/
 
+# Build c-executables
+controller/build
+controller/src/out/
+
 
 # Compiled Object files
 *.slo
