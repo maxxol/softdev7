@@ -11,7 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.4.7",
     "nodemon": "^3.1.9",
+    "yup": "^1.6.1",
     "zeromq": "^6.3.0"
   },
   "devDependencies": {

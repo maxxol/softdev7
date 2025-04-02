@@ -3,6 +3,8 @@
  * @version 0.1
  * @author Willem Daniel Visser
  */
+require('dotenv').config({path: __dirname + `/../.env`});
+const validate_env_data = require("../src/validate_env_data")
 const {getSockPub, getSockSub} = require("../src/common_sockets");
 
 const startTime = new Date().getTime()
@@ -29,8 +31,9 @@ function messagePublishedData(topic, publishedData) {
  * * Subscribes to: 'stoplichten'.
  */
 async function startSimulatorTestSockets() {
-    const sockPub = await getSockPub(3000)
-    const sockSub = await getSockSub(3001)
+    // Uses SUB_PORT on sockPub, because the controller subscribes to that, so here we need to publish
+    const sockPub = await getSockPub(process.env.SUB_PORT)
+    const sockSub = await getSockSub(process.env.PUB_PORT)
 
     sockSub.subscribe("stoplichten")
 
@@ -84,4 +87,5 @@ async function startSimulatorTestSockets() {
     })();
 }
 
+validate_env_data.checkPorts()
 startSimulatorTestSockets()

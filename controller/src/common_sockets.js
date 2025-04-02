@@ -25,7 +25,8 @@ const zmq = require("zeromq")
  */
 async function getSockPub(port=3000) {
     const sock = new zmq.Publisher()
-    await sock.bind(`tcp://127.0.0.1:${port}`)
+    await sock.bind(`tcp://${process.env.PUB_IP}:${port}`)
+    console.log(`Publishing to full adres: ${process.env.PUB_IP}:${port}`);
     return sock 
 }
 
@@ -34,9 +35,10 @@ async function getSockPub(port=3000) {
  * @param {number} port port to listen to
  * @returns promise that it will be listening
  */
-async function getSockSub(port=3000) {
+async function getSockSub(port=3001) {
     const sock = new zmq.Subscriber()
-    sock.connect(`tcp://127.0.0.1:${port}`)
+    sock.connect(`tcp://${process.env.SUB_IP}:${port}`)
+    console.log(`Subscribing to full adres: ${process.env.SUB_IP}:${port}`);
     return sock
 }
 
