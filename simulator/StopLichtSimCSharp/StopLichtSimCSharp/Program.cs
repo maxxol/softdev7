@@ -26,12 +26,14 @@ namespace StopLichtSimCSharp
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
             Raylib.InitWindow(800, 800, "Raylib C# Example");
-            Raylib.SetWindowState(ConfigFlags.ResizableWindow);
-            Raylib.SetWindowMinSize(screenWidth/2, screenHeight/2);
+            //Raylib.SetWindowState(ConfigFlags.ResizableWindow);
+            //
+            Raylib.SetWindowState(ConfigFlags.MaximizedWindow);
+            Raylib.SetWindowMinSize(screenWidth, screenHeight/2);
            // Raylib.image imblank = GenImageColor(1024, 1024, Color.blank);
             //Texture2D kruispunt = Raylib.LoadTexture("../../../../../Images/cross_section.png");
             Image crossroads = Raylib.LoadImage("../../../../../Images/cross_section.png");
-            Raylib.ImageResize(ref crossroads, screenWidth, screenHeight);
+            Raylib.ImageResize(ref crossroads, screenWidth, (int)(screenHeight/1.852));
             Texture2D crossingroads = Raylib.LoadTextureFromImage(crossroads);
             Raylib.UnloadImage(crossroads);
 
@@ -61,7 +63,7 @@ namespace StopLichtSimCSharp
                     testCarIterator2 = car2.MoveToNextCheckNode(ref car2.PosX, ref car2.PosY, car2.CarSpeed, testLane.CheckPointNodes, ref testCarIterator2);
 
                 Raylib.BeginDrawing();
-                    Raylib.ClearBackground(Raylib_cs.Color.White);
+                    Raylib.ClearBackground(Raylib_cs.Color.Black);
                     Raylib.DrawTexture(crossingroads, screenWidth / 2 - crossingroads.Width / 2, screenHeight / 2 - crossingroads.Height / 2 - 40, Raylib_cs.Color.White);
 
                     Raylib.DrawCircleV(new Vector2(car1.PosX, car1.PosY), 30, Raylib_cs.Color.Maroon);
