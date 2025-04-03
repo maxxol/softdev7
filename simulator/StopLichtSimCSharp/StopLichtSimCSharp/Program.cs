@@ -35,6 +35,13 @@ namespace StopLichtSimCSharp
             Texture2D crossingroads = Raylib.LoadTextureFromImage(crossroads);
             Raylib.UnloadImage(crossroads);
 
+            Rectangle center = new(400, 280, 40, 40);
+            Camera2D camera = new();
+            camera.Offset = new Vector2(0,0);
+            camera.Rotation = 0.0f;
+            camera.Zoom = 1.0f;
+
+
             List<CheckPointNode> testLaneCheckpoints = new()
             {
                 new CheckPointNode(1920 - 400, 1080 - 650, false),
@@ -51,9 +58,26 @@ namespace StopLichtSimCSharp
             int testCarIterator1 = 0, testCarIterator2 = 1;
 
             Raylib.SetTargetFPS(120);
+           // int scrollSpeed = 4;
+
 
             while (!Raylib.WindowShouldClose())
             {
+                camera.Zoom += ((float)Raylib.GetMouseWheelMove() * 0.05f);
+
+               // Raylib.GetMousePosition((float)Raylib.);
+                if (camera.Zoom > 3.0f)
+                {
+                    camera.Zoom = 3.0f;
+                }
+                else if (camera.Zoom < 0.1f )
+                {
+                    camera.Zoom = 0.1f;
+                }
+                if (Raylib.IsMouseButtonDown(MouseButton.Left j))
+                {
+                    camera.Target = new Vector2(Raylib.GetMousePosition().X, Raylib.GetMousePosition().Y);
+                }
                 if (testCarIterator1 < testLane.CheckPointNodes.Count - 1)
                     testCarIterator1 = car1.MoveToNextCheckNode(ref car1.PosX, ref car1.PosY, car1.CarSpeed, testLane.CheckPointNodes, ref testCarIterator1);
 
@@ -62,11 +86,21 @@ namespace StopLichtSimCSharp
 
                 Raylib.BeginDrawing();
                     Raylib.ClearBackground(Raylib_cs.Color.White);
+                    Raylib.BeginMode2D(camera);
                     Raylib.DrawTexture(crossingroads, screenWidth / 2 - crossingroads.Width / 2, screenHeight / 2 - crossingroads.Height / 2 - 40, Raylib_cs.Color.White);
 
                     Raylib.DrawCircleV(new Vector2(car1.PosX, car1.PosY), 30, Raylib_cs.Color.Maroon);
                     Raylib.DrawCircleV(new Vector2(car2.PosX, car2.PosY), 30, Raylib_cs.Color.Maroon);
-
+                    
+                  //  Raylib.DrawRectangle((int)camera.Target.X, -500, 1, (int)(screenHeight * 4), Color.Green);
+                    //Raylib.DrawLine(
+                    //    (int)(-screenWidth * 10),
+                    //    (int)camera.Target.Y,
+                    //    (int)(screenWidth * 10),
+                    //    (int)camera.Target.Y,
+                    //    Color.Green
+                    //);
+                    Raylib.EndMode2D();
                     foreach (var node in testLane.CheckPointNodes)
                     {
                         Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
