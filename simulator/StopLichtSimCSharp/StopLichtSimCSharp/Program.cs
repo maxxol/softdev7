@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Raylib_cs;
 using System.Numerics;
+using System.IO;
+using System.Drawing.Drawing2D;
 //using System.Drawing;
 
 
@@ -56,6 +58,9 @@ namespace StopLichtSimCSharp
 
             while (!Raylib.WindowShouldClose())
             {
+                MouseClickNodeCreator.AddCoordinateToNodeFileByClicking();
+
+
                 if (testCarIterator1 < testLane.CheckPointNodes.Count - 1)
                     testCarIterator1 = car1.MoveToNextCheckNode(ref car1.PosX, ref car1.PosY, car1.CarSpeed, testLane.CheckPointNodes, ref testCarIterator1);
 
