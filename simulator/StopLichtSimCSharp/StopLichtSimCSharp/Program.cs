@@ -74,7 +74,7 @@ namespace StopLichtSimCSharp
                 {
                     camera.Zoom = 0.1f;
                 }
-                if (Raylib.IsMouseButtonDown(MouseButton.Left j))
+                if (Raylib.IsMouseButtonDown(MouseButton.Left))
                 {
                     camera.Target = new Vector2(Raylib.GetMousePosition().X, Raylib.GetMousePosition().Y);
                 }
@@ -92,14 +92,7 @@ namespace StopLichtSimCSharp
                     Raylib.DrawCircleV(new Vector2(car1.PosX, car1.PosY), 30, Raylib_cs.Color.Maroon);
                     Raylib.DrawCircleV(new Vector2(car2.PosX, car2.PosY), 30, Raylib_cs.Color.Maroon);
                     
-                  //  Raylib.DrawRectangle((int)camera.Target.X, -500, 1, (int)(screenHeight * 4), Color.Green);
-                    //Raylib.DrawLine(
-                    //    (int)(-screenWidth * 10),
-                    //    (int)camera.Target.Y,
-                    //    (int)(screenWidth * 10),
-                    //    (int)camera.Target.Y,
-                    //    Color.Green
-                    //);
+                 
                     Raylib.EndMode2D();
                     foreach (var node in testLane.CheckPointNodes)
                     {
