@@ -5,25 +5,27 @@ namespace StopLichtSimCSharp
 {
     class MouseClickNodeCreator
     {
-        public static void AddCoordinateToNodeFileByClicking()
+        public static void AddCoordinateToNodeFileByClicking(bool turnOnNodeCreationByClicking)
         {
-            Vector2 mousePos = Raylib.GetMousePosition();
+            if (turnOnNodeCreationByClicking) {
+                Vector2 mousePos = Raylib.GetMousePosition();
             
-            MouseButton leftClickButton = MouseButton.Left;
-            MouseButton rightClickButton = MouseButton.Right;
+                MouseButton leftClickButton = MouseButton.Left;
+                MouseButton rightClickButton = MouseButton.Right;
 
-            if (Raylib.IsMouseButtonPressed(leftClickButton))
-            {
-                Console.WriteLine(mousePos);
+                if (Raylib.IsMouseButtonPressed(leftClickButton))
+                {
+                    Console.WriteLine(mousePos);
 
-                File.AppendAllText("../../../../../NodeData/NodeData.txt", mousePos.ToString() + "\n");
+                    File.AppendAllText("../../../../../NodeData/NodeData.txt", mousePos.ToString() + "\n");
 
+                }
+                if (Raylib.IsMouseButtonPressed(rightClickButton)) {
+                    File.AppendAllText("../../../../../NodeData/NodeData.txt", "LANE END" + "\n");
+
+                }
+                //Console.WriteLine(mousePos);
             }
-            if (Raylib.IsMouseButtonPressed(rightClickButton)) {
-                File.AppendAllText("../../../../../NodeData/NodeData.txt", "LANE END" + "\n");
-
-            }
-            //Console.WriteLine(mousePos);
         }
     }
 }
