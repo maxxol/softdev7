@@ -66,7 +66,9 @@ namespace StopLichtSimCSharp
 
 
             while (!Raylib.WindowShouldClose())
+
             {
+                MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(false);
                 camera.Zoom += ((float)Raylib.GetMouseWheelMove() * 0.05f);
 
                // Raylib.GetMousePosition((float)Raylib.);
@@ -82,10 +84,10 @@ namespace StopLichtSimCSharp
                 {
                     camera.Target = new Vector2(Raylib.GetMousePosition().X, Raylib.GetMousePosition().Y);
                 }
-                if (testCarIterator1 < testLane.CheckPointNodes.Count - 1)
+                if (testCarIterator1 < testLane.CheckPointNodes.Length - 1)
                     testCarIterator1 = car1.MoveToNextCheckNode(ref car1.PosX, ref car1.PosY, car1.CarSpeed, testLane.CheckPointNodes, ref testCarIterator1);
 
-                if (testCarIterator2 < testLane.CheckPointNodes.Count - 1)
+                if (testCarIterator2 < testLane.CheckPointNodes.Length - 1)
                     testCarIterator2 = car2.MoveToNextCheckNode(ref car2.PosX, ref car2.PosY, car2.CarSpeed, testLane.CheckPointNodes, ref testCarIterator2);
 
                 Raylib.BeginDrawing();
