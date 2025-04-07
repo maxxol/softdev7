@@ -62,6 +62,10 @@ namespace StopLichtSimCSharp
             Raylib.SetTargetFPS(60);
             while (!Raylib.WindowShouldClose())
             {
+                ZeroMqHandler.PublishSensorData();
+                ZeroMqHandler.SubscribeToSensorData();
+
+
                 MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(false);//should only be true when you want to modify NodeData.txt
 
 
