@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using Raylib_cs;
 using System.Numerics;
-//using System.Drawing;
+using System.IO;
+using System.Drawing.Drawing2D;
 
 
 namespace StopLichtSimCSharp
@@ -26,12 +27,12 @@ namespace StopLichtSimCSharp
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
             Raylib.InitWindow(800, 800, "Raylib C# Example");
-            Raylib.SetWindowState(ConfigFlags.ResizableWindow);
-            Raylib.SetWindowMinSize(screenWidth/2, screenHeight/2);
+            Raylib.SetWindowState(ConfigFlags.MaximizedWindow);
+            Raylib.SetWindowMinSize(screenWidth, screenHeight/2);
            // Raylib.image imblank = GenImageColor(1024, 1024, Color.blank);
             //Texture2D kruispunt = Raylib.LoadTexture("../../../../../Images/cross_section.png");
             Image crossroads = Raylib.LoadImage("../../../../../Images/cross_section.png");
-            Raylib.ImageResize(ref crossroads, screenWidth, screenHeight);
+            Raylib.ImageResize(ref crossroads, screenWidth, (int)(screenHeight/1.852));
             Texture2D crossingroads = Raylib.LoadTextureFromImage(crossroads);
             Raylib.UnloadImage(crossroads);
 
@@ -42,7 +43,7 @@ namespace StopLichtSimCSharp
             camera.Zoom = 1.0f;
 
 
-            List<CheckPointNode> testLaneCheckpoints = new()
+            CheckPointNode[] testLaneCheckpoints = 
             {
                 new CheckPointNode(1920 - 400, 1080 - 650, false),
                 new CheckPointNode(1920 - 990, 1080 - 660, false),
@@ -57,7 +58,10 @@ namespace StopLichtSimCSharp
 
             int testCarIterator1 = 0, testCarIterator2 = 1;
 
-            Raylib.SetTargetFPS(120);
+            CheckPointNode[][] loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
+            Lane[] Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
+          
+            Raylib.SetTargetFPS(60);
            // int scrollSpeed = 4;
 
 
@@ -92,13 +96,18 @@ namespace StopLichtSimCSharp
                     Raylib.DrawCircleV(new Vector2(car1.PosX, car1.PosY), 30, Raylib_cs.Color.Maroon);
                     Raylib.DrawCircleV(new Vector2(car2.PosX, car2.PosY), 30, Raylib_cs.Color.Maroon);
                     
-                 
-                    Raylib.EndMode2D();
-                    foreach (var node in testLane.CheckPointNodes)
+                 foreach (Lane lane in Lanes)
+                {
+                    foreach (var node in lane.CheckPointNodes)
                     {
                         Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
                     }
-
+                }
+                foreach (var node in testLane.CheckPointNodes)
+                    {
+                        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
+                    }
+                    
                 Raylib.EndDrawing();
             }
 

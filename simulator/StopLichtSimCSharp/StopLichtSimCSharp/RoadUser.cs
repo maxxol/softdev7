@@ -8,7 +8,7 @@ namespace StopLichtSimCSharp
 {
     class RoadUser
     {
-        public int MoveToNextCheckNode(ref int posX, ref int posY, int roadUserSpeed, List<CheckPointNode> checkPointNodes, ref int iterator)
+        public int MoveToNextCheckNode(ref int posX, ref int posY, int roadUserSpeed, CheckPointNode[] checkPointNodes, ref int iterator)
         {
             int xDiff = checkPointNodes[iterator + 1].X - posX;
             int yDiff = checkPointNodes[iterator + 1].Y - posY;
