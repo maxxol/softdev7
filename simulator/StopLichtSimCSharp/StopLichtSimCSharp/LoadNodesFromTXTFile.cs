@@ -30,7 +30,7 @@ namespace StopLichtSimCSharp
                     Console.WriteLine("added point");
                 }
 
-                else 
+                else
                 {
                     Console.WriteLine("lane ended");
                     loadedNodesListList.Add(autoCreatedCheckpointList.ToArray());

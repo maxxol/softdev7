@@ -10,8 +10,8 @@ namespace StopLichtSimCSharp
     {
         public string LaneID;
         public List<RoadUser> LaneUsers = new();
-        public List<CheckPointNode> CheckPointNodes;
-        public Lane(string laneID, List<CheckPointNode> checkPointNodes)
+        public CheckPointNode[] CheckPointNodes;
+        public Lane(string laneID, CheckPointNode[] checkPointNodes)
         {
             LaneID = laneID;
             CheckPointNodes = checkPointNodes;
