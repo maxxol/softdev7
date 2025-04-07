@@ -13,7 +13,7 @@ namespace StopLichtSimCSharp
         {
             PosX = x;
             PosY = y;
-            CarSpeed = 2;
+            CarSpeed = 4;
         }
         public void DriveManual(char dir)
         {

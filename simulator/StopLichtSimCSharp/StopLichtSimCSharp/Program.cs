@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Raylib_cs;
 using System.Numerics;
+using System.IO;
+using System.Drawing.Drawing2D;
 //using System.Drawing;
 
 
@@ -52,10 +54,17 @@ namespace StopLichtSimCSharp
 
             int testCarIterator1 = 0, testCarIterator2 = 1;
 
-            Raylib.SetTargetFPS(120);
+            CheckPointNode[][] loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
 
+
+
+
+            Raylib.SetTargetFPS(60);
             while (!Raylib.WindowShouldClose())
             {
+                MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(false);//should only be true when you want to modify NodeData.txt
+
+
                 if (testCarIterator1 < testLane.CheckPointNodes.Count - 1)
                     testCarIterator1 = car1.MoveToNextCheckNode(ref car1.PosX, ref car1.PosY, car1.CarSpeed, testLane.CheckPointNodes, ref testCarIterator1);
 
@@ -69,11 +78,20 @@ namespace StopLichtSimCSharp
                     Raylib.DrawCircleV(new Vector2(car1.PosX, car1.PosY), 30, Raylib_cs.Color.Maroon);
                     Raylib.DrawCircleV(new Vector2(car2.PosX, car2.PosY), 30, Raylib_cs.Color.Maroon);
 
-                    foreach (var node in testLane.CheckPointNodes)
+
+                //loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT(); //updates live for debugging
+                foreach (CheckPointNode[] autoCreatedCheckpointArray in loadedNodesArrayArray)
+                {
+                    foreach (var node in autoCreatedCheckpointArray)
                     {
                         Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
                     }
-
+                }
+                foreach (var node in testLane.CheckPointNodes)
+                    {
+                        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
+                    }
+                    
                 Raylib.EndDrawing();
             }
 
