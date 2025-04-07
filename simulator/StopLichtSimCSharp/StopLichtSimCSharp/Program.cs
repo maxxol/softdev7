@@ -54,7 +54,7 @@ namespace StopLichtSimCSharp
 
             int testCarIterator1 = 0, testCarIterator2 = 1;
 
-            CheckPointNode[] autoCreatedCheckpointArray = TXTFileNodeLoader.LoadNodesFromTXT();
+            CheckPointNode[][] loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
 
 
 
@@ -79,15 +79,19 @@ namespace StopLichtSimCSharp
                     Raylib.DrawCircleV(new Vector2(car2.PosX, car2.PosY), 30, Raylib_cs.Color.Maroon);
 
 
-                autoCreatedCheckpointArray = TXTFileNodeLoader.LoadNodesFromTXT(); //updates live for debugging
-                foreach (var node in testLane.CheckPointNodes)
-                    {
-                        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
-                    }
+                //loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT(); //updates live for debugging
+                foreach (CheckPointNode[] autoCreatedCheckpointArray in loadedNodesArrayArray)
+                {
                     foreach (var node in autoCreatedCheckpointArray)
                     {
                         Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
                     }
+                }
+                foreach (var node in testLane.CheckPointNodes)
+                    {
+                        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
+                    }
+                    
                 Raylib.EndDrawing();
             }
 

@@ -5,13 +5,17 @@ namespace StopLichtSimCSharp
 {
     class TXTFileNodeLoader
     {
-        public static CheckPointNode[] LoadNodesFromTXT()
+        public static CheckPointNode[][] LoadNodesFromTXT()
         {
 
             //"../../../../../NodeData/NodeData.txt"
             //StreamReader sr = new StreamReader("Names.txt");
             string[] coords = File.ReadAllLines("../../../../../NodeData/NodeData.txt");
-            List<CheckPointNode> autoCreatedCheckpointArray = new List<CheckPointNode>();
+
+
+            List<CheckPointNode[]> loadedNodesListList = new List<CheckPointNode[]>();
+
+            List<CheckPointNode> autoCreatedCheckpointList = new List<CheckPointNode>();
 
             foreach (string line in coords)
             {
@@ -22,15 +26,18 @@ namespace StopLichtSimCSharp
                 //Console.WriteLine(line);
                 if (cleanLine != "LANE END")
                 {
-                    autoCreatedCheckpointArray.Add(new CheckPointNode(Convert.ToInt32(parts[0]), (Convert.ToInt32(parts[1])), false));
+                    autoCreatedCheckpointList.Add(new CheckPointNode(Convert.ToInt32(parts[0]), (Convert.ToInt32(parts[1])), false));
+                    Console.WriteLine("added point");
                 }
+
                 else 
                 {
-                    break;
-                    
+                    Console.WriteLine("lane ended");
+                    loadedNodesListList.Add(autoCreatedCheckpointList.ToArray());
+                    autoCreatedCheckpointList.Clear();
                 }
             }
-            return autoCreatedCheckpointArray.ToArray();
+            return loadedNodesListList.ToArray();
         }
     }
 }
