@@ -39,7 +39,7 @@ namespace StopLichtSimCSharp
             Texture2D crossingroads = Raylib.LoadTextureFromImage(crossroads);
             Raylib.UnloadImage(crossroads);
 
-            List<CheckPointNode> testLaneCheckpoints = new()
+            CheckPointNode[] testLaneCheckpoints = 
             {
                 new CheckPointNode(1920 - 400, 1080 - 650, false),
                 new CheckPointNode(1920 - 990, 1080 - 660, false),
@@ -55,7 +55,7 @@ namespace StopLichtSimCSharp
             int testCarIterator1 = 0, testCarIterator2 = 1;
 
             CheckPointNode[][] loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
-
+            Lane[] Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
 
 
 
@@ -65,10 +65,10 @@ namespace StopLichtSimCSharp
                 MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(false);//should only be true when you want to modify NodeData.txt
 
 
-                if (testCarIterator1 < testLane.CheckPointNodes.Count - 1)
+                if (testCarIterator1 < testLane.CheckPointNodes.Length - 1)
                     testCarIterator1 = car1.MoveToNextCheckNode(ref car1.PosX, ref car1.PosY, car1.CarSpeed, testLane.CheckPointNodes, ref testCarIterator1);
 
-                if (testCarIterator2 < testLane.CheckPointNodes.Count - 1)
+                if (testCarIterator2 < testLane.CheckPointNodes.Length - 1)
                     testCarIterator2 = car2.MoveToNextCheckNode(ref car2.PosX, ref car2.PosY, car2.CarSpeed, testLane.CheckPointNodes, ref testCarIterator2);
 
                 Raylib.BeginDrawing();
@@ -80,9 +80,9 @@ namespace StopLichtSimCSharp
 
 
                 //loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT(); //updates live for debugging
-                foreach (CheckPointNode[] autoCreatedCheckpointArray in loadedNodesArrayArray)
+                foreach (Lane lane in Lanes)
                 {
-                    foreach (var node in autoCreatedCheckpointArray)
+                    foreach (var node in lane.CheckPointNodes)
                     {
                         Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
                     }
