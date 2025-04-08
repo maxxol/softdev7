@@ -76,7 +76,7 @@ namespace StopLichtSimCSharp
                 //ZeroMqHandler.ListenStoplichtSub();
 
 
-                bool nodeDevMode = false;
+                bool nodeDevMode = true;
                 MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(nodeDevMode);
                 if (!nodeDevMode)
                 {
@@ -109,8 +109,9 @@ namespace StopLichtSimCSharp
 
                     Raylib.DrawCircleV(new Vector2(car1.PosX, car1.PosY), 30, Raylib_cs.Color.Maroon);
                     Raylib.DrawCircleV(new Vector2(car2.PosX, car2.PosY), 30, Raylib_cs.Color.Maroon);
-                    
-                 foreach (Lane lane in Lanes)
+                loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
+                Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
+                foreach (Lane lane in Lanes)
                 {
                     foreach (var node in lane.CheckPointNodes)
                     {

@@ -8,7 +8,7 @@ namespace StopLichtSimCSharp
     class ZeroMqHandler
     {
 
-        static string communicationIPAdress = "tcp://10.121.17.182:5555";
+        static string communicationIPAddress = "tcp://10.121.17.195:5555"; //don't push your home wifi ip please thank you
 
 
 
@@ -20,7 +20,7 @@ namespace StopLichtSimCSharp
                 if (_sensorPublisher != null) return;
 
                 _sensorPublisher = new PublisherSocket();
-                _sensorPublisher.Bind(communicationIPAdress);
+                _sensorPublisher.Bind(communicationIPAddress);
                 Console.WriteLine("Publisher started.");
             }
 
@@ -53,7 +53,7 @@ namespace StopLichtSimCSharp
                 if (_stoplichtSubscriber != null) return;
 
                 _stoplichtSubscriber = new SubscriberSocket();
-                _stoplichtSubscriber.Connect(communicationIPAdress);
+                _stoplichtSubscriber.Connect(communicationIPAddress);
                 _stoplichtSubscriber.Subscribe("sensor");
 
                 Console.WriteLine("Stoplichten subscriber started.");
