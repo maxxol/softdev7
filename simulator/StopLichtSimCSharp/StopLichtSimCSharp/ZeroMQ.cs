@@ -7,7 +7,12 @@ namespace StopLichtSimCSharp
 {
     class ZeroMqHandler
     {
-     
+
+        static string communicationIPAdress = "tcp://10.121.17.182:5555";
+
+
+
+
             private static PublisherSocket _sensorPublisher;
 
             public static void StartSensorPub()
@@ -15,7 +20,7 @@ namespace StopLichtSimCSharp
                 if (_sensorPublisher != null) return;
 
                 _sensorPublisher = new PublisherSocket();
-                _sensorPublisher.Bind("tcp://10.121.17.182:5555");
+                _sensorPublisher.Bind(communicationIPAdress);
                 Console.WriteLine("Publisher started.");
             }
 
@@ -48,7 +53,7 @@ namespace StopLichtSimCSharp
                 if (_stoplichtSubscriber != null) return;
 
                 _stoplichtSubscriber = new SubscriberSocket();
-                _stoplichtSubscriber.Connect("tcp://localhost:5555");
+                _stoplichtSubscriber.Connect(communicationIPAdress);
                 _stoplichtSubscriber.Subscribe("sensor");
 
                 Console.WriteLine("Stoplichten subscriber started.");
