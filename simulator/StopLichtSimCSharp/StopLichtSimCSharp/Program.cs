@@ -11,13 +11,16 @@ namespace StopLichtSimCSharp
 {
     struct CheckPointNode // Lanes are composed of these nodes
     {
-        public int X, Y;
-        public bool Occupied;
-        public CheckPointNode(int x, int y, bool occupied)
+        public int x, y;
+        public bool occupied;
+        public string stopLightColor;
+        public CheckPointNode(int _x, int _y, bool _occupied)
         {
-            X = x;
-            Y = y;
-            Occupied = occupied;
+            x = _x;
+            y = _y;
+            occupied = _occupied;
+            stopLightColor = "green";
+
         }
     }
 
