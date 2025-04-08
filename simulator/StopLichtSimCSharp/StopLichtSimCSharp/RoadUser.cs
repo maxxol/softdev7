@@ -10,14 +10,14 @@ namespace StopLichtSimCSharp
     {
         public int MoveToNextCheckNode(ref int posX, ref int posY, int roadUserSpeed, CheckPointNode[] checkPointNodes, ref int iterator)
         {
-            int xDiff = checkPointNodes[iterator + 1].X - posX;
-            int yDiff = checkPointNodes[iterator + 1].Y - posY;
+            int xDiff = checkPointNodes[iterator + 1].x - posX;
+            int yDiff = checkPointNodes[iterator + 1].y - posY;
 
             double distance = Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
             if (distance < 1)
             {
-                posX = checkPointNodes[iterator + 1].X;
-                posY = checkPointNodes[iterator + 1].Y;
+                posX = checkPointNodes[iterator + 1].x;
+                posY = checkPointNodes[iterator + 1].y;
                 return ++iterator;
             }
 
@@ -27,10 +27,10 @@ namespace StopLichtSimCSharp
             posX += (int)Math.Round(moveX);
             posY += (int)Math.Round(moveY);
 
-            if (Math.Abs(checkPointNodes[iterator + 1].X - posX) < roadUserSpeed && Math.Abs(checkPointNodes[iterator + 1].Y - posY) < roadUserSpeed)
+            if (Math.Abs(checkPointNodes[iterator + 1].x - posX) < roadUserSpeed && Math.Abs(checkPointNodes[iterator + 1].y - posY) < roadUserSpeed)
             {
-                posX = checkPointNodes[iterator + 1].X;
-                posY = checkPointNodes[iterator + 1].Y;
+                posX = checkPointNodes[iterator + 1].x;
+                posY = checkPointNodes[iterator + 1].y;
                 return ++iterator;
             }
             return iterator;

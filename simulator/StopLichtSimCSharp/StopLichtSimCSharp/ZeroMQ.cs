@@ -8,7 +8,7 @@ namespace StopLichtSimCSharp
     class ZeroMqHandler
     {
 
-        static string communicationIPAddress = "tcp://10.121.17.195:5555"; //don't push your home wifi ip please thank you
+        static string communicationIPAddress = "tcp://localhost:5555"; //don't push your home wifi ip please thank you
 
 
 

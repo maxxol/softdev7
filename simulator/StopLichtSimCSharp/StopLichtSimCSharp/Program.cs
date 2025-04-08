@@ -28,6 +28,7 @@ namespace StopLichtSimCSharp
     {
         static void Main()
         {
+            bool nodeDevMode = false;
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
             Raylib.InitWindow(800, 800, "Raylib C# Example");
@@ -57,8 +58,8 @@ namespace StopLichtSimCSharp
 
             Lane testLane = new("test lane", testLaneCheckpoints);
 
-            Car car1 = new(testLane.CheckPointNodes[0].X, testLane.CheckPointNodes[0].Y);
-            Car car2 = new(testLane.CheckPointNodes[1].X, testLane.CheckPointNodes[1].Y);
+            Car car1 = new(testLane.CheckPointNodes[0].x, testLane.CheckPointNodes[0].y);
+            Car car2 = new(testLane.CheckPointNodes[1].x, testLane.CheckPointNodes[1].y);
 
             int testCarIterator1 = 0, testCarIterator2 = 1;
 
@@ -79,7 +80,7 @@ namespace StopLichtSimCSharp
                 //ZeroMqHandler.ListenStoplichtSub();
 
 
-                bool nodeDevMode = true;
+                
                 MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(nodeDevMode);
                 if (!nodeDevMode)
                 {
@@ -118,12 +119,12 @@ namespace StopLichtSimCSharp
                 {
                     foreach (var node in lane.CheckPointNodes)
                     {
-                        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
+                        Raylib.DrawCircleV(new Vector2(node.x, node.y), 10, Raylib_cs.Color.Green);
                     }
                 }
                 foreach (var node in testLane.CheckPointNodes)
                     {
-                        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
+                        Raylib.DrawCircleV(new Vector2(node.x, node.y), 10, Raylib_cs.Color.Green);
                     }
                     
                 Raylib.EndDrawing();
