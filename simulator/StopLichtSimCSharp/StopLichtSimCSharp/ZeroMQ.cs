@@ -1,59 +1,86 @@
 ﻿using System;
-using System.Security.Policy;
+using System.Threading;
 using NetMQ;
 using NetMQ.Sockets;
-
-
-
 
 namespace StopLichtSimCSharp
 {
     class ZeroMqHandler
     {
-        var publisher = new PublisherSocket();
-        public static void PublishSensorData()
-        {
-            Console.WriteLine("Starting the publisher...");
+     
+            private static PublisherSocket _sensorPublisher;
 
-            using (Publisher)
+            public static void StartSensorPub()
             {
-                publisher.Bind("tcp://localhost:5556"); // Publisher binds to a port
+                if (_sensorPublisher != null) return;
 
-                // Send a single message with a topic and a message
-                string message = "SensorData 1"; // Example message
-                publisher.SendMoreFrame("sensor")  // Topic
-                           .SendFrame(message);    // Message
+                _sensorPublisher = new PublisherSocket();
+                _sensorPublisher.Bind("tcp://10.121.17.182:5555");
+                Console.WriteLine("Publisher started.");
+            }
 
+            public static void PublishSensorData(string message)
+            {
+                if (_sensorPublisher == null)
+                {
+                    throw new InvalidOperationException("Publisher not started. Call Start() first.");
+                }
+
+                _sensorPublisher.SendMoreFrame("sensor").SendFrame(message);
                 Console.WriteLine($"Published: {message}");
             }
-        }
 
-
-
-
-        public static void SubscribeToSensorData()
-        {
-            Console.WriteLine("Starting the subscriber...");
-
-            using (var subscriber = new SubscriberSocket())
+            public static void StopSensorPub()
             {
-                subscriber.Connect("tcp://localhost:5556");  // Connect to the publisher's address
-                subscriber.Subscribe("sensor");  // Subscribe to the "sensor" topic
-
-                // Try to receive a message with a timeout (e.g., 1000ms = 1 second)
-                string topic;
-                string message;
-
-                if (subscriber.TryReceiveFrameString(TimeSpan.FromMilliseconds(1000), out topic))
+                if (_sensorPublisher != null)
                 {
-                    message = subscriber.ReceiveFrameString();
-                    Console.WriteLine($"Received: {topic} - {message}");
+                    _sensorPublisher.Dispose();
+                    _sensorPublisher = null;
+                    Console.WriteLine("Publisher stopped.");
                 }
-                else
+            }
+
+        
+            private static SubscriberSocket _stoplichtSubscriber;
+
+            public static void StartStoplichtSub()
+            {
+                if (_stoplichtSubscriber != null) return;
+
+                _stoplichtSubscriber = new SubscriberSocket();
+                _stoplichtSubscriber.Connect("tcp://localhost:5555");
+                _stoplichtSubscriber.Subscribe("sensor");
+
+                Console.WriteLine("Stoplichten subscriber started.");
+            }
+
+            public static void ListenStoplichtSub()
+            {
+                if (_stoplichtSubscriber == null)
                 {
-                    Console.WriteLine("No message received within timeout.");
+                    throw new InvalidOperationException("Subscriber not started. Call Start() first.");
+                }
+
+                
+                    string topic = _stoplichtSubscriber.ReceiveFrameString();
+                    string message = _stoplichtSubscriber.ReceiveFrameString();
+
+                    Console.WriteLine($"Received: {topic} - {message}");
+                
+            }
+
+            public static void StopStoplichtSub()
+            {
+                if (_stoplichtSubscriber != null)
+                {
+                    _stoplichtSubscriber.Dispose();
+                    _stoplichtSubscriber = null;
+                    Console.WriteLine("Stoplichten subscriber stopped.");
                 }
             }
         }
+
     }
-}
+
+    
+
