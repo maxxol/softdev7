@@ -34,20 +34,21 @@ async function startSimulatorTestSockets() {
     // Uses SUB_PORT on sockPub, because the controller subscribes to that, so here we need to publish
     const sockPub = await getSockPub(process.env.SUB_PORT)
     const sockSub = await getSockSub(process.env.PUB_PORT)
+    let i = 1
 
     sockSub.subscribe("stoplichten")
 
     setInterval(async () => {
         console.debug("Publishing message as simulator...");
-        
+        i = !i
         await sockPub.send(["sensoren_rijbaan", JSON.stringify({
             "1.1": {
-              "voor": false,
-              "achter": false
+              "voor": !i,
+              "achter": !!i
             },
             "22.1": {
               "voor": true,
-              "achter": false
+              "achter": !i
             }
           })]);
         await sockPub.send(["sensoren_speciaal", JSON.stringify({

@@ -8,18 +8,22 @@ const validate_env_data = require("./src/validate_env_data");
 const {getSockPub} = require("./src/sockets_setup");
 const {handleTrafficLightModification} = require("./src/handling_sensor_information");
 const subscription = require('./src/subscription');
-let trafficLightStatus = {}
-let sensorsRoadwayStatus = {}
-let sensorsSpecialStatus = {}
+const intersectionData = require('./config/intersection_data.json')
+
+let trafficLightStatus,
+    sensorRoadwayStatus,
+    sensorsSpecialStatus,
+    priorityVehicleStatus = {}
+
 
 /**
  * Updates the traffic light status and sends the new status on the given sockPub, with topic 'stoplichten'
  * @param {Promise<Subscriber>} sockPub ZeroMQ socket publisher
  */
 async function trafficLightCycle(sockPub) {
-    trafficLightStatus = handleTrafficLightModification(trafficLightStatus, sensorsRoadwayStatus, sensorsSpecialStatus, intersectionData)
-    
+    trafficLightStatus = handleTrafficLightModification(trafficLightStatus, sensorRoadwayStatus, sensorsSpecialStatus, priorityVehicleStatus, intersectionData)
     sockPub.send(["stoplichten", JSON.stringify(trafficLightStatus)]);
+    console.log("trafficlight update was send...");
 }
 
 
