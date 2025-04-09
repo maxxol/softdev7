@@ -5,7 +5,7 @@
  */
 require('dotenv').config({path: __dirname + `/../.env`});
 const validate_env_data = require("../src/validate_env_data")
-const {getSockPub, getSockSub} = require("../src/common_sockets");
+const {getSockPub, getSockSub} = require("../src/sockets_setup");
 
 const startTime = new Date().getTime()
 
@@ -61,7 +61,7 @@ async function startSimulatorTestSockets() {
 		await sockPub.send(["voorrangsvoertuig", JSON.stringify({
 			"queue": [
 				{
-					"baan": "8.2",
+					"baan": "1.1",
 					"simulatie_tijd_ms": 1231456352542,
 					"prioriteit": 1
 				},

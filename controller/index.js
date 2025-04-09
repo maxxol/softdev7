@@ -1,14 +1,12 @@
 /**
  * Entry file for the controller component in the traffic simulator.
- * @version 0.1
+ * @version 1.0.0
  * @author Willem Daniel Visser
  */
-
 require('dotenv').config();
-const validate_env_data = require("./src/validate_env_data")
-const {getSockPub} = require("./src/common_sockets")
-const {handleTrafficLightModification} = require("./src/handling")
-const intersectionData = require("./src/load_intersection_data");
+const validate_env_data = require("./src/validate_env_data");
+const {getSockPub} = require("./src/sockets_setup");
+const {handleTrafficLightModification} = require("./src/handling_sensor_information");
 const subscription = require('./src/subscription');
 let trafficLightStatus = {}
 let sensorsRoadwayStatus = {}

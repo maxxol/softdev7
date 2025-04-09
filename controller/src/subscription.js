@@ -1,8 +1,11 @@
 /**
  * This file is intended to hande subscription to all the simulators messages.
+ * @author Willem Daniel Visser
+ * @version 1.0.0
  */
-const {getSockSub} = require("./common_sockets")
-const sensorsRoadwayStatus = require("./socket_data/sensors_roadway_status")
+const {getSockSub} = require("./sockets_setup");
+
+
 
 
 /**
@@ -21,13 +24,15 @@ function messagePublishedData(topic, publishedData) {
 
 
 /**
- * 
+ * Subscribes to all topics that get published by the simulator.
  * @param {CallableFunction} launchPublisher 
  */
 async function subscribeToAllSimulator(launchPublisher) {
-    let sensorsRoadwayStatusIncomming = {}
-    let sensorsSpecialStatus = {}
     let simulatorTimePassed = 0
+    const roadwayDataContainer = new SensorDataContainer(sensorRijbaanSchema)
+    const specialDataContainer = new SensorDataContainer(sensorSpeciaalSchema)
+    const priorityVehicleDataContainer = new SensorDataContainer(priorityVehicleSchema, validSensorsSchema)
+
     const sockSub = await getSockSub(process.env.SUB_PORT)
     sockSub.subscribe("sensoren_rijbaan")
     sockSub.subscribe("sensoren_speciaal")
@@ -38,15 +43,16 @@ async function subscribeToAllSimulator(launchPublisher) {
         const topicString = topic.toString()
         try {
             const dataObj = JSON.parse(data)
-            messagePublishedData(topicString, dataObj)
+            // messagePublishedData(topicString, dataObj)
             switch (topicString) {
                 case "sensoren_rijbaan":
-                    
-                    sensorsRoadwayStatusIncomming = dataObj
-                    sensorsRoadwayStatus.set(sensorsRoadwayStatusIncomming)
+                    roadwayDataContainer.updateStatus(dataObj)
                     break;
                 case "sensoren_speciaal":
-                    sensorsSpecialStatus = dataObj
+                    specialDataContainer.updateStatus(dataObj)
+                    break;
+                case "voorrangsvoertuig":
+                    priorityVehicleDataContainer.updateStatus(dataObj)
                     break;
                 case "tijd":
                     simulatorTimePassed = dataObj["simulatie_tijd_ms"]
@@ -56,7 +62,7 @@ async function subscribeToAllSimulator(launchPublisher) {
             if(e instanceof SyntaxError) {
                 if(e.message.includes("in JSON at position")) {
                     console.error(`Expected incomming data to be a JSON string, topic='${topic}', error message:`)
-                    // console.error(e.message);
+                    console.error(e.message);
                 } else {
                     console.error(`Expected incomming data to have a different format, topic='${topic}', error message:`)
                     console.error(e.message);
@@ -66,8 +72,7 @@ async function subscribeToAllSimulator(launchPublisher) {
                 console.error(e.message);
             }
         }
-        launchPublisher(sensorsRoadwayStatusIncomming, sensorsSpecialStatus, simulatorTimePassed)
-        
+        launchPublisher(roadwayDataContainer, specialDataContainer, priorityVehicleDataContainer, simulatorTimePassed)
     }
 }
 
