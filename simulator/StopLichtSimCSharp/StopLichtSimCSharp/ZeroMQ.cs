@@ -32,7 +32,7 @@ namespace StopLichtSimCSharp
                 }
 
                 _sensorPublisher.SendMoreFrame("sensor").SendFrame(message);
-                Console.WriteLine($"Published: {message}");
+                //Console.WriteLine($"Published: {message}");
             }
 
             public static void StopSensorPub()
