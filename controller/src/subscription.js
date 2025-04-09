@@ -5,7 +5,11 @@
  */
 const {getSockSub} = require("./sockets_setup");
 
-
+const SensorDataContainer = require("./sensor_data_container")
+const validSensorsSchema = require("../config/topic_schemas/valid_sensors.json")
+const sensorRijbaanSchema = require("../config/topic_schemas/sensor_rijbaan.json")
+const sensorSpeciaalSchema = require("../config/topic_schemas/sensor_speciaal.json")
+const priorityVehicleSchema = require("../config/topic_schemas/voorrangsvoertuig.json")
 
 
 /**

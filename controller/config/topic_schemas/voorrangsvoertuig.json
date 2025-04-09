@@ -1,0 +1,25 @@
+{
+    "type": "object",
+    "properties": {
+        "queue": {
+            "type": "array",
+            "items": {
+                "type":"object",
+                "properties": {
+                    "baan": {
+                        "$ref": "valid_sensors.json#/definitions/all_valid_sensors"
+                    },
+                    "simulatie_tijd_ms": {"type": "number"},
+                    "prioriteit": {
+                        "type": "number",
+                        "enum": [1,2]
+                    }
+                },
+                "required": ["baan","simulatie_tijd_ms","prioriteit"],
+                "additionalProperties": false
+            }
+        }
+    },
+    "required": ["queue"],
+    "additionalProperties": false
+}

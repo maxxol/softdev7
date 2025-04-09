@@ -36,13 +36,19 @@ async function startSockets() {
     let trafficLightCycleInterval
     const sockPub = await getSockPub(process.env.PUB_PORT)
     trafficLightCycleInterval = setInterval(trafficLightCycle, process.env.DEFAULT_CYCLE_MS, sockPub)
-    subscription.subscribeToAllSimulator(
-        () => {
-            if(trafficLightCycleInterval == undefined) {
-                trafficLightCycleInterval = setInterval(trafficLightCycle, process.env.DEFAULT_CYCLE_MS, sockPub)// Cycle every 9 seconds trough the regular traffic light program
-            }
+    function publisher(roadwayDataContainer, specialDataContainer, priorityVehicleDataContainer, simulatorTimePassed) {
+        sensorRoadwayStatus = roadwayDataContainer.status   
+        sensorsSpecialStatus = specialDataContainer.status
+        priorityVehicleStatus = priorityVehicleDataContainer.status
+        if(trafficLightCycleInterval == undefined) {
+            trafficLightCycleInterval = setInterval(trafficLightCycle, process.env.DEFAULT_CYCLE_MS, sockPub)// Cycle every 9 seconds trough the regular traffic light program
         }
+    }
+    subscription.subscribeToAllSimulator(
+        publisher
     )
 }
+
+
 validate_env_data.checkPorts()
 startSockets()
