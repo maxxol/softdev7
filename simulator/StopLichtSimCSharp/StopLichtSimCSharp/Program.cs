@@ -11,15 +11,17 @@ namespace StopLichtSimCSharp
 {
     struct CheckPointNode // Lanes are composed of these nodes
     {
-        public int x, y;
-        public bool occupied;
-        public string stopLightColor;
-        public CheckPointNode(int _x, int _y, bool _occupied)
+        public string NodeID;
+        public int X, Y;
+        public bool Occupied;
+        public string TrafficLightColor;
+        public CheckPointNode(int x, int y, bool occupied,string nodeid)
         {
-            x = _x;
-            y = _y;
-            occupied = _occupied;
-            stopLightColor = "green";
+            NodeID = nodeid;
+            X = x;
+            Y = y;
+            Occupied = occupied;
+            TrafficLightColor = "green";
 
         }
     }
@@ -28,7 +30,7 @@ namespace StopLichtSimCSharp
     {
         static void Main()
         {
-            bool nodeDevMode = false;
+            bool nodeDevMode = true;
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
             Raylib.InitWindow(800, 800, "Raylib C# Example");
@@ -50,22 +52,22 @@ namespace StopLichtSimCSharp
 
             CheckPointNode[] testLaneCheckpoints = 
             {
-                new CheckPointNode(1920 - 400, 1080 - 650, false),
-                new CheckPointNode(1920 - 990, 1080 - 660, false),
-                new CheckPointNode(1920 - 1200, 1080 - 650, false),
-                new CheckPointNode(1920 - 1300, 1080 - 200, false)
+                new CheckPointNode(1920 - 400, 1080 - 650, false,"test1"),
+                new CheckPointNode(1920 - 990, 1080 - 660, false,"test2"),
+                new CheckPointNode(1920 - 1200, 1080 - 650, false,"test3"),
+                new CheckPointNode(1920 - 1300, 1080 - 200, false,"test4")
             };
 
             Lane testLane = new("test lane", testLaneCheckpoints);
 
-            Car car1 = new(testLane.CheckPointNodes[0].x, testLane.CheckPointNodes[0].y);
-            Car car2 = new(testLane.CheckPointNodes[1].x, testLane.CheckPointNodes[1].y);
+            Car car1 = new(testLane.CheckPointNodes[0].X, testLane.CheckPointNodes[0].Y);
+            Car car2 = new(testLane.CheckPointNodes[1].X, testLane.CheckPointNodes[1].Y);
 
             int testCarIterator1 = 0, testCarIterator2 = 1;
 
             CheckPointNode[][] loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
             Lane[] Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
-          
+
             Raylib.SetTargetFPS(60);
             // int scrollSpeed = 4;
 
@@ -107,7 +109,7 @@ namespace StopLichtSimCSharp
                     testCarIterator2 = car2.MoveToNextCheckNode(ref car2.PosX, ref car2.PosY, car2.CarSpeed, testLane.CheckPointNodes, ref testCarIterator2);
 
                 Raylib.BeginDrawing();
-                    Raylib.ClearBackground(Raylib_cs.Color.White);
+                    Raylib.ClearBackground(Raylib_cs.Color.Black);
                     Raylib.BeginMode2D(camera);
                     Raylib.DrawTexture(crossingroads, screenWidth / 2 - crossingroads.Width / 2, screenHeight / 2 - crossingroads.Height / 2 - 40, Raylib_cs.Color.White);
 
@@ -119,13 +121,13 @@ namespace StopLichtSimCSharp
                 {
                     foreach (var node in lane.CheckPointNodes)
                     {
-                        Raylib.DrawCircleV(new Vector2(node.x, node.y), 10, Raylib_cs.Color.Green);
+                        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Green);
                     }
                 }
-                foreach (var node in testLane.CheckPointNodes)
-                    {
-                        Raylib.DrawCircleV(new Vector2(node.x, node.y), 10, Raylib_cs.Color.Green);
-                    }
+                //foreach (var node in testLane.CheckPointNodes)
+                //    {
+                //        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
+                //    }
                     
                 Raylib.EndDrawing();
             }
