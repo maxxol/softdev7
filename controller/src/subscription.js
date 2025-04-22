@@ -3,13 +3,16 @@
  * @author Willem Daniel Visser
  * @version 1.0.0
  */
+const { Subscriber, Publisher } = require("zeromq");
 const {getSockSub} = require("./sockets_setup");
-
-const SensorDataContainer = require("./sensor_data_container")
-const validSensorsSchema = require("../config/topic_schemas/valid_sensors.json")
-const sensorRijbaanSchema = require("../config/topic_schemas/sensor_rijbaan.json")
-const sensorSpeciaalSchema = require("../config/topic_schemas/sensor_speciaal.json")
-const priorityVehicleSchema = require("../config/topic_schemas/voorrangsvoertuig.json")
+const {
+    shouldLetPriorityVehicleTrough,
+    onSensorsRoadWay,
+    bridgeIdSet, boatIdSet
+} = require("./utils");
+const { getTrafficLightStatusOnSensorBridgeUpdate } = require("./handling_sensor_information");
+const SensorDataContainer = require("./sensor_data_container");
+const { trafficLightStatus } = require("..");
 
 
 /**
@@ -27,62 +30,124 @@ function messagePublishedData(topic, publishedData) {
 }
 
 
+// /**
+//  * Subscribes to all topics that get published by the simulator.
+//  * @param {CallableFunction} launchPublisher 
+//  * @deprecated
+//  */
+// async function subscribeToAllSimulator(roadwayDataContainer, specialDataContainer, priorityVehicleDataContainer) {
+//     let simulatorTimePassed = 0
+//     let firstMessageRecieved = false
+
+//     const sockSub = getSockSub(process.env.SUB_PORT)
+//     // sockSub.subscribe("sensoren_rijbaan")
+//     // sockSub.subscribe("sensoren_speciaal")
+//     // sockSub.subscribe("tijd")
+//     // sockSub.subscribe("voorrangsvoertuig")
+//     sockSub.subscribe("")
+
+//     for await (const [topic, data] of sockSub) {
+//         if (!firstMessageRecieved) {
+//             console.log("verbinding geaccepteerd");
+//         }
+//         firstMessageRecieved = true
+//         const topicString = topic.toString()
+//         console.log("testt");
+        
+//         try {
+//             const dataObj = JSON.parse(data)
+//             console.log(`recieved topic: ${topicString}`);
+            
+//             switch (topicString) {
+//                 case "sensoren_rijbaan":
+//                     roadwayDataContainer.updateStatus(dataObj)
+//                     break;
+//                 case "sensoren_speciaal":
+//                     specialDataContainer.updateStatus(dataObj)
+//                     break;
+//                 case "voorrangsvoertuig":
+//                     priorityVehicleDataContainer.updateStatus(dataObj)
+//                     break;
+//                 case "tijd":
+//                     simulatorTimePassed = dataObj["simulatie_tijd_ms"]
+//                     break;
+//                 default:
+//                     console.log(`topic: ${topicString}`);
+//                     console.log(`ingekomen data: ${data}`);
+//             }
+//         } catch (e) {
+//             if(e instanceof SyntaxError) {
+//                 if(e.message.includes("in JSON at position")) {
+//                     console.error(`Expected incomming data to be a JSON string, topic='${topic}', error message:`)
+//                     console.error(e.message);
+//                 } else {
+//                     console.error(`Expected incomming data to have a different format, topic='${topic}', error message:`)
+//                     console.error(e.message);
+//                 }
+//             } else {
+//                 console.error("Something unexpected occurred:");
+//                 console.error(e.message);
+//             }
+//         }
+//         // launchPublisher(roadwayDataContainer, specialDataContainer, priorityVehicleDataContainer, simulatorTimePassed)
+//     }
+// }
+
 /**
- * Subscribes to all topics that get published by the simulator.
- * @param {CallableFunction} launchPublisher 
+ * 
+ * @param {Subscriber} sockSub 
+ * @param {Publisher} sockPub 
+ * @param {boolean} passBoats 
+ * @param {boolean} doLetPriorityVehicleTrough 
+ * @param {SensorDataContainer} roadwayDataContainer 
+ * @param {SensorDataContainer} specialDataContainer 
+ * @param {SensorDataContainer} priorityVehicleDataContainer 
+ * @returns 
  */
-async function subscribeToAllSimulator(launchPublisher) {
-    let simulatorTimePassed = 0
-    const roadwayDataContainer = new SensorDataContainer(sensorRijbaanSchema)
-    const specialDataContainer = new SensorDataContainer(sensorSpeciaalSchema)
-    const priorityVehicleDataContainer = new SensorDataContainer(priorityVehicleSchema, validSensorsSchema)
-
-    const sockSub = await getSockSub(process.env.SUB_PORT)
-    sockSub.subscribe("sensoren_rijbaan")
-    sockSub.subscribe("sensoren_speciaal")
-    sockSub.subscribe("tijd")
-    sockSub.subscribe("voorrangsvoertuig")
-
+async function handleSubscription(sockSub, sockPub, passBoats, doLetPriorityVehicleTrough, roadwayDataContainer, specialDataContainer, priorityVehicleDataContainer, bridgeDataContainer) {
+    let simulatorTimePassed = 0;
+    let firstMessageRecieved = false;
+    let boadTimer = null;
     for await (const [topic, data] of sockSub) {
-        const topicString = topic.toString()
-        try {
-            const dataObj = JSON.parse(data)
-            // messagePublishedData(topicString, dataObj)
-            switch (topicString) {
-                case "sensoren_rijbaan":
-                    roadwayDataContainer.updateStatus(dataObj)
-                    break;
-                case "sensoren_speciaal":
-                    specialDataContainer.updateStatus(dataObj)
-                    break;
-                case "voorrangsvoertuig":
-                    priorityVehicleDataContainer.updateStatus(dataObj)
-                    break;
-                case "tijd":
-                    simulatorTimePassed = dataObj["simulatie_tijd_ms"]
-                    break;
-            }
-        } catch (e) {
-            if(e instanceof SyntaxError) {
-                if(e.message.includes("in JSON at position")) {
-                    console.error(`Expected incomming data to be a JSON string, topic='${topic}', error message:`)
-                    console.error(e.message);
-                } else {
-                    console.error(`Expected incomming data to have a different format, topic='${topic}', error message:`)
-                    console.error(e.message);
-                }
-            } else {
-                console.error("Something unexpected occurred:");
-                console.error(e.message);
-            }
+        if (!firstMessageRecieved) {
+            console.log("verbinding geaccepteerd");
         }
-        launchPublisher(roadwayDataContainer, specialDataContainer, priorityVehicleDataContainer, simulatorTimePassed)
+        firstMessageRecieved = true;
+        const topicString = topic.toString();
+
+        const dataObj = JSON.parse(data);
+        // console.log(`recieved topic: ${topicString}`);
+
+        switch (topicString) {
+            case "sensoren_rijbaan":
+                ({ passBoats, boadTimer } = onSensorsRoadWay(dataObj, boadTimer, passBoats));
+                roadwayDataContainer.updateStatus(dataObj);
+                break;
+            case "sensoren_speciaal":
+                specialDataContainer.updateStatus(dataObj);
+                break;
+            case "sensoren_bruggen":
+                bridgeDataContainer.updateStatus(dataObj);
+                // maybe find a way to run this immediately
+                break;
+            case "voorrangsvoertuig":
+                doLetPriorityVehicleTrough = shouldLetPriorityVehicleTrough(doLetPriorityVehicleTrough, dataObj);
+                priorityVehicleDataContainer.updateStatus(dataObj);
+                break;
+            case "tijd":
+                simulatorTimePassed = dataObj["simulatie_tijd_ms"];
+                break;
+            default:
+                console.log(`remaining topic: ${topicString}`);
+                console.log(`incomming data: ${data}`);
+        }
     }
+    return { passBoats, doLetPriorityVehicleTrough };
 }
 
-
 const subscription = {
-    subscribeToAllSimulator
+    
+    handleSubscription
 }
 
 

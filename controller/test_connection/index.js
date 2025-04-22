@@ -46,43 +46,92 @@ async function startSimulatorTestSockets() {
               "voor": !i,
               "achter": !!i
             },
-            "22.1": {
-              "voor": true,
-              "achter": !i
-            }
+            "2.1": {voor: false, achter: !i},
+            "2.2": {voor: false, achter: !i},
+            "3.1": {voor: false, achter: !i},
+            "3.6": {voor: false, achter: !i},
+            "4.1": {voor: false, achter: !i},
+            "5.1": {voor: false, achter: !i},
+            "6.1": {voor: false, achter: !i},
+            "7.1": {voor: false, achter: !i},
+            "8.1": {voor: false, achter: !i},
+            "8.2": {voor: false, achter: !i},
+            "9.1": {voor: false, achter: !i},
+            "10.1": {voor: false, achter: !i},
+            "11.1": {voor: false, achter: !i},
+            "12.1": {voor: false, achter: !i},
+            "21.1": {voor: false, achter: !i},
+            "22.1": {voor: false, achter: !i},
+            "24.1": {voor: false, achter: !i},
+            "25.1": {voor: false, achter: !i},
+            "26.1": {voor: false, achter: !i},
+            "27.1": {voor: false, achter: !i},
+            "28.1": {voor: false, achter: !i},
+            "31.1": {voor: false, achter: !i},
+            "31.2": {voor: false, achter: !i},
+            "32.1": {voor: false, achter: !i},
+            "32.2": {voor: false, achter: !i},
+            "33.1": {voor: false, achter: !i},
+            "33.2": {voor: false, achter: !i},
+            "34.1": {voor: false, achter: !i},
+            "34.2": {voor: false, achter: !i},
+            "35.1": {voor: false, achter: !i},
+            "35.2": {voor: false, achter: !i},
+            "36.1": {voor: false, achter: !i},
+            "37.1": {voor: false, achter: !i},
+            "37.2": {voor: false, achter: !i},
+            "38.1": {voor: false, achter: !i},
+            "38.2": {voor: false, achter: !i},
+            "41.1": {voor: false, achter: !i},
+            "42.1": {voor: false, achter: !i},
+            "51.1": {voor: false, achter: !i},
+            "52.1": {voor: false, achter: !i},
+            "53.1": {voor: false, achter: !i},
+            "54.1": {voor: false, achter: !i},
+            "71.1": {voor: true, achter: false},
+            "72.1": {voor: false, achter: false},
           })]);
         await sockPub.send(["sensoren_speciaal", JSON.stringify({
             "brug_wegdek": true,
             "brug_water": false,
-            "brug_file": true
+            "brug_file": false
           })]);
         await sockPub.send(["tijd", JSON.stringify({
             "simulatie_tijd_ms": (new Date().getTime() - startTime)
           })]);
 		await sockPub.send(["voorrangsvoertuig", JSON.stringify({
 			"queue": [
-				{
-					"baan": "1.1",
-					"simulatie_tijd_ms": 1231456352542,
-					"prioriteit": 1
-				},
-				{
-					"baan": "3.1",
-					"simulatie_tijd_ms": 1231456650000,
-					"prioriteit": 2
-				}
+				// {
+				// 	"baan": "1.1",
+				// 	"simulatie_tijd_ms": 1231456352542,
+				// 	"prioriteit": 1
+				// },
+				// {
+				// 	"baan": "3.1",
+				// 	"simulatie_tijd_ms": 1231456650000,
+				// 	"prioriteit": 2
+				// }
 			]
 		})]);
-    }, 5000);
+    await sockPub.send(["sensor_bruggen", JSON.stringify({
+      "81.1": {
+        state: "dicht"
+      }
+		})]);
+    }, 10000);
+    
 
     (async () => {
         for await (const [topic, data] of sockSub) {
           	let topicString = topic.toString()
 			try {
 				let dataObj = JSON.parse(data)
-				messagePublishedData(topicString, dataObj)
+				messagePublishedData(topicString, dataObj["11.1"])
 			} catch (e) {
 				console.error("Expected incomming data to be a JSON string")
+        console.error("The imcomming data was: " + data)
+        console.error("The imcomming topic was: " + topicString);
+        
 			}
         }
     })();

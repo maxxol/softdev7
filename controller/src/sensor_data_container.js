@@ -19,7 +19,7 @@ class SensorDataContainer {
             // console.log(this.validate);
         }
     }
-    #status = {}
+    #status
 
     /**
      * Checks if 'newStatus' has the valid object format(if feature doValidateIncommingData is enabled) and then updates private field 'status'.

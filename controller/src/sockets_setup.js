@@ -22,7 +22,7 @@ async function getSockPub(port=3000) {
  * @param {number} port port to listen to
  * @returns promise that it will be listening
  */
-async function getSockSub(port=3001) {
+function getSockSub(port=3001) {
     const sock = new zmq.Subscriber()
     sock.connect(`tcp://${process.env.SUB_IP}:${port}`)
     console.log(`Subscribing to full adres: ${process.env.SUB_IP}:${port}`);
