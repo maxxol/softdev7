@@ -5,7 +5,7 @@ namespace StopLichtSimCSharp
 {
     class MouseClickNodeCreator
     {
-        static int nodeIDIncrementor = 0;
+        static int nodeIDIncrementor = 148; //latest nodeid in the node file + 1
 
         public static void AddCoordinateToNodeFileByClicking(bool turnOnNodeCreationByClicking)
         {
@@ -20,7 +20,7 @@ namespace StopLichtSimCSharp
                     {
                         Console.WriteLine(mousePos);
 
-                        File.AppendAllText("../../../../../NodeData/NodeData.txt", mousePos.ToString() + ". " + nodeIDIncrementor.ToString() + "\n");
+                        File.AppendAllText("../../../../../NodeData/NodeData.txt", mousePos.ToString() + ". " + nodeIDIncrementor.ToString()+ "\n");
                         nodeIDIncrementor++;
 
                     }

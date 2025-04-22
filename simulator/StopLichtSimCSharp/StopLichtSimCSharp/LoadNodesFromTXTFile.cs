@@ -35,6 +35,7 @@ namespace StopLichtSimCSharp
                 //Console.WriteLine(line);
                 if (cleanLine != "LANE END")
                 {
+                    Console.WriteLine("trying: "+cleanLine);
                     autoCreatedCheckpointList.Add(new CheckPointNode(Convert.ToInt32(parts[0]), (Convert.ToInt32(parts[1])), false, parts[2]));
                     //loadedNodesListList.Add(autoCreatedCheckpointList.ToArray());
                     //Console.WriteLine("added point");

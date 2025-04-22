@@ -121,13 +121,13 @@ namespace StopLichtSimCSharp
                 {
                     foreach (var node in lane.CheckPointNodes)
                     {
-                        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
+                        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Green);
                     }
                 }
-                foreach (var node in testLane.CheckPointNodes)
-                    {
-                        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
-                    }
+                //foreach (var node in testLane.CheckPointNodes)
+                //    {
+                //        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
+                //    }
                     
                 Raylib.EndDrawing();
             }
