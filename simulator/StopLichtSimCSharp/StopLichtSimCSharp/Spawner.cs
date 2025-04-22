@@ -32,19 +32,19 @@ namespace StopLichtSimCSharp
         }
         public void spawnCar(Lane chosenLane)
         {
-            allRoadUsersArray.Add(new Car(chosenLane.CheckPointNodes[0].x, chosenLane.CheckPointNodes[0].y));
+            allRoadUsersArray.Add(new Car(chosenLane.CheckPointNodes[0].X, chosenLane.CheckPointNodes[0].Y));
         }
         public void spawnBike(Lane chosenLane)
         {
-            allRoadUsersArray.Add(new Bike(chosenLane.CheckPointNodes[0].x, chosenLane.CheckPointNodes[0].y));
+            allRoadUsersArray.Add(new Bike(chosenLane.CheckPointNodes[0].X, chosenLane.CheckPointNodes[0].Y));
         }
         public void spawnPed(Lane chosenLane)
         {
-            allRoadUsersArray.Add(new Pedestrian(chosenLane.CheckPointNodes[0].x, chosenLane.CheckPointNodes[0].y));
+            allRoadUsersArray.Add(new Pedestrian(chosenLane.CheckPointNodes[0].X, chosenLane.CheckPointNodes[0].Y));
         }
         public void spawnBoat(Lane chosenLane)
         {
-            allRoadUsersArray.Add(new Boat(chosenLane.CheckPointNodes[0].x, chosenLane.CheckPointNodes[0].y));
+            allRoadUsersArray.Add(new Boat(chosenLane.CheckPointNodes[0].X, chosenLane.CheckPointNodes[0].Y));
         }
     }
 }

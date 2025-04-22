@@ -30,7 +30,7 @@ namespace StopLichtSimCSharp
     {
         static void Main()
         {
-            bool nodeDevMode = true;
+            bool nodeDevMode = false;
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
             Raylib.InitWindow(800, 800, "Raylib C# Example");
@@ -131,7 +131,7 @@ namespace StopLichtSimCSharp
 
                 foreach (var node in testLane.CheckPointNodes)
                     {
-                        Raylib.DrawCircleV(new Vector2(node.x, node.y), 10, Raylib_cs.Color.Green);
+                        Raylib.DrawCircleV(new Vector2(node.X ,node.Y), 10, Raylib_cs.Color.Green);
                     }
 
 
