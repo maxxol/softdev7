@@ -115,8 +115,11 @@ namespace StopLichtSimCSharp
 
                     Raylib.DrawCircleV(new Vector2(car1.PosX, car1.PosY), 30, Raylib_cs.Color.Maroon);
                     Raylib.DrawCircleV(new Vector2(car2.PosX, car2.PosY), 30, Raylib_cs.Color.Maroon);
-                loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
-                Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
+                if (nodeDevMode)
+                {
+                    loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
+                    Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
+                }
                 foreach (Lane lane in Lanes)
                 {
                     foreach (var node in lane.CheckPointNodes)
@@ -124,10 +127,14 @@ namespace StopLichtSimCSharp
                         Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Green);
                     }
                 }
-                //foreach (var node in testLane.CheckPointNodes)
-                //    {
-                //        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 10, Raylib_cs.Color.Green);
-                //    }
+
+
+                foreach (var node in testLane.CheckPointNodes)
+                    {
+                        Raylib.DrawCircleV(new Vector2(node.x, node.y), 10, Raylib_cs.Color.Green);
+                    }
+
+
                     
                 Raylib.EndDrawing();
             }
