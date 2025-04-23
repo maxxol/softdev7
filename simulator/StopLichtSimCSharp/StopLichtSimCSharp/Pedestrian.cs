@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace StopLichtSimCSharp
 {
     class Pedestrian : RoadUser
-    {
-        public int PosX, PosY, PedSpeed;
-        public Pedestrian(int x, int y)
+    {        public Pedestrian(int x, int y, int laneid)
         {
             PosX = x;
             PosY = y;
-            PedSpeed = 2;
+            LaneID = laneid;
+            Speed = 2;
+            NodeTravelIterator = 0;
         }
     }
 }
