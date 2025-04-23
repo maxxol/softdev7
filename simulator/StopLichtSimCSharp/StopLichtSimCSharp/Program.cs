@@ -66,7 +66,6 @@ namespace StopLichtSimCSharp
 
 
             while (!Raylib.WindowShouldClose())
-
             {
                 MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(false);
                 camera.Zoom += ((float)Raylib.GetMouseWheelMove() * 0.05f);
