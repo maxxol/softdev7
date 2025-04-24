@@ -10,7 +10,7 @@ namespace StopLichtSimCSharp
 
             //"../../../../../NodeData/NodeData.txt"
             //StreamReader sr = new StreamReader("Names.txt");
-            string[] coords = File.ReadAllLines("../../../../../NodeData/NodeData.txt");
+            string[] coords = File.ReadAllLines("../../../../../NodeData/TXTData.txt");
 
 
             List<CheckPointNode[]> loadedNodesListList = new List<CheckPointNode[]>();
@@ -39,7 +39,7 @@ namespace StopLichtSimCSharp
                 //Ignore LANE END when adding checkpointnodes to list.
                 if (cleanLine != "LANE END")
                 {
-                    Console.WriteLine("trying: "+cleanLine);
+                   // Console.WriteLine("trying: "+cleanLine);
                     autoCreatedCheckpointList.Add(new CheckPointNode(Convert.ToInt32(parts[0]), (Convert.ToInt32(parts[1])), false, parts[2]));
                     //loadedNodesListList.Add(autoCreatedCheckpointList.ToArray());
                     //Console.WriteLine("added point");

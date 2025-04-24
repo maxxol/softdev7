@@ -6,6 +6,7 @@ using System.Numerics;
 using System.IO;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 
 
 namespace StopLichtSimCSharp
@@ -28,9 +29,11 @@ namespace StopLichtSimCSharp
 
     class Program
     {
+       
         static void Main()
         {
-            bool nodeDevMode = false;
+           
+            bool nodeDevMode = true;
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
             Raylib.InitWindow(800, 800, "Raylib C# Example");
@@ -86,6 +89,8 @@ namespace StopLichtSimCSharp
                 //Console.WriteLine(allRoadUsersArray.Length+ " after");
 
                 MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(nodeDevMode);
+                TrafficLights.TrafficLightStatusChange(nodeDevMode);
+                Color TrafficLightColor =  TrafficLights.TrafficLightColor;
                 if (!nodeDevMode)
                 {
                     camera.Zoom += ((float)Raylib.GetMouseWheelMove() * 0.05f);
@@ -151,19 +156,20 @@ namespace StopLichtSimCSharp
                 //    }
                 //}
 
-                
-                    //if(Enviro)
-                    //Raylib_cs.Color.Red
+
+                //if(Enviro)
+                //Raylib_cs.Color.Red
                     Lanes[0].addTrafficlight(10);
                     Lanes[1].addTrafficlight(10);
                     Lanes[2].addTrafficlight(10);
-
+                    TrafficLights traffic = new TrafficLights();
+                    traffic.TrafficLightSpawn();
                     Color[] controllermsg = { Color.Green, Color.Orange, Color.Red };
 
                     for (int i = 0; i < 3; i++)
                     {                    
                         Lanes[i].TrafficNode.TrafficLightColor = controllermsg[i];
-                        Raylib.DrawCircleV(new Vector2(Lanes[i].TrafficNode.X, Lanes[i].TrafficNode.Y), 3, Lanes[i].TrafficNode.TrafficLightColor);
+                        Raylib.DrawCircleV(new Vector2(Lanes[i].TrafficNode.X, Lanes[i].TrafficNode.Y), 3, TrafficLightColor);
                     }
 
                     //CheckPointNode trafficlight = Lanes[0].CheckPointNodes[10];                
