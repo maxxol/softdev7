@@ -11,14 +11,24 @@ namespace StopLichtSimCSharp
         public string LaneID;
         public List<RoadUser> LaneUsers = new();
         public CheckPointNode[] CheckPointNodes;
+        public CheckPointNode TrafficNode;
+        //node met ID 10 is stoplicht. 
         public Lane(string laneID, CheckPointNode[] checkPointNodes)
         {
             LaneID = laneID;
             CheckPointNodes = checkPointNodes;
+
+
         }
         public void AddRoadUserToLane(RoadUser roadUser)
         {
             LaneUsers.Add(roadUser);
         }
+
+        public void addTrafficlight(int nodeId)
+        {
+            TrafficNode = CheckPointNodes[nodeId];
+        }
+        
     }
 }

@@ -14,7 +14,6 @@ namespace StopLichtSimCSharp
         int numberOfBoatLanes = 0;
 
 
-
         static List<RoadUser> allRoadUsersList = new List<RoadUser>();
 
 
@@ -24,14 +23,13 @@ namespace StopLichtSimCSharp
             int chosenLaneNumber = rand.Next(Lanes.Length);
             Lane chosenLane = Lanes[chosenLaneNumber]; //choose random lane to spawn a car
             if (rand.Next(300) == 1) { 
-            if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber); } //car
-            else if (chosenLaneNumber <= numberOfBikeLanes + numberOfCarLanes) { spawnBike(chosenLane, chosenLaneNumber); } //bike
-            else if (chosenLaneNumber <= numberOfPedLanes + numberOfCarLanes + numberOfBikeLanes) { spawnPed(chosenLane, chosenLaneNumber); } //ped
-            else if (chosenLaneNumber <= numberOfBoatLanes + numberOfCarLanes + numberOfBikeLanes + numberOfPedLanes) { spawnBoat(chosenLane, chosenLaneNumber); } //boat
-            else { }//number outside of array count (should be impossible)
-                    }
+                if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber); } //car
+                else if (chosenLaneNumber <= numberOfBikeLanes + numberOfCarLanes) { spawnBike(chosenLane, chosenLaneNumber); } //bike
+                else if (chosenLaneNumber <= numberOfPedLanes + numberOfCarLanes + numberOfBikeLanes) { spawnPed(chosenLane, chosenLaneNumber); } //ped
+                else if (chosenLaneNumber <= numberOfBoatLanes + numberOfCarLanes + numberOfBikeLanes + numberOfPedLanes) { spawnBoat(chosenLane, chosenLaneNumber); } //boat
+                else { }//number outside of array count (should be impossible)
+            }
             return allRoadUsersList.ToArray();
-
         }
         public void spawnCar(Lane chosenLane, int chosenLaneNumber)
         {
@@ -41,19 +39,16 @@ namespace StopLichtSimCSharp
         public void spawnBike(Lane chosenLane, int chosenLaneNumber)
         {
             Console.WriteLine("spawned bike");
-
             allRoadUsersList.Add(new Bike(chosenLane.CheckPointNodes[0].X, chosenLane.CheckPointNodes[0].Y, chosenLaneNumber));
         }
         public void spawnPed(Lane chosenLane, int chosenLaneNumber)
         {
             Console.WriteLine("spawned ped");
-
             allRoadUsersList.Add(new Pedestrian(chosenLane.CheckPointNodes[0].X, chosenLane.CheckPointNodes[0].Y, chosenLaneNumber));
         }
         public void spawnBoat(Lane chosenLane, int chosenLaneNumber)
         {
             Console.WriteLine("spawned boat");
-
             allRoadUsersList.Add(new Boat(chosenLane.CheckPointNodes[0].X, chosenLane.CheckPointNodes[0].Y, chosenLaneNumber));
         }
     }

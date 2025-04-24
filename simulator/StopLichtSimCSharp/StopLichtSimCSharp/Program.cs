@@ -5,6 +5,7 @@ using Raylib_cs;
 using System.Numerics;
 using System.IO;
 using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 
 
 namespace StopLichtSimCSharp
@@ -14,15 +15,14 @@ namespace StopLichtSimCSharp
         public string NodeID;
         public int X, Y;
         public bool Occupied;
-        public string TrafficLightColor;
+        public Color TrafficLightColor;
         public CheckPointNode(int x, int y, bool occupied,string nodeid)
         {
             NodeID = nodeid;
             X = x;
             Y = y;
             Occupied = occupied;
-            TrafficLightColor = "green";
-
+            TrafficLightColor = Color.Green;
         }
     }
 
@@ -72,7 +72,7 @@ namespace StopLichtSimCSharp
 
             Raylib.SetTargetFPS(60);
             // int scrollSpeed = 4;
-
+            var colour = Raylib_cs.Color.Red;
             ZeroMqHandler.StartSensorPub();
             //ZeroMqHandler.StartStoplichtSub();
             while (!Raylib.WindowShouldClose())
@@ -116,34 +116,57 @@ namespace StopLichtSimCSharp
 
                     //Raylib.DrawCircleV(new Vector2(car1.PosX, car1.PosY), 30, Raylib_cs.Color.Maroon);
                     //Raylib.DrawCircleV(new Vector2(car2.PosX, car2.PosY), 30, Raylib_cs.Color.Maroon);
-                foreach(RoadUser roaduser in allRoadUsersArray)
-                {
-                    Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 30, Raylib_cs.Color.Maroon);
-                    //roaduser.MoveToNextCheckNode(ref roaduser.PosX, ref roaduser.PosY, roaduser.Speed, Lanes[roaduser.LaneID].CheckPointNodes, roaduser.NodeTravelIterator);
-                }
-
-
-                if (nodeDevMode)
-                {
-                    loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
-                    Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
-                }
-                foreach (Lane lane in Lanes)
-                {
-                    foreach (var node in lane.CheckPointNodes)
+                    foreach(RoadUser roaduser in allRoadUsersArray)
                     {
-                        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Green);
+                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 30, Raylib_cs.Color.Maroon);
+                        //roaduser.MoveToNextCheckNode(ref roaduser.PosX, ref roaduser.PosY, roaduser.Speed, Lanes[roaduser.LaneID].CheckPointNodes, roaduser.NodeTravelIterator);
                     }
-                }
 
 
-                //foreach (var node in testLane.CheckPointNodes)
-                //    {
-                //        Raylib.DrawCircleV(new Vector2(node.X ,node.Y), 10, Raylib_cs.Color.Green);
-                //    }
+                    if (nodeDevMode)
+                    {
+                        loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
+                        Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
+                    }
+
+                    //foreach (Lane lane in Lanes)
+                    //{
+                    //    foreach (var node in lane.CheckPointNodes)
+                    //    {
+                    //        Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Green);
+                    //    }
+                    //}
+
+                
+                    //if(Enviro)
+                    //Raylib_cs.Color.Red
+                    Lanes[0].addTrafficlight(10);
+                    Lanes[1].addTrafficlight(10);
+                    Lanes[2].addTrafficlight(10);
+
+                    Color[] controllermsg = { Color.Green, Color.Orange, Color.Red };
+
+                    for (int i = 0; i < 3; i++)
+                    {                    
+                        Lanes[i].TrafficNode.TrafficLightColor = controllermsg[i];
+                        Raylib.DrawCircleV(new Vector2(Lanes[i].TrafficNode.X, Lanes[i].TrafficNode.Y), 3, Lanes[i].TrafficNode.TrafficLightColor);
+                    }
+
+                    //CheckPointNode trafficlight = Lanes[0].CheckPointNodes[10];                
+                    //Raylib.DrawCircleV(new Vector2(Lanes[0].TrafficNode.X, Lanes[0].TrafficNode.Y), 3, Raylib_cs.Color.Red);
+
+                    //trafficlight = Lanes[1].CheckPointNodes[10];
+                    //Raylib.DrawCircleV(new Vector2(trafficlight.X, trafficlight.Y), 3, Raylib_cs.Color.Red);
+
+                    //trafficlight = Lanes[2].CheckPointNodes[10];
+                    //Raylib.DrawCircleV(new Vector2(trafficlight.X, trafficlight.Y), 3, Raylib_cs.Color.Red);
+                    //foreach (var node in testLane.CheckPointNodes)
+                    //    {
+                    //        Raylib.DrawCircleV(new Vector2(node.X ,node.Y), 10, Raylib_cs.Color.Green);
+                    //    }
 
 
-                    
+
                 Raylib.EndDrawing();
             }
 

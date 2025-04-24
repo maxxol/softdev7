@@ -6,6 +6,7 @@ namespace StopLichtSimCSharp
 {
     class LaneCreator
     {
+        //Creates lanes based on given array with nodes.
         public static Lane[] CreateLanesFrom2dArray(CheckPointNode[][] loadedNodesArrayArray)
         {
             List<Lane> lanes = new List<Lane>();
