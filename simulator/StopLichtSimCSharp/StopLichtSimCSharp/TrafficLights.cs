@@ -1,6 +1,7 @@
 ﻿using Raylib_cs;
 using System;
 using System.Collections.Generic;
+using System.Data.OleDb;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace StopLichtSimCSharp
     {
         public static Color TrafficLightColor;
         public Dictionary<int, string> trafficlightnodes = new Dictionary<int, string>();
-
+        public static int TrafficLightID;
         string[] trafficlightcoords = File.ReadAllLines("../../../../../NodeData/TrafficLightIDs.txt");
        
         public void TrafficLightSpawn()
@@ -38,6 +39,13 @@ namespace StopLichtSimCSharp
             {
                 TrafficLightColor = Color.Green;
             }
+        }
+
+        public void TrafficLightStatusChangeSingular()
+        {
+            TrafficLightStatus something = new TrafficLightStatus();
+            something.Traffic();
+            var lighttochange = trafficlightnodes.Where(entry => TrafficLightStatus.trafficlights[entry.Value] == entry.Value);        
         }
     }
 }
