@@ -9,19 +9,33 @@ namespace StopLichtSimCSharp
     class RoadUser
     {
         public int PosX, PosY, Speed, NodeTravelIterator, LaneID;
-        public int MoveToNextCheckNode(ref int posX, ref int posY, int roadUserSpeed, CheckPointNode[] checkPointNodes, int iterator)
+        public bool MoveToNextCheckNode(ref int posX, ref int posY, int roadUserSpeed, CheckPointNode[] checkPointNodes, int iterator, RoadUser roaduser)
         {
-            Console.WriteLine("iterator used: " + iterator);
+            checkPointNodes[iterator].Occupied = true;
+
+            //Console.WriteLine("iterator used: " + iterator); //+ " " + checkPointNodes.Length);
+            try
+            {
+                int testValue = checkPointNodes[iterator + 1].X;
+            }
+            catch 
+            {
+                //Console.WriteLine("car has reached final point");
+                checkPointNodes[iterator].Occupied = false;
+
+                return true; 
+            }
+
+            if (checkPointNodes[iterator + 1].Occupied == true) { return false; }// if next node is occupied
+
+
+
+
             int xDiff = checkPointNodes[iterator + 1].X - posX;
             int yDiff = checkPointNodes[iterator + 1].Y - posY;
 
             double distance = Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
-            if (distance < 1)
-            {
-                posX = checkPointNodes[iterator + 1].X;
-                posY = checkPointNodes[iterator + 1].Y;
-                return ++iterator;
-            }
+            
 
             double moveX = (xDiff / distance) * roadUserSpeed;
             double moveY = (yDiff / distance) * roadUserSpeed;
@@ -33,9 +47,12 @@ namespace StopLichtSimCSharp
             {
                 posX = checkPointNodes[iterator + 1].X;
                 posY = checkPointNodes[iterator + 1].Y;
-                return ++iterator;
+                checkPointNodes[iterator].Occupied = false; 
+                roaduser.NodeTravelIterator += 1;
+                
+                return false;
             }
-            return iterator;
+            return false;
         }
     }
 }
