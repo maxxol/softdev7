@@ -1,25 +1,20 @@
 /**
  * This script contains multiple functions handling the incomming simulator-information, possibly updating the trafficlight status.
+ * @deprecated
  * @author Willem Daniel Visser
  * @version 1.0.0
  */
 
 const green_sets = require("../config/green_sets.json")
-const { findSensorIdPriorityVehicle, bridgeIdSet, boatIdSet, trafficGoingTobridgeIdSet, crossingIdSet } = require('./utils');
+const { findSensorIdPriorityVehicle, bridgeIdSet, boatIdSet, trafficGoingTobridgeIdSet, crossingIdSet, crossingCarIdSet, crossingCyclerIdSet, crossingPedIslandIdSet,crossingPedNOTIslandIdSet } = require('./utils');
 
 
-function handleTrafficLightModification(trafficLightStatus, sensorRoadwayStatus, Ncyclus, passBoats, isBrugFile, priorityVehicleStatus, bridgeStatus) {
+function updateTrafficLightStatus(trafficLightStatus, roadwayStatus, specialStatus, priorityVehicleStatus, bridgeStatus, Ncyclus, passBoats) {
     const sensorIdPriorityVehicleLevel1 = findSensorIdPriorityVehicle(priorityVehicleStatus, 1)
     const sensorIdPriorityVehicleLevel2 = findSensorIdPriorityVehicle(priorityVehicleStatus, 2)
 
-    let trafficLightStatusBridge = {
-        ...Object.fromEntries(bridgeIdSet.map(id => [id, trafficLightStatus[id]])),
-        ...Object.fromEntries(
-            Object.values(boatIdSet).map(value => [value, trafficLightStatus[value]])
-          )
-    };
-    trafficLightStatusBridge = getTrafficLightStatusOnSensorBridgeUpdate(trafficLightStatusBridge, bridgeStatus, sensorRoadwayStatus, passBoats, priorityVehicleStatus);
-    trafficLightStatus = { ...trafficLightStatus, ...trafficLightStatusBridge };
+    updateTrafficLightStatusBridge(trafficLightStatus, roadwayStatus, specialStatus, priorityVehicleStatus, bridgeStatus, passBoats)
+    
 
 
     // check if there is a priority vehicle with priority level 2, if so, set all the lights to red, except the one for the priority vehicle
@@ -29,101 +24,124 @@ function handleTrafficLightModification(trafficLightStatus, sensorRoadwayStatus,
     // check if there is a priority vehicle with priority level 2, if so, set the lights to red and the green set to green
     } else if(sensorIdPriorityVehicleLevel2 != undefined) {
         const greenSet = Object.entries(green_sets).find(([_, set]) => set.includes(sensorIdPriorityVehicleLevel2))
-        if(greenSet) {
+        if(greenSet.length > 0) {
             const greenSetId = greenSet[0]
-            trafficLightStatus = {...getTrafficLightStatusCrossing(trafficLightStatus, sensorRoadwayStatus, greenSetId)};
+            updateTrafficLightStatusCrossing(trafficLightStatus, roadwayStatus, greenSetId * 3);
         }
     } else {
-        trafficLightStatus = {...getTrafficLightStatusCrossing(trafficLightStatus, sensorRoadwayStatus, Ncyclus)};
-        if(isBrugFile && bridgeStatus["81.1"].state == "open") { // overwrite the traffic light status to red for lights directing to the bridge, if there is a file for the bridge
+        updateTrafficLightStatusCrossing(trafficLightStatus, roadwayStatus, Ncyclus);
+        if(specialStatus.brug_file && bridgeStatus["81.1"]?.state == "open") { // overwrite the traffic light status to red for lights directing to the bridge, if there is a file for the bridge
             trafficGoingTobridgeIdSet.forEach(trafficLight=>{
                 trafficLightStatus[trafficLight] = "rood"
             })
         }
     }
-
-    return trafficLightStatus
 }
 
 /**
  * * Updates the traffic light status specific to the crossing based on the current cycle number and sensor data.
- * @param {object} trafficLightStatusCrossing crossing specific traffic light status
+ * @param {object} trafficLightStatus crossing specific traffic light status
  * @param {object} sensorRoadwayStatus status of the roadway sensors 
  * @param {number} Ncyclus the current cycle number
- * @returns newTrafficLightStatus the updated traffic light status specific to the crossing
+ * @returns the updated traffic light status specific to the crossing
  */
-function getTrafficLightStatusCrossing(trafficLightStatusCrossing, sensorRoadwayStatus, Ncyclus) {
-    newTrafficLightStatus = Object.assign({}, trafficLightStatusCrossing);
+function updateTrafficLightStatusCrossing(trafficLightStatus, roadwayStatus, Ncyclus) {
     if(Ncyclus == 0) 
-        return newTrafficLightStatus;
-    const NgreenSet = ((Ncyclus - 1) % 5) + 1; // 5 is the number of green sets
-    const greenSetLights = green_sets[`${NgreenSet}`];
-    setAllLightsToRed(newTrafficLightStatus);
-    greenSetLights.forEach(light => {
-        newTrafficLightStatus[light] = "groen"
-    });
-    return newTrafficLightStatus;
+        return trafficLightStatus;
+    const Nstage = ((Ncyclus - 1) % 15) + 1; // 5 is the number of green sets, 3 rounds per green set
+    const Ngreenset = Math.ceil(Nstage / 3); // Ncyclus 1 & 2 = green set 1, Ncyclus 3 & 4 = green set 2, etc.
+    const greenLightSet = green_sets[`${Ngreenset}`];
+    if (Nstage % 3 != 0) {
+        [...crossingCyclerIdSet, ...crossingPedIslandIdSet, ...crossingCarIdSet].forEach(id => { // keep island lights green
+            if(trafficLightStatus[id] == "groen") {
+                trafficLightStatus[id] = "oranje";
+            }
+        })
+    } else {
+        crossingIdSet.forEach(id => {
+            if(trafficLightStatus[id] == "oranje") {
+                trafficLightStatus[id] = "rood";
+            }
+        })
+        greenLightSet.forEach(id => {
+            trafficLightStatus[id] = "groen"
+        });
+    }
+    // setAllLightsToRed(trafficLightStatus);
 }
 
 
-function getTrafficLightStatusOnSensorBridgeUpdate(trafficLightStatusBridge, bridgeState, statusSensorBridge, passBoats, priorityVehicleStatus) {
+function updateTrafficLightStatusBridge(trafficLightStatus, roadwayStatus, specialStatus, priorityVehicleStatus, bridgeStatus, passBoats) {
     const sensorIdPriorityVehicleLevel1 = findSensorIdPriorityVehicle(priorityVehicleStatus, 1)
-    const newTrafficLightStatus = Object.assign({}, trafficLightStatusBridge);
-    if (typeof bridgeState?.["81.1"]?.state != "string") {
-        bridgeState = { "81.1": { state: "closed" } }; // default value for bridgeState
+    if (typeof bridgeStatus?.["81.1"]?.state != "string") {
+        bridgeStatus = { "81.1": { state: "closed" } }; // default value for bridgeState
     }
-    if (statusSensorBridge == undefined || statusSensorBridge == null) {
-        statusSensorBridge = {[boatIdSet.north]: {voor: false}, [boatIdSet.south]: {voor: false}};
-    } else if (statusSensorBridge?.[boatIdSet.north]?.voor != "boolean") {
-        statusSensorBridge[boatIdSet.north] = {voor: false};
+    if (roadwayStatus == undefined || roadwayStatus == null) {
+        roadwayStatus = {[boatIdSet[0]]: {voor: false}, [boatIdSet[1]]: {voor: false}};
+    } else if (typeof roadwayStatus?.[boatIdSet[0]]?.voor != "boolean") {
+        roadwayStatus[boatIdSet[0]] = {voor: false};
     }
-    if(statusSensorBridge?.[boatIdSet.south]?.voor != "boolean") {
-        statusSensorBridge[boatIdSet.south] = {voor: false};
+    if(typeof roadwayStatus?.[boatIdSet[1]]?.voor != "boolean") {
+        roadwayStatus[boatIdSet[1]] = {voor: false};
     }
     if (typeof passBoats?.isReady != "boolean") {
         passBoats = { isReady: false }; // default value for passBoats
     }
-    let isBridgeOpen = (bridgeState["81.1"].state == "open");
-    const isSensorTriggeredNorth = statusSensorBridge[boatIdSet.north].voor;
-    const isSensorTriggeredSouth = statusSensorBridge[boatIdSet.south].voor;
+    let isBridgeOpen = (bridgeStatus["81.1"].state == "open");
+    const isSensorTriggeredNorth = roadwayStatus[boatIdSet[0]].voor;
+    const isSensorTriggeredSouth = roadwayStatus[boatIdSet[1]].voor;
     
     
     if (
-        passBoats.isReady && // if passBoats is not ready, do not bother setting related traffic lights)
-            !trafficGoingTobridgeIdSet.includes(sensorIdPriorityVehicleLevel1)
-            // if a priority vehicle heads to the bridge, do not initiate the bridge opening
-        ) { 
+        // if passBoats is not ready, do not bother setting related traffic lights)
+        passBoats.isReady 
+        && 
+        // if a priority vehicle heads to the bridge, do not initiate the bridge opening
+        !trafficGoingTobridgeIdSet.includes(sensorIdPriorityVehicleLevel1)
+        ) {
         bridgeIdSet.forEach(trafficLight => {
-            newTrafficLightStatus[trafficLight] = "rood";
+            trafficLightStatus[trafficLight] = "rood";
         });
         if (!isBridgeOpen) { // if the bridge is closed, set the boat traffic lights to red
-            newTrafficLightStatus[boatIdSet.north] = "rood";
-            newTrafficLightStatus[boatIdSet.south] = "rood";
-        }
-        if (isBridgeOpen && isSensorTriggeredNorth) { // if the bridge is open and a boat is on the sensor-north, set the boat traffic lights in the north to green and south to red
-            newTrafficLightStatus[boatIdSet.north] = "groen";
-            newTrafficLightStatus[boatIdSet.south] = "rood";
-        } else if (isBridgeOpen && isSensorTriggeredSouth) { // if the bridge is open and a boat is only on the sensor south, set the boat traffic lights in the north to red and south to green
-            newTrafficLightStatus[boatIdSet.north] = "rood";
-            newTrafficLightStatus[boatIdSet.south] = "groen";
-        }
-        if (isBridgeOpen && !isSensorTriggeredNorth && !isSensorTriggeredSouth) { // if the bridge is open and no boat is on the sensor, set the boat traffic lights in the north and south to red
-            newTrafficLightStatus[boatIdSet.north] = "rood";
-            newTrafficLightStatus[boatIdSet.south] = "rood";
-            passBoats.isReady = false; // reset the passBoats status
-        }
+            trafficLightStatus[boatIdSet[0]] = "rood";
+            trafficLightStatus[boatIdSet[1]] = "rood";
+
+            if(!specialStatus.brug_wegdek) {
+                // trafficLightStatus["61.1"] = "rood"; // set slagboom to "rood"
+                // trafficLightStatus["62.1"] = "rood";
+                // trafficLightStatus["63.1"] = "rood";
+                // trafficLightStatus["64.1"] = "rood";
+                // trafficLightStatus["81.1"] = "groen"; // tell bridge to open
+            }
+        } else if (isBridgeOpen) {
+            if (isSensorTriggeredNorth) { // if the bridge is open and a boat is on the sensor-north, set the boat traffic lights in the north to green and south to red
+                trafficLightStatus[boatIdSet[0]] = "groen";
+                trafficLightStatus[boatIdSet[1]] = "rood";
+            } else if (isSensorTriggeredSouth) { // if the bridge is open and a boat is only on the sensor south, set the boat traffic lights in the north to red and south to green
+                trafficLightStatus[boatIdSet[0]] = "rood";
+                trafficLightStatus[boatIdSet[1]] = "groen";
+            } else if (!isSensorTriggeredNorth && !isSensorTriggeredSouth) { // if the bridge is open and no boat is on the sensor, set the boat traffic lights in the north and south to red
+                trafficLightStatus[boatIdSet[0]] = "rood";
+                trafficLightStatus[boatIdSet[1]] = "rood";
+                passBoats.isReady = false; // reset the passBoats status
+                if(!specialStatus.brug_water) {
+                    trafficLightStatus["81.1"] = "rood"; // tell bridge to close
+
+                }
+            }
+            
+        } 
     } else {
-        if (!isBridgeOpen) {
+        if (!isBridgeOpen && !specialStatus.brug_water) {
             bridgeIdSet.forEach(trafficLight => {
-                newTrafficLightStatus[trafficLight] = "groen";
+                trafficLightStatus[trafficLight] = "groen";
             });
         }
         
-        newTrafficLightStatus[boatIdSet.north] = "rood";
-        newTrafficLightStatus[boatIdSet.south] = "rood";
+        trafficLightStatus[boatIdSet[0]] = "rood";
+        trafficLightStatus[boatIdSet[1]] = "rood";
         
     }
-    return newTrafficLightStatus;
 }
 
 
@@ -134,5 +152,5 @@ function setAllLightsToRed(trafficLightStatus) {
 }
 
 
-module.exports = {handleTrafficLightModification, getTrafficLightStatusOnSensorBridgeUpdate, getTrafficLightStatusCrossing}
+module.exports = {updateTrafficLightStatus, updateTrafficLightStatusBridge, getTrafficLightStatusCrossing: updateTrafficLightStatusCrossing}
 

@@ -1,8 +1,14 @@
 const bridgeIdSet = ["41.1", "42.1", "51.1", "52.1", "53.1", "54.1"]
-const boatIdSet = {"north": "71.1", "south": "72.1"}
+const boatIdSet = ["71.1", "72.1"]
+const bridgeBoatIdSet = [...boatIdSet, ...bridgeIdSet]
 const trafficGoingTobridgeIdSet = ["12.1", "8.1", "8.2", "4.1"]
-const crossingIdSet = ["1.1", "2.1", "2.2", "3.1", "3.6", "5.1", "6.1", "7.1", "9.1", "10.1", "11.1", "21.1", "22.1", "24.1", "25.1", "26.1", "27.1", "28.1", "31.1", "31.2", "32.1", "32.2", "33.1", "33.2", "34.1", "34.2", "35.1", "35.2", "36.1", "37.1", "37.2", "38.1", "38.2", ...trafficGoingTobridgeIdSet]
-
+const crossingCarIdSet = ["1.1", "2.1", "2.2", "3.1", "3.6", "5.1", "6.1", "7.1", "9.1", "10.1", "11.1", ...trafficGoingTobridgeIdSet]
+const crossingPedIdSet = ["31.1", "31.2", "32.1", "32.2", "33.1", "33.2", "34.1", "34.2", "35.1", "35.2", "36.1", "37.1", "37.2", "38.1", "38.2"]
+const crossingPedIslandIdSet = ["31.2", "32.1", "33.2", "34.1", "35.2", "36.1", "37.2", "38.1"]
+const crossingPedNOTIslandIdSet = ["31.1", "32.2", "33.1", "34.2", "35.1", "37.1", "38.2"]
+const crossingCyclerIdSet = ["21.1", "22.1", "23.1", "24.1", "25.1", "26.1", "27.1", "28.1"]
+const crossingIdSet = [...crossingCarIdSet, ...crossingCyclerIdSet, ...crossingPedIdSet, ...trafficGoingTobridgeIdSet]
+const totalCrossingIdSet = [...crossingIdSet, ...bridgeBoatIdSet]
 
 function shouldLetPriorityVehicleTrough(doLetPriorityVehicleTrough, priorityVehicleStatus) {
     if (priorityVehicleStatus?.queue == undefined || !(priorityVehicleStatus.queue instanceof Array)) {
@@ -33,7 +39,7 @@ function onSensorsRoadWay(sensorRoadwayStatus, boadTimer, passBoats) {
         }, 10 * 1000); //3*60*1000
         }
     }
-    return { boadTimer, passBoats };
+    return { boadTimer };
 }
 
 
@@ -56,6 +62,13 @@ module.exports = {
     findSensorIdPriorityVehicle,
     bridgeIdSet,
     boatIdSet,
+    bridgeBoatIdSet,
     trafficGoingTobridgeIdSet,
-    crossingIdSet
+    crossingIdSet,
+    crossingCyclerIdSet,
+    crossingCarIdSet,
+    crossingPedIdSet,
+    crossingPedIslandIdSet,
+    crossingPedNOTIslandIdSet,
+    totalCrossingIdSet
 }

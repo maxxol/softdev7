@@ -33,7 +33,7 @@ function messagePublishedData(topic, publishedData) {
 async function startSimulatorTestSockets() {
     // Uses SUB_PORT on sockPub, because the controller subscribes to that, so here we need to publish
     const sockPub = await getSockPub(process.env.SUB_PORT)
-    const sockSub = await getSockSub(process.env.PUB_PORT)
+    const sockSub = getSockSub(process.env.PUB_PORT)
     let i = 1
 
     sockSub.subscribe("stoplichten")
@@ -62,6 +62,7 @@ async function startSimulatorTestSockets() {
             "12.1": {voor: false, achter: !i},
             "21.1": {voor: false, achter: !i},
             "22.1": {voor: false, achter: !i},
+            "23.1": {voor: false, achter: !i},
             "24.1": {voor: false, achter: !i},
             "25.1": {voor: false, achter: !i},
             "26.1": {voor: false, achter: !i},
