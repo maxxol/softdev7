@@ -27,7 +27,8 @@ namespace StopLichtSimCSharp
 
         public void addTrafficlight(int nodeId)
         {
-            TrafficNode = CheckPointNodes[nodeId];
+            //TrafficNode = CheckPointNodes[nodeId];
+            TrafficNode = CheckPointNodes.Where(X => Convert.ToInt32(X.NodeID) == nodeId).First();
         }
         
     }

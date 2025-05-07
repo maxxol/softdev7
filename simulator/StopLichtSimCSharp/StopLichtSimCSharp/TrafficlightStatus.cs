@@ -11,14 +11,29 @@ namespace StopLichtSimCSharp
     {
         // public string[] array = { "rood", "oranje", "groen" };
         public static Dictionary<string, string> trafficlights = new Dictionary<string, string>();
-        string color = "10.1:rood";
+        
         public string Traffic()
         {
-
-            
-            string[] part = color.Split(':');
-            trafficlights.Add(part[0], part[1]);
-
+            Console.WriteLine("write the colorname");
+            string color = "";// Console.ReadLine();
+            for (int i = 0; i < 3; i++)
+            {
+                if (i == 0)
+                {
+                    color = "10.1:rood";
+                }
+                else if (i == 1)
+                {
+                    color = "12.1:geel";
+                    
+                }
+                else
+                {
+                    color = "11.1:groen";
+                }
+                string[] part = color.Split(':');
+                trafficlights.TryAdd(part[0], part[1]);  //10.1:rood
+            }
 
             // Raylib.Color
             return color;
