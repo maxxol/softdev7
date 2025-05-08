@@ -49,7 +49,6 @@ async function startSimulatorTestSockets() {
             "2.1": {voor: false, achter: !i},
             "2.2": {voor: false, achter: !i},
             "3.1": {voor: false, achter: !i},
-            "3.6": {voor: false, achter: !i},
             "4.1": {voor: false, achter: !i},
             "5.1": {voor: false, achter: !i},
             "6.1": {voor: false, achter: !i},

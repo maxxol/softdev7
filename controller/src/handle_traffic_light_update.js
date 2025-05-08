@@ -12,10 +12,10 @@ const { findSensorIdPriorityVehicle, bridgeIdSet, boatIdSet, trafficGoingTobridg
 * @param {number} Ncyclus 
 * @param {{ isReady: boolean }} passBoats 
 */
-function handleTrafficLightUpdate(simulatorStatus, trafficLightStatus, Ncyclus, passBoats) {
-    updateCrossingLights(simulatorStatus, trafficLightStatus, Ncyclus)
+function handleTrafficLightUpdate(simulatorStatus, trafficLightStatus, Ncyclus=0, passBoats) {
+    Ncyclus = updateCrossingLights(simulatorStatus, trafficLightStatus, Ncyclus)
     updateBridgeLights(simulatorStatus, trafficLightStatus, passBoats)
-    return ++Ncyclus
+    return Ncyclus
 }
 
 
@@ -29,29 +29,33 @@ function handleTrafficLightUpdate(simulatorStatus, trafficLightStatus, Ncyclus, 
  */
 function updateCrossingLights(simulatorStatus, trafficLightStatus, Ncyclus) {
     priorityVehicleResult = handlePriorityVehicle(simulatorStatus, trafficLightStatus)
-    if (priorityVehicleResult?.priorityLevel == 1) return Ncyclus; // skip to next cycle
+    if (priorityVehicleResult?.priorityLevel == 1) return Ncyclus; // skip to next cycle to prevent the trafficlights from updating below
     if (priorityVehicleResult?.priorityLevel == 2) Ncyclus = priorityVehicleResult?.newNcyclus // make vehicle with priority level 2 determine the next cycle number
     
-    if(Ncyclus == 0) return trafficLightStatus;
+    if(Ncyclus == 0) return Ncyclus;
     const Nstage = ((Ncyclus - 1) % 15) + 1; // 5 is the number of green sets, 3 rounds per green set
     const Ngreenset = Math.ceil(Nstage / 3); // Ncyclus 1 & 2 = green set 1, Ncyclus 3 & 4 = green set 2, etc.
     const greenLightSet = green_sets[`${Ngreenset}`];
-    if (Nstage % 3 != 0) {
+    if (Nstage % 3 != 0) { // 'oranje'- stage
         [...crossingCyclerIdSet, ...crossingPedIslandIdSet, ...crossingCarIdSet].forEach(id => { // keep island lights green
             if(trafficLightStatus[id] == "groen") {
                 trafficLightStatus[id] = "oranje";
             }
         })
-    } else {
-        crossingIdSet.forEach(id => {
+    } else { // 'groen'- stage
+        crossingIdSet.forEach(id => { // PLEASE FIX
             if(trafficLightStatus[id] == "oranje") {
                 trafficLightStatus[id] = "rood";
             }
+        })
+        crossingPedNOTIslandIdSet.forEach(id => {
+            trafficLightStatus[id] = "rood";
         })
         greenLightSet.forEach(id => {
             trafficLightStatus[id] = "groen"
         });
     }
+    return ++Ncyclus
 }
 
 
@@ -72,9 +76,8 @@ function handlePriorityVehicle(simulatorStatus, trafficLightStatus) {
             priorityLevel: 1,
         }
     } else if(sensorIdPriorityVehicleLevel2 != undefined) { // set the lights to red and the green set to green
-        const greenSet = Object.keys(green_sets).find(([_, set]) => set.includes(sensorIdPriorityVehicleLevel2))
-        if(greenSet.length > 0) {
-            const greenSetId = greenSet
+        const greenSetId = Object.entries(green_sets).find(([_, set]) => set.includes(sensorIdPriorityVehicleLevel2))[0]
+        if(greenSetId) {
             return {
                 priorityLevel: 2,
                 newNcyclus: greenSetId * 3 // because there are 3 rounds per green set
@@ -118,6 +121,7 @@ function updateBridgeLights(simulatorStatus, trafficLightStatus, passBoats) {
             trafficLightStatus[trafficLight] = "rood";
         });
         if (!isBridgeOpen) { // if the bridge is closed, make sure all the boat traffic lights are red
+            trafficLightStatus["81.1"] = "groen"; // tell bridge to open
             trafficLightStatus[boatIdSet[0]] = "rood";
             trafficLightStatus[boatIdSet[1]] = "rood";
 
@@ -127,7 +131,6 @@ function updateBridgeLights(simulatorStatus, trafficLightStatus, passBoats) {
                 trafficLightStatus["62.1"] = "rood";
                 trafficLightStatus["63.1"] = "rood";
                 trafficLightStatus["64.1"] = "rood";
-                trafficLightStatus["81.1"] = "groen"; // tell bridge to open
             }
         } else if (isBridgeOpen) {
             if (isSensorTriggeredNorth) { // if the bridge is open and a boat is on the sensor-north, set the boat traffic lights in the north to green and south to red
@@ -176,5 +179,6 @@ function setAllCrossingLightsToRed(trafficLightStatus) {
 
 module.exports = {
     handleTrafficLightUpdate,
-    updateCrossingLights
+    updateCrossingLights,
+    updateBridgeLights
 };
