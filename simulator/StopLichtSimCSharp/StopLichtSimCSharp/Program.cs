@@ -11,11 +11,11 @@ namespace StopLichtSimCSharp
 {
     struct CheckPointNode // Lanes are composed of these nodes
     {
-        public string NodeID;
+        public int NodeID;
         public int X, Y;
         public bool Occupied;
         public string TrafficLightColor;
-        public CheckPointNode(int x, int y, bool occupied,string nodeid)
+        public CheckPointNode(int x, int y, bool occupied,int nodeid)
         {
             NodeID = nodeid;
             X = x;
@@ -50,22 +50,9 @@ namespace StopLichtSimCSharp
             camera.Zoom = 1.0f;
 
             Spawner spawner = new Spawner();
+            RoadSensors.fillDictionary();
+            //RoadSensors.printDictionary();
 
-
-            //CheckPointNode[] testLaneCheckpoints = 
-            //{
-            //    new CheckPointNode(1920 - 400, 1080 - 650, false,"test1"),
-            //    new CheckPointNode(1920 - 990, 1080 - 660, false,"test2"),
-            //    new CheckPointNode(1920 - 1200, 1080 - 650, false,"test3"),
-            //    new CheckPointNode(1920 - 1300, 1080 - 200, false,"test4")
-            //};
-
-            //Lane testLane = new("test lane", testLaneCheckpoints);
-
-            //Car car1 = new(testLane.CheckPointNodes[0].X, testLane.CheckPointNodes[0].Y);
-            //Car car2 = new(testLane.CheckPointNodes[1].X, testLane.CheckPointNodes[1].Y);
-
-            //int testCarIterator1 = 0, testCarIterator2 = 1;
 
             CheckPointNode[][] loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
             Lane[] Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
@@ -78,7 +65,7 @@ namespace StopLichtSimCSharp
             while (!Raylib.WindowShouldClose())
 
             {
-                
+                RoadSensors.checkRoadSensors(Lanes);
                 // Publish a message
                 ZeroMqHandler.PublishSensorData("SensorData 1");
                 //ZeroMqHandler.ListenStoplichtSub();
@@ -105,19 +92,13 @@ namespace StopLichtSimCSharp
                         camera.Target = new Vector2(Raylib.GetMousePosition().X, Raylib.GetMousePosition().Y);
                     }
                 }
-                //if (testCarIterator1 < testLane.CheckPointNodes.Length - 1)
-                //    testCarIterator1 = car1.MoveToNextCheckNode(ref car1.PosX, ref car1.PosY, car1.CarSpeed, testLane.CheckPointNodes, ref testCarIterator1);
-
-                //if (testCarIterator2 < testLane.CheckPointNodes.Length - 1)
-                //    testCarIterator2 = car2.MoveToNextCheckNode(ref car2.PosX, ref car2.PosY, car2.CarSpeed, testLane.CheckPointNodes, ref testCarIterator2);
 
                 Raylib.BeginDrawing();
                     Raylib.ClearBackground(Raylib_cs.Color.Black);
                     Raylib.BeginMode2D(camera);
                     Raylib.DrawTexture(crossingroads, screenWidth / 2 - crossingroads.Width / 2, screenHeight / 2 - crossingroads.Height / 2 - 40, Raylib_cs.Color.White);
 
-                    //Raylib.DrawCircleV(new Vector2(car1.PosX, car1.PosY), 30, Raylib_cs.Color.Maroon);
-                    //Raylib.DrawCircleV(new Vector2(car2.PosX, car2.PosY), 30, Raylib_cs.Color.Maroon);
+
                 List<RoadUser> allRoadUsersArrayCopyList= new List<RoadUser>();
                 allRoadUsersArrayCopyList = allRoadUsersArray.ToList();
                 bool shouldBeRemoved;
@@ -137,27 +118,24 @@ namespace StopLichtSimCSharp
                     loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
                     Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
                 }
-                //foreach (Lane lane in Lanes)
-                //{
-                //    foreach (var node in lane.CheckPointNodes)
-                //    {
-                //        if (node.Occupied)
-                //        {
-                //            Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Yellow);
-                //        }
-                //        else
-                //        {
-                //            Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Green);
-                //        }
-                //    }
-                //}
-
-
-                //foreach (var node in testLane.CheckPointNodes)
-                //    {
-                //        Raylib.DrawCircleV(new Vector2(node.X ,node.Y), 10, Raylib_cs.Color.Green);
-                //    }
-
+                foreach (Lane lane in Lanes)
+                {
+                    foreach (var node in lane.CheckPointNodes)
+                    {
+                        if (new[] { 9, 7, 36, 34 , 70,68}.Contains(node.NodeID))
+                        {
+                            Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.DarkPurple);
+                        }
+                        else if (node.Occupied)
+                        {
+                            Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Yellow);
+                        }
+                        else
+                        {
+                            Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Green);
+                        }
+                    }
+                }
 
 
                 Raylib.EndDrawing();
