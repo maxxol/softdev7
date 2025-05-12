@@ -8,7 +8,7 @@ namespace StopLichtSimCSharp
 {
     class Spawner
     {
-        int numberOfCarLanes = 3; //update manually when nodes have been set.
+        int numberOfCarLanes = 5; //update manually when nodes have been set.
         int numberOfBikeLanes = 0;
         int numberOfPedLanes = 0;
         int numberOfBoatLanes = 0;
