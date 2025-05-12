@@ -30,7 +30,7 @@ namespace StopLichtSimCSharp
     {
         static void Main()
         {
-            bool nodeDevMode = false;
+            bool nodeDevMode = true;
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
             Raylib.InitWindow(800, 800, "Raylib C# Example");
@@ -118,21 +118,24 @@ namespace StopLichtSimCSharp
                     loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
                     Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
                 }
-                foreach (Lane lane in Lanes)
+                if (true)
                 {
-                    foreach (var node in lane.CheckPointNodes)
+                    foreach (Lane lane in Lanes)
                     {
-                        if (new[] { 9, 7, 36, 34 , 70,68}.Contains(node.NodeID))
+                        foreach (var node in lane.CheckPointNodes)
                         {
-                            Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.DarkPurple);
-                        }
-                        else if (node.Occupied)
-                        {
-                            Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Yellow);
-                        }
-                        else
-                        {
-                            Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Green);
+                            if (new[] { 9, 7, 36, 34, 70, 68 }.Contains(node.NodeID))
+                            {
+                                Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.DarkPurple);
+                            }
+                            else if (node.Occupied)
+                            {
+                                Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Yellow);
+                            }
+                            else
+                            {
+                                Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Green);
+                            }
                         }
                     }
                 }
