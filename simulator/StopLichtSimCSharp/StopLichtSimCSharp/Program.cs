@@ -30,7 +30,7 @@ namespace StopLichtSimCSharp
     {
         static void Main()
         {
-            bool nodeDevMode = true;
+            bool nodeDevMode = false;
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
             Raylib.InitWindow(800, 800, "Raylib C# Example");
@@ -118,7 +118,7 @@ namespace StopLichtSimCSharp
                     loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
                     Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
                 }
-                if (true)
+                if (false) //change to true if you want the nodes rendered
                 {
                     foreach (Lane lane in Lanes)
                     {
