@@ -94,6 +94,7 @@ namespace StopLichtSimCSharp
                 TrafficLights aaaah = new TrafficLights();
                 aaaah.TrafficLightStatusChangeSingular();
                 Color TrafficLightColor =  TrafficLights.TrafficLightColor;
+                int nodeId = TrafficLights.TrafficLightID;
                 if (!nodeDevMode)
                 {
                     camera.Zoom += ((float)Raylib.GetMouseWheelMove() * 0.05f);
@@ -170,7 +171,7 @@ namespace StopLichtSimCSharp
                 {
                     for (int i = 0; i < Lanes.Count(); i++)
                     {
-                        Lanes[i].addTrafficlight(10);
+                        Lanes[i].addTrafficlight(nodeId);
                     }
                     //Lanes[1].addTrafficlight(37);
                     //Lanes[2].addTrafficlight(72);

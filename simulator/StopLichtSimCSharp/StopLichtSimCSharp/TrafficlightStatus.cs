@@ -24,8 +24,7 @@ namespace StopLichtSimCSharp
                 }
                 else if (i == 1)
                 {
-                    color = "12.1:geel";
-                    
+                    color = "12.1:geel";                    
                 }
                 else
                 {

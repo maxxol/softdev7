@@ -16,20 +16,20 @@ namespace StopLichtSimCSharp
                 MouseButton leftClickButton = MouseButton.Left;
                 MouseButton rightClickButton = MouseButton.Right;
                
-                    if (Raylib.IsMouseButtonPressed(leftClickButton))
-                    {
-                        Console.WriteLine(mousePos);
+                if (Raylib.IsMouseButtonPressed(leftClickButton))
+                {
+                    Console.WriteLine(mousePos);
 
-                      //  File.AppendAllText("../../../../../NodeData/TXTData.txt", mousePos.ToString() + ": " + nodeIDIncrementor.ToString()+ "\n");
-                     //   nodeIDIncrementor++;
+                    //  File.AppendAllText("../../../../../NodeData/TXTData.txt", mousePos.ToString() + ": " + nodeIDIncrementor.ToString()+ "\n");
+                    //   nodeIDIncrementor++;
 
-                    }
-                    if (Raylib.IsMouseButtonPressed(rightClickButton))
-                    {
-                      //  File.AppendAllText("../../../../../NodeData/TXTData.txt", "LANE END" + "\n");
+                }
+                if (Raylib.IsMouseButtonPressed(rightClickButton))
+                {
+                    //  File.AppendAllText("../../../../../NodeData/TXTData.txt", "LANE END" + "\n");
                        
-                    }                 
-                    //Console.WriteLine(mousePos);
+                }                 
+                //Console.WriteLine(mousePos);
                 
             }
         }

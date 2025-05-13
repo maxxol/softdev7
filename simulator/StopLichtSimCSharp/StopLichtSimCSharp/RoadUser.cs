@@ -28,9 +28,6 @@ namespace StopLichtSimCSharp
 
             if (checkPointNodes[iterator + 1].Occupied == true) { return false; }// if next node is occupied
 
-
-
-
             int xDiff = checkPointNodes[iterator + 1].X - posX;
             int yDiff = checkPointNodes[iterator + 1].Y - posY;
 
