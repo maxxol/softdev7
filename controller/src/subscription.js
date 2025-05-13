@@ -45,6 +45,7 @@ async function handleSubscription(passBoats, roadwayDataContainer, specialDataCo
             case "sensoren_rijbaan":
                 ({ boadTimer } = onSensorsRoadWay(dataObj, boadTimer, passBoats));
                 roadwayDataContainer.updateStatus(dataObj);
+                
                 break;
             case "sensoren_speciaal":
                 specialDataContainer.updateStatus(dataObj);

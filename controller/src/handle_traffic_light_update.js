@@ -29,10 +29,13 @@ function handleTrafficLightUpdate(simulatorStatus, trafficLightStatus, Ncyclus=0
  */
 function updateCrossingLights(simulatorStatus, trafficLightStatus, Ncyclus) {
     priorityVehicleResult = handlePriorityVehicle(simulatorStatus, trafficLightStatus)
-    if (priorityVehicleResult?.priorityLevel == 1) return Ncyclus; // skip to next cycle to prevent the trafficlights from updating below
-    if (priorityVehicleResult?.priorityLevel == 2) Ncyclus = priorityVehicleResult?.newNcyclus // make vehicle with priority level 2 determine the next cycle number
+    if (priorityVehicleResult?.priorityLevel == 1) 
+        return Ncyclus; // skip to next cycle to prevent the trafficlights from updating below
+    if (priorityVehicleResult?.priorityLevel == 2) 
+        Ncyclus = priorityVehicleResult?.newNcyclus // make vehicle with priority level 2 determine the next cycle number
     
-    if(Ncyclus == 0) return Ncyclus;
+    if(Ncyclus == 0) 
+        return Ncyclus; // 0 means we're still waiting for the first cycle, everything should be the last trafficlight state
     const Nstage = ((Ncyclus - 1) % 15) + 1; // 5 is the number of green sets, 3 rounds per green set
     const Ngreenset = Math.ceil(Nstage / 3); // Ncyclus 1 & 2 = green set 1, Ncyclus 3 & 4 = green set 2, etc.
     const greenLightSet = green_sets[`${Ngreenset}`];
@@ -43,7 +46,7 @@ function updateCrossingLights(simulatorStatus, trafficLightStatus, Ncyclus) {
             }
         })
     } else { // 'groen'- stage
-        crossingIdSet.forEach(id => { // PLEASE FIX
+        crossingIdSet.forEach(id => {
             if(trafficLightStatus[id] == "oranje") {
                 trafficLightStatus[id] = "rood";
             }
@@ -55,6 +58,26 @@ function updateCrossingLights(simulatorStatus, trafficLightStatus, Ncyclus) {
             trafficLightStatus[id] = "groen"
         });
     }
+    // if(N)
+    // if (Nstage % 3 != 0) { // 'oranje'- stage
+    //     [...crossingCyclerIdSet, ...crossingPedIslandIdSet, ...crossingCarIdSet].forEach(id => { // keep island lights green
+    //         if(trafficLightStatus[id] == "groen") {
+    //             trafficLightStatus[id] = "oranje";
+    //         }
+    //     })
+    // } else { // 'groen'- stage
+    //     crossingIdSet.forEach(id => {
+    //         if(trafficLightStatus[id] == "oranje") {
+    //             trafficLightStatus[id] = "rood";
+    //         }
+    //     })
+    //     crossingPedNOTIslandIdSet.forEach(id => {
+    //         trafficLightStatus[id] = "rood";
+    //     })
+    //     greenLightSet.forEach(id => {
+    //         trafficLightStatus[id] = "groen"
+    //     });
+    // }
     return ++Ncyclus
 }
 
@@ -97,7 +120,7 @@ function handlePriorityVehicle(simulatorStatus, trafficLightStatus) {
  */
 function updateBridgeLights(simulatorStatus, trafficLightStatus, passBoats) {
     const sensorIdPriorityVehicleLevel1 = findSensorIdPriorityVehicle(simulatorStatus.priority_vehicle, 1)
-    if (typeof simulatorStatus.bridge?.["81.1"]?.state != "string")         simulatorStatus.bridge = { "81.1": { state: "closed" } }; // default value for bridgeState
+    if (typeof simulatorStatus.bridge?.["81"]?.state != "string")         simulatorStatus.bridge = { "81": { state: "closed" } }; // default value for bridgeState
     if (simulatorStatus.roadway == undefined || simulatorStatus.roadway == null) {
         simulatorStatus.roadway = {[boatIdSet[0]]: {voor: false}, [boatIdSet[1]]: {voor: false}};
     } else if (typeof simulatorStatus.roadway?.[boatIdSet[0]]?.voor != "boolean") {
@@ -105,10 +128,10 @@ function updateBridgeLights(simulatorStatus, trafficLightStatus, passBoats) {
     }
     if (typeof simulatorStatus.roadway?.[boatIdSet[1]]?.voor != "boolean")  simulatorStatus.roadway[boatIdSet[1]] = {voor: false};
     if (typeof passBoats?.isReady != "boolean")                             passBoats = { isReady: false }; // default value for passBoats
-    let isBridgeOpen = (simulatorStatus.bridge["81.1"].state == "open");
+
+    let isBridgeOpen = (simulatorStatus.bridge["81"].state == "open");
     const isSensorTriggeredNorth = simulatorStatus.roadway[boatIdSet[0]].voor;
     const isSensorTriggeredSouth = simulatorStatus.roadway[boatIdSet[1]].voor;
-    
     
     if (
         // if passBoats is not ready, do not bother setting related traffic lights)
@@ -121,18 +144,17 @@ function updateBridgeLights(simulatorStatus, trafficLightStatus, passBoats) {
             trafficLightStatus[trafficLight] = "rood";
         });
         if (!isBridgeOpen) { // if the bridge is closed, make sure all the boat traffic lights are red
-            trafficLightStatus["81.1"] = "groen"; // tell bridge to open
             trafficLightStatus[boatIdSet[0]] = "rood";
             trafficLightStatus[boatIdSet[1]] = "rood";
 
             if(!simulatorStatus.special.brug_wegdek) { // UPDATE this to account for flikkering
-                console.log("initiating bridge opening process");
-                trafficLightStatus["61.1"] = "rood"; // tell slagboom to close
+                trafficLightStatus["81.1"] = "groen"; // tell bridge to open
+                trafficLightStatus["61.1"] = "rood"; // tell barriers to close
                 trafficLightStatus["62.1"] = "rood";
                 trafficLightStatus["63.1"] = "rood";
                 trafficLightStatus["64.1"] = "rood";
             }
-        } else if (isBridgeOpen) {
+        } else {
             if (isSensorTriggeredNorth) { // if the bridge is open and a boat is on the sensor-north, set the boat traffic lights in the north to green and south to red
                 trafficLightStatus[boatIdSet[0]] = "groen";
                 trafficLightStatus[boatIdSet[1]] = "rood";
@@ -144,7 +166,6 @@ function updateBridgeLights(simulatorStatus, trafficLightStatus, passBoats) {
                 trafficLightStatus[boatIdSet[1]] = "rood";
                 passBoats.isReady = false; // reset the passBoats status                
                 if(!simulatorStatus.special.brug_water) {
-                    console.log("initiating bridge closing process");
                     trafficLightStatus["81.1"] = "rood"; // tell bridge to close
                 }
             }
@@ -152,7 +173,7 @@ function updateBridgeLights(simulatorStatus, trafficLightStatus, passBoats) {
         }
     } else {
         if (!isBridgeOpen) {
-            trafficLightStatus["61.1"] = "groen"; // tell slagboom to close
+            trafficLightStatus["61.1"] = "groen"; // tell barriers to open
             trafficLightStatus["62.1"] = "groen";
             trafficLightStatus["63.1"] = "groen";
             trafficLightStatus["64.1"] = "groen";
@@ -160,9 +181,6 @@ function updateBridgeLights(simulatorStatus, trafficLightStatus, passBoats) {
                 trafficLightStatus[trafficLight] = "groen";
             });
         }
-        
-        trafficLightStatus[boatIdSet[0]] = "rood";
-        trafficLightStatus[boatIdSet[1]] = "rood";
         
     }
 

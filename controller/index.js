@@ -45,7 +45,7 @@ async function main() {
         queue: [],
     });
     bridgeDataContainer.updateStatus({
-        "81.1": { state: "closed" },
+        "81": { state: "closed" },
     });
     
     const simulatorStatus = {

@@ -35,6 +35,8 @@ class SensorDataContainer {
 
         }
         this.#status = newStatus
+        console.warn(this.#status);
+        
     }
 
     /**
