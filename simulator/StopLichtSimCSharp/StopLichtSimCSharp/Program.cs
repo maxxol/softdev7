@@ -9,20 +9,20 @@ using System.Drawing.Drawing2D;
 
 namespace StopLichtSimCSharp
 {
-    struct CheckPointNode // Lanes are composed of these nodes
+    class CheckPointNode
     {
         public int NodeID;
         public int X, Y;
         public bool Occupied;
         public string TrafficLightColor;
-        public CheckPointNode(int x, int y, bool occupied,int nodeid)
+
+        public CheckPointNode(int x, int y, bool occupied, int nodeid)
         {
             NodeID = nodeid;
             X = x;
             Y = y;
             Occupied = occupied;
             TrafficLightColor = "green";
-
         }
     }
 
@@ -65,9 +65,10 @@ namespace StopLichtSimCSharp
             while (!Raylib.WindowShouldClose())
 
             {
-                RoadSensors.checkRoadSensors(Lanes);
+                //RoadSensors.checkRoadSensors(Lanes);
+                string rijbaan_sensor_json = RoadSensors.buildJson(Lanes);
                 // Publish a message
-                ZeroMqHandler.PublishSensorData("SensorData 1");
+                ZeroMqHandler.PublishSensorData(rijbaan_sensor_json);
                 //ZeroMqHandler.ListenStoplichtSub();
                 //Console.WriteLine(allRoadUsersArray.Length+" before");
                 allRoadUsersArray = spawner.spawnRoaduser(Lanes, allRoadUsersArray);
@@ -108,7 +109,7 @@ namespace StopLichtSimCSharp
                     Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 7, Raylib_cs.Color.Maroon);
                     shouldBeRemoved = roaduser.MoveToNextCheckNode(ref roaduser.PosX, ref roaduser.PosY, roaduser.Speed, Lanes[roaduser.LaneID].CheckPointNodes, roaduser.NodeTravelIterator, roaduser);
                     if (shouldBeRemoved) {
-                        Console.WriteLine("removing");
+                        //Console.WriteLine("removing");
                         allRoadUsersArrayCopyList.Remove(roaduser); }
                 }
                 allRoadUsersArray = allRoadUsersArrayCopyList.ToArray();
@@ -118,24 +119,31 @@ namespace StopLichtSimCSharp
                     loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
                     Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
                 }
-                if (false) //change to true if you want the nodes rendered
+                if (true) //change to true if you want the nodes rendered
                 {
                     foreach (Lane lane in Lanes)
                     {
                         foreach (var node in lane.CheckPointNodes)
                         {
-                            if (new[] { 9, 7, 36, 34, 70, 68 }.Contains(node.NodeID))
+                            if (new[] { 9, 6, 36, 33, 70, 67, 158,161,231,234,277,280,312,315,348,351,369,372,406,409,439,442,466,469,485,488,555,558 }.Contains(node.NodeID))
                             {
                                 Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.DarkPurple);
                             }
+                            
                             else if (node.Occupied)
                             {
                                 Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Yellow);
                             }
-                            else
+                            else if (!node.Occupied)
                             {
                                 Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Green);
                             }
+                            
+                            else
+                            {
+                                //Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Green);
+                            }
+                            //Console.WriteLine(node.Occupied);
                         }
                     }
                 }

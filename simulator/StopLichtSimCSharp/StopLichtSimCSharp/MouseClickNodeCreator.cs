@@ -5,7 +5,7 @@ namespace StopLichtSimCSharp
 {
     class MouseClickNodeCreator
     {
-        static int nodeIDIncrementor = 148; //latest nodeid in the node file + 1
+        static int nodeIDIncrementor = 580; //latest nodeid in the node file + 1
 
         public static void AddCoordinateToNodeFileByClicking(bool turnOnNodeCreationByClicking)
         {
@@ -20,8 +20,8 @@ namespace StopLichtSimCSharp
                     {
                         Console.WriteLine(mousePos);
 
-                    File.AppendAllText("../../../../../TXTData/NodeData.txt", mousePos.ToString() + ". " + nodeIDIncrementor.ToString() + "\n");
-                    nodeIDIncrementor++;
+                    //File.AppendAllText("../../../../../TXTData/NodeData.txt", mousePos.ToString() + ". " + nodeIDIncrementor.ToString() + "\n");
+                    //nodeIDIncrementor++;
 
                 }
                     if (Raylib.IsMouseButtonPressed(rightClickButton))
