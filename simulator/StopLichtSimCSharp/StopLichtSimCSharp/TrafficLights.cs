@@ -13,9 +13,10 @@ namespace StopLichtSimCSharp
     {
         public static Color TrafficLightColor;
         public static Dictionary<string, string> trafficlightnodes = new Dictionary<string, string>();
-        public static int TrafficLightID;
+       // public static int TrafficLightID;
 
         public static Dictionary<string, string> trythis =  new Dictionary<string, string>();
+
         string[] trafficlightcoords = File.ReadAllLines("../../../../../NodeData/TrafficLightIDs.txt");
        
         public Dictionary<string, string> TrafficLightSpawn()
@@ -45,7 +46,7 @@ namespace StopLichtSimCSharp
             }
         }
 
-        public static void TrafficLightStatusIndividual(string givencolor)
+        public static Color TrafficLightStatusIndividual(string givencolor)
         {
             if (givencolor == "rood")
             {
@@ -59,6 +60,7 @@ namespace StopLichtSimCSharp
             {
                 TrafficLightColor = Color.Green;
             }
+            return TrafficLightColor;
         }
         //Entry van TrafficLightStatus = key 10.1, value rood
         //Entry van TrafficlightNodes =  key 10, value 10.1
