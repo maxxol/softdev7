@@ -38,7 +38,7 @@ namespace StopLichtSimCSharp
             Raylib.InitWindow(800, 800, "Raylib C# Example");
             Raylib.SetWindowState(ConfigFlags.MaximizedWindow);
             Raylib.SetWindowMinSize(screenWidth, screenHeight/2);
-           // Raylib.image imblank = GenImageColor(1024, 1024, Color.blank);
+            //Raylib.image imblank = GenImageColor(1024, 1024, Color.blank);
             //Texture2D kruispunt = Raylib.LoadTexture("../../../../../Images/cross_section.png");
             Image crossroads = Raylib.LoadImage("../../../../../Images/cross_section.png");
             Raylib.ImageResize(ref crossroads, screenWidth, (int)(screenHeight/1.852));
@@ -52,7 +52,6 @@ namespace StopLichtSimCSharp
             camera.Zoom = 1.0f;
 
             Spawner spawner = new Spawner();
-
 
             //CheckPointNode[] testLaneCheckpoints = 
             //{
@@ -74,7 +73,7 @@ namespace StopLichtSimCSharp
             RoadUser[] allRoadUsersArray = new RoadUser[0];
             Raylib.SetTargetFPS(20);
             // int scrollSpeed = 4;
-            var colour = Raylib_cs.Color.Red;
+          //  var colour = Raylib_cs.Color.Red;
             ZeroMqHandler.StartSensorPub();
             TrafficLights traffic = new TrafficLights();
             var trafficlights = traffic.TrafficLightSpawn();
@@ -89,11 +88,10 @@ namespace StopLichtSimCSharp
                 //Console.WriteLine(allRoadUsersArray.Length+ " after");
 
                 MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(nodeDevMode);
-                TrafficLights.TrafficLightStatusChange(nodeDevMode);
                 
-                TrafficLights aaaah = new TrafficLights();
-                aaaah.TrafficLightStatusChangeSingular();
-             //   Color TrafficLightColor =  TrafficLights.TrafficLightColor;
+                TrafficLights trafficlight = new TrafficLights();
+                trafficlight.CompareIdsAndLoadColors();
+       
                 Dictionary<string,string> nodeId = TrafficLights.trythis;
                 if (!nodeDevMode)
                 {
@@ -164,28 +162,18 @@ namespace StopLichtSimCSharp
                 //    }
                 //}
 
-
-                //if(Enviro)
-                //Raylib_cs.Color.Red
                 foreach (var lane in Lanes)
                 {
                     for (int i = 0; i < Lanes.Count(); i++)
                     {
                         Lanes[i].addTrafficlight(Convert.ToInt32(nodeId.Keys.ElementAt(i)));
-                        //  Lanes[i].TrafficNode.TrafficLightColor = controllermsg[i];
                         Color color = TrafficLights.TrafficLightStatusIndividual(Convert.ToString(nodeId.Values.ElementAt(i)));
                         Raylib.DrawCircleV(new Vector2(Lanes[i].TrafficNode.X, Lanes[i].TrafficNode.Y), 3, color);
-                    }
-                    //Lanes[1].addTrafficlight(37);
-                    //Lanes[2].addTrafficlight(72);
+                        
+
+                    }                
                 }
                    
-                Color[] controllermsg = { Color.Green, Color.Orange, Color.Red };
-
-                for (int i = 0; i < 3; i++)
-                {                    
-                  
-                }
 
                 //CheckPointNode trafficlight = Lanes[0].CheckPointNodes[10];                
                 //Raylib.DrawCircleV(new Vector2(Lanes[0].TrafficNode.X, Lanes[0].TrafficNode.Y), 3, Raylib_cs.Color.Red);

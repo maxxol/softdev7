@@ -30,22 +30,6 @@ namespace StopLichtSimCSharp
             return trafficlightnodes;
         }
 
-        public static void TrafficLightStatusChange(bool turnOnNodeCreationByClicking)
-        {                       
-            if (Raylib.IsMouseButtonPressed(MouseButton.Middle))
-            {
-             TrafficLightColor = Color.Yellow;
-            }
-            if (Raylib.IsMouseButtonPressed(MouseButton.Left))
-            {
-                TrafficLightColor = Color.Red;
-            }
-            if (Raylib.IsMouseButtonPressed(MouseButton.Right))
-            {
-                TrafficLightColor = Color.Green;
-            }
-        }
-
         public static Color TrafficLightStatusIndividual(string givencolor)
         {
             if (givencolor == "rood")
@@ -64,30 +48,12 @@ namespace StopLichtSimCSharp
         }
         //Entry van TrafficLightStatus = key 10.1, value rood
         //Entry van TrafficlightNodes =  key 10, value 10.1
-        public void TrafficLightStatusChangeSingular(/*Dictionary<int,string> trafficlights*/)
+        public void CompareIdsAndLoadColors()
         {
             //trafficlightnodes = trafficlights;
             TrafficLightStatus something = new TrafficLightStatus();
             something.Traffic();
-            trythis = trafficlightnodes.Where(entry => TrafficLightStatus.trafficlights[entry.Value] != entry.Value).ToDictionary(entry => entry.Key, entry => TrafficLightStatus.trafficlights[entry.Value]);
-            
-            
-          //  int nodeid = Convert.ToInt32(lighttochange.Keys.First());
-            //string colour = lighttochange.Values.First();
-            //trafficLightID = nodeid;
-            //TrafficLightStatusIndividual(colour);
-            //foreach (var light in lighttochange)
-            //{
-
-            //}
-            //var 
-            //if (trafficlightnodes[value].Equals(TrafficLightStatus.trafficlights[value]))
-            //{
-            //    Console.Write(value);
-            //}
-
-            // TrafficLightID = Convert.ToInt32(lighttochange.Value);
-            //output: 10            
+            trythis = trafficlightnodes.Where(entry => TrafficLightStatus.trafficlights[entry.Value] != entry.Value).ToDictionary(entry => entry.Key, entry => TrafficLightStatus.trafficlights[entry.Value]);            
         }
     }
 }

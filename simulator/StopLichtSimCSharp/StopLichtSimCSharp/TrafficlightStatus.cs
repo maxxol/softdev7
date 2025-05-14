@@ -9,13 +9,11 @@ namespace StopLichtSimCSharp
 {
     internal class TrafficLightStatus
     {
-        // public string[] array = { "rood", "oranje", "groen" };
-        public static Dictionary<string, string> trafficlights = new Dictionary<string, string>();
-        
+        public static Dictionary<string, string> trafficlights = new Dictionary<string, string>();        
         public string Traffic()
         {
             Console.WriteLine("write the colorname");
-            string color = "";// Console.ReadLine();
+            string color = "";
             for (int i = 0; i < 3; i++)
             {
                 if (i == 0)
@@ -31,10 +29,8 @@ namespace StopLichtSimCSharp
                     color = "11.1:groen";
                 }
                 string[] part = color.Split(':');
-                trafficlights.TryAdd(part[0], part[1]);  //10.1:rood
+                trafficlights.TryAdd(part[0], part[1]); 
             }
-
-            // Raylib.Color
             return color;
         }
     }
