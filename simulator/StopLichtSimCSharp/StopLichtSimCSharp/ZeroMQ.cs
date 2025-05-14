@@ -2,25 +2,27 @@
 using System.Threading;
 using NetMQ;
 using NetMQ.Sockets;
+using System.Text.Json; // Make sure you have this using directive
 
 namespace StopLichtSimCSharp
 {
     class ZeroMqHandler
     {
 
-        static string communicationIPAddress = "tcp://localhost:5555"; //don't push your home wifi ip please thank you
+        static string pubAdress = "tcp://10.121.17.182:5556"; //don't push your home wifi ip please thank you
+        static string subAdress = "tcp://10.121.17.106:5555"; //don't push your home wifi ip please thank you
 
 
 
 
-            private static PublisherSocket _sensorPublisher;
+        private static PublisherSocket _sensorPublisher;
 
             public static void StartSensorPub()
             {
                 if (_sensorPublisher != null) return;
 
                 _sensorPublisher = new PublisherSocket();
-                _sensorPublisher.Bind(communicationIPAddress);
+                _sensorPublisher.Bind(pubAdress);
                 Console.WriteLine("Publisher started.");
             }
 
@@ -31,11 +33,33 @@ namespace StopLichtSimCSharp
                     throw new InvalidOperationException("Publisher not started. Call Start() first.");
                 }
 
-                _sensorPublisher.SendMoreFrame("sensor").SendFrame(message);
+                _sensorPublisher.SendMoreFrame("sensoren_rijbaan").SendFrame(message);
                 //Console.WriteLine($"Published: {message}");
             }
 
-            public static void StopSensorPub()
+public static void PublishTimeData(int frame)
+    {
+        if (_sensorPublisher == null)
+        {
+            throw new InvalidOperationException("Publisher not started. Call Start() first.");
+        }
+
+        long currentTimeMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        var payload = new
+        {
+            simulatie_tijd_ms = frame * 1000
+        };
+
+        string jsonMessage = JsonSerializer.Serialize(payload);
+
+        _sensorPublisher.SendMoreFrame("tijd").SendFrame(jsonMessage);
+            Console.WriteLine(jsonMessage);
+        //Console.WriteLine($"Published: {jsonMessage}");
+    }
+
+
+
+    public static void StopSensorPub()
             {
                 if (_sensorPublisher != null)
                 {
@@ -53,7 +77,7 @@ namespace StopLichtSimCSharp
                 if (_stoplichtSubscriber != null) return;
 
                 _stoplichtSubscriber = new SubscriberSocket();
-                _stoplichtSubscriber.Connect(communicationIPAddress);
+                _stoplichtSubscriber.Connect(subAdress);
                 _stoplichtSubscriber.Subscribe("sensor");
 
                 Console.WriteLine("Stoplichten subscriber started.");
@@ -67,8 +91,8 @@ namespace StopLichtSimCSharp
                 }
 
                 
-                    string topic = _stoplichtSubscriber.ReceiveFrameString();
-                    string message = _stoplichtSubscriber.ReceiveFrameString();
+                    var topic = _stoplichtSubscriber.ReceiveFrameStringAsync(); 
+                    var message = _stoplichtSubscriber.ReceiveFrameStringAsync();
 
                     Console.WriteLine($"Received: {topic} - {message}");
                 

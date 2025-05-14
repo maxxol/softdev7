@@ -61,15 +61,22 @@ namespace StopLichtSimCSharp
             // int scrollSpeed = 4;
 
             ZeroMqHandler.StartSensorPub();
-            //ZeroMqHandler.StartStoplichtSub();
+            ZeroMqHandler.StartStoplichtSub();
+            int testit = 0;
             while (!Raylib.WindowShouldClose())
 
             {
+                testit++;
                 //RoadSensors.checkRoadSensors(Lanes);
                 string rijbaan_sensor_json = RoadSensors.buildJson(Lanes);
                 // Publish a message
-                ZeroMqHandler.PublishSensorData(rijbaan_sensor_json);
-                //ZeroMqHandler.ListenStoplichtSub();
+                if (testit % 10 == 0)
+                {
+                    ZeroMqHandler.PublishSensorData(rijbaan_sensor_json);
+                    ZeroMqHandler.PublishTimeData(testit);
+                    //Console.WriteLine("tests");
+                    //ZeroMqHandler.ListenStoplichtSub();
+                }
                 //Console.WriteLine(allRoadUsersArray.Length+" before");
                 allRoadUsersArray = spawner.spawnRoaduser(Lanes, allRoadUsersArray);
                 //Console.WriteLine(allRoadUsersArray.Length+ " after");
@@ -119,7 +126,7 @@ namespace StopLichtSimCSharp
                     loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
                     Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
                 }
-                if (true) //change to true if you want the nodes rendered
+                if (false) //change to true if you want the nodes rendered
                 {
                     foreach (Lane lane in Lanes)
                     {
