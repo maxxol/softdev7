@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "properties": {
+    "brug_wegdek": {"type": "boolean"},
+    "brug_water": {"type": "boolean"},
+    "brug_file": {"type": "boolean"}
+  },
+  "required": ["brug_wegdek", "brug_water", "brug_file"],
+  "additionalProperties": false
+}
