@@ -9,9 +9,9 @@ namespace StopLichtSimCSharp
     class ZeroMqHandler
     {
 
-        static string communicationIPAddress = "tcp://localhost:5555"; //don't push your home wifi ip please thank you
-
-
+        //static string communicationIPAddress = "tcp://localhost:5555"; //don't push your home wifi ip please thank you
+        static string pubAdress = "tcp://10.121.17.182:5556"; //don't push your home wifi ip please thank you
+        static string subAdress = "tcp://10.121.17.106:5555"; //don't push your home wifi ip please thank you
 
 
         private static PublisherSocket _sensorPublisher;
@@ -23,7 +23,7 @@ namespace StopLichtSimCSharp
                 _sensorPublisher = new PublisherSocket();
                 _sensorPublisher.Bind(pubAdress);
                 Console.WriteLine("Publisher started.");
-            }
+        }
 
         public static void PublishSensorData(string message)
         {
@@ -36,37 +36,35 @@ namespace StopLichtSimCSharp
                 //Console.WriteLine($"Published: {message}");
             }
 
-public static void PublishTimeData(int frame)
-    {
-        if (_sensorPublisher == null)
+        public static void PublishTimeData(int frame)
         {
-            throw new InvalidOperationException("Publisher not started. Call Start() first.");
+            if (_sensorPublisher == null)
+            {
+                throw new InvalidOperationException("Publisher not started. Call Start() first.");
+            }
+
+            long currentTimeMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var payload = new
+            {
+                simulatie_tijd_ms = frame * 1000
+            };
+
+            string jsonMessage = JsonSerializer.Serialize(payload);
+
+            _sensorPublisher.SendMoreFrame("tijd").SendFrame(jsonMessage);
+                Console.WriteLine(jsonMessage);
+            //Console.WriteLine($"Published: {jsonMessage}");
         }
 
-        long currentTimeMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        var payload = new
+        public static void StopSensorPub()
         {
-            simulatie_tijd_ms = frame * 1000
-        };
-
-        string jsonMessage = JsonSerializer.Serialize(payload);
-
-        _sensorPublisher.SendMoreFrame("tijd").SendFrame(jsonMessage);
-            Console.WriteLine(jsonMessage);
-        //Console.WriteLine($"Published: {jsonMessage}");
-    }
-
-
-
-    public static void StopSensorPub()
+            if (_sensorPublisher != null)
             {
-                if (_sensorPublisher != null)
-                {
-                    _sensorPublisher.Dispose();
-                    _sensorPublisher = null;
-                    Console.WriteLine("Publisher stopped.");
-                }
+                _sensorPublisher.Dispose();
+                _sensorPublisher = null;
+                Console.WriteLine("Publisher stopped.");
             }
+        }
 
         
         private static SubscriberSocket _stoplichtSubscriber;
@@ -89,8 +87,8 @@ public static void PublishTimeData(int frame)
                 throw new InvalidOperationException("Subscriber not started. Call Start() first.");
             }
                 
-                    var topic = _stoplichtSubscriber.ReceiveFrameStringAsync(); 
-                    var message = _stoplichtSubscriber.ReceiveFrameStringAsync();
+            var topic = _stoplichtSubscriber.ReceiveFrameStringAsync(); 
+            var message = _stoplichtSubscriber.ReceiveFrameStringAsync();
 
             Console.WriteLine($"Received: {topic} - {message}");
                 
@@ -106,7 +104,6 @@ public static void PublishTimeData(int frame)
             }
         }
     }
-
 }
 
     

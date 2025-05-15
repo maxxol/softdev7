@@ -77,23 +77,19 @@ namespace StopLichtSimCSharp
                             if (!result.ContainsKey(groupID))
                             {
                                 result[groupID] = new Dictionary<string, bool>
-                        {
-                            { "voor", false },
-                            { "achter", false }
-                        };
+                                {
+                                    { "voor", false },
+                                    { "achter", false }
+                                };
                             }
-
                             result[groupID][position] = node.Occupied;
                         }
                     }
                 }
             }
-
             string json = JsonConvert.SerializeObject(result, Formatting.Indented);
             return json;
             //Console.WriteLine(json);
         }
-
-
     }
 }

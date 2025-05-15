@@ -9,7 +9,7 @@ namespace StopLichtSimCSharp
     class RoadUser
     {
         public int PosX, PosY, Speed, NodeTravelIterator, LaneID;
-        public bool MoveToNextCheckNode(ref int posX, ref int posY, int roadUserSpeed, CheckPointNode[] checkPointNodes, int iterator, RoadUser roaduser)
+        public bool MoveToNextCheckNode(ref int posX, ref int posY, int roadUserSpeed, CheckPointNode[] checkPointNodes, Dictionary<string, string> nodeId, int iterator, RoadUser roaduser)
         {
             checkPointNodes[iterator].Occupied = true;
 
@@ -22,11 +22,10 @@ namespace StopLichtSimCSharp
             {
                 //Console.WriteLine("car has reached final point");
                 checkPointNodes[iterator].Occupied = false;
-
                 return true; 
             }
 
-            if (checkPointNodes[iterator + 1].Occupied == true) { return false; }// if next node is occupied
+            if (checkPointNodes[iterator + 1].Occupied == true || (checkPointNodes[iterator + 1].TrafficLightColor == "rood")) { return false; }// if next node is occupied
 
             int xDiff = checkPointNodes[iterator + 1].X - posX;
             int yDiff = checkPointNodes[iterator + 1].Y - posY;
