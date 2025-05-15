@@ -26,7 +26,7 @@ namespace StopLichtSimCSharp
                 return true; 
             }
 
-            if (checkPointNodes[iterator + 1].Occupied == true) { return false; }// if next node is occupied
+            if (checkPointNodes[iterator + 1].Occupied == true || (checkPointNodes[iterator + 1].TrafficLightColor == "rood")) { return false; }// if next node is occupied
 
 
 

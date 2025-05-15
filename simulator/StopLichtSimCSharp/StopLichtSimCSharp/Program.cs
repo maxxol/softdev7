@@ -59,9 +59,11 @@ namespace StopLichtSimCSharp
             RoadUser[] allRoadUsersArray = new RoadUser[0];
             Raylib.SetTargetFPS(20);
             // int scrollSpeed = 4;
+            ZeroMqHandler.StartStoplichtSub();
 
             ZeroMqHandler.StartSensorPub();
-            ZeroMqHandler.StartStoplichtSub();
+            Task.Run(() => ZeroMqHandler.ListenLoop());
+
             int testit = 0;
             while (!Raylib.WindowShouldClose())
 
@@ -74,8 +76,7 @@ namespace StopLichtSimCSharp
                 {
                     ZeroMqHandler.PublishSensorData(rijbaan_sensor_json);
                     ZeroMqHandler.PublishTimeData(testit);
-                    //Console.WriteLine("tests");
-                    //ZeroMqHandler.ListenStoplichtSub();
+
                 }
                 //Console.WriteLine(allRoadUsersArray.Length+" before");
                 allRoadUsersArray = spawner.spawnRoaduser(Lanes, allRoadUsersArray);
