@@ -12,22 +12,7 @@ using System.Xml.Linq;
 
 namespace StopLichtSimCSharp
 {
-    class CheckPointNode
-    {
-        public int NodeID;
-        public int X, Y;
-        public bool Occupied;
-        public string TrafficLightColor;
-
-        public CheckPointNode(int x, int y, bool occupied, int nodeid)
-        {
-            NodeID = nodeid;
-            X = x;
-            Y = y;
-            Occupied = occupied;
-            TrafficLightColor = "groen";
-        }
-    }
+    
 
     class Program
     {       
@@ -57,17 +42,16 @@ namespace StopLichtSimCSharp
             RoadSensors.fillDictionary();
             //RoadSensors.printDictionary();
 
-
             CheckPointNode[][] loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
             Lane[] Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
             RoadUser[] allRoadUsersArray = new RoadUser[0];
             Raylib.SetTargetFPS(20);
             // int scrollSpeed = 4;
             ZeroMqHandler.StartStoplichtSub();
-          //  var colour = Raylib_cs.Color.Red;
-          //  ZeroMqHandler.StartSensorPub();
+            // var colour = Raylib_cs.Color.Red;
+            ZeroMqHandler.StartSensorPub();
             TrafficLights traffic = new TrafficLights();
-            var trafficlights = traffic.TrafficLightSpawn();
+            var trafficlights = traffic.TrafficLightLoad();
             Task.Run(() => ZeroMqHandler.ListenLoop());
 
             int testit = 0;
@@ -117,11 +101,9 @@ namespace StopLichtSimCSharp
                 Raylib.ClearBackground(Raylib_cs.Color.Black);
                 Raylib.BeginMode2D(camera);
                 Raylib.DrawTexture(crossingroads, screenWidth / 2 - crossingroads.Width / 2, screenHeight / 2 - crossingroads.Height / 2 - 40, Raylib_cs.Color.White);
-
-                int counter = 0;
+                
                 foreach (var lane in Lanes)
-                {
-                    int noding = 0;
+                {                   
                     foreach (var node in lane.CheckPointNodes)
                     {
                         try
@@ -130,17 +112,16 @@ namespace StopLichtSimCSharp
                             {
                                 node.TrafficLightColor = Convert.ToString(nodeIdToTrafficLightColor.FirstOrDefault(x => x.Key == Convert.ToString(node.NodeID)).Value);
                                // Lanes[Convert.ToInt32(lane.LaneID)].addTrafficlight(Convert.ToInt32(nodeIdToTrafficLightColor.FirstOrDefault(x => x.Key == Convert.ToString(node.NodeID)).Key));
-                                Color color = TrafficLights.TrafficLightStatusIndividual(node.TrafficLightColor); //nodeIdToTrafficLightColor.Values.ElementAt(noding)
+                                Color color = TrafficLights.TrafficLightStatusIndividual(node.TrafficLightColor); 
                                 Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, color);
                             }
                         }
-                        catch { }
-                        
-                        noding++;
+                        catch 
+                        { 
+                        }                       
                     }
-                    counter++;
-
                 }
+
                 List<RoadUser> allRoadUsersArrayCopyList= new List<RoadUser>();
                 allRoadUsersArrayCopyList = allRoadUsersArray.ToList();
                 bool shouldBeRemoved;
@@ -151,7 +132,8 @@ namespace StopLichtSimCSharp
                      shouldBeRemoved = roaduser.MoveToNextCheckNode(ref roaduser.PosX, ref roaduser.PosY, roaduser.Speed, Lanes[roaduser.LaneID].CheckPointNodes, nodeIdToTrafficLightColor, roaduser.NodeTravelIterator, roaduser);
                     if (shouldBeRemoved) {
                         //Console.WriteLine("removing");
-                        allRoadUsersArrayCopyList.Remove(roaduser); }
+                        allRoadUsersArrayCopyList.Remove(roaduser); 
+                    }
                 }
 
                 allRoadUsersArray = allRoadUsersArrayCopyList.ToArray();
@@ -161,6 +143,7 @@ namespace StopLichtSimCSharp
                     loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
                     Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
                 }
+
                 //foreach (Lane lane in Lanes)
                 //{
                 //    foreach (var node in lane.CheckPointNodes)
@@ -174,10 +157,7 @@ namespace StopLichtSimCSharp
                 //            Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Green);
                 //        }
                 //    }
-                //}
-
-                
-                   
+                //}                  
 
                 //CheckPointNode trafficlight = Lanes[0].CheckPointNodes[10];                
                 //Raylib.DrawCircleV(new Vector2(Lanes[0].TrafficNode.X, Lanes[0].TrafficNode.Y), 3, Raylib_cs.Color.Red);

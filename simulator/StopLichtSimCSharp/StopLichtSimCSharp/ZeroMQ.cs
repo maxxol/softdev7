@@ -9,8 +9,8 @@ namespace StopLichtSimCSharp
     class ZeroMqHandler
     {
 
-        static string pubAdress = "tcp://10.121.17.195:5556"; //don't push your home wifi ip please thank you
-        static string subAdress = "tcp://10.121.17.195:5556"; //don't push your home wifi ip please thank you
+        static string pubAdress = "tcp://localhost:5556"; //don't push your home wifi ip please thank you
+        static string subAdress = "tcp://localhost:5556"; //don't push your home wifi ip please thank you
 
 
         private static PublisherSocket _sensorPublisher;
@@ -114,7 +114,6 @@ namespace StopLichtSimCSharp
         }
 
     }
-
 
 }
 
