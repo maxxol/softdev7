@@ -5,12 +5,10 @@
  */
 require('dotenv').config();
 const validate_env_data = require("./src/validate_env_data");
-const { getSockPub, getSockSub } = require("./src/sockets_setup");
-// const { updateTrafficLightStatus } = require("./src/handling_sensor_information");
-const { handleTrafficLightUpdate } = require("./src/handle_traffic_light_update");
+const { getSockPub } = require("./src/sockets_setup");
+const handleTrafficLightUpdate2 = require("./src/handle_traffic_light_update");
 const subscription = require('./src/subscription');
 const SensorDataContainer = require("./src/sensor_data_container")
-const { totalCrossingIdSet } = require('./src/utils');
 
 
 const validSensorsSchema = require("./config/topic_schemas/valid_sensors.json")
@@ -18,24 +16,22 @@ const sensorRijbaanSchema = require("./config/topic_schemas/sensor_rijbaan.json"
 const sensorSpeciaalSchema = require("./config/topic_schemas/sensor_speciaal.json")
 const priorityVehicleSchema = require("./config/topic_schemas/voorrangsvoertuig.json");
 const sensorBridgeSchema = require("./config/topic_schemas/sensor_bruggen.json")
+const timeSchema = require("./config/topic_schemas/tijd.json")
 let trafficLightStatus = require("./config/misc/trafficlight_status_initial.json");
+const roadwaySensorStatus = require("./config/misc/roadway_sensor_status_initial.json");
 
 
 validate_env_data.checkPorts()
 
 async function main() {
-
-    const socketPub = await getSockPub(process.env.PUB_PORT)
-    const passBoats = { isReady: false}; // isReady is set to true when a boat is detected on the sensor and the timer has expired
-    let Ncyclus = 1;
-    let doLetPriorityVehicleTrough = false;
-    
+    const socketPub = await getSockPub(process.env.PUB_PORT);
     const roadwayDataContainer = new SensorDataContainer(sensorRijbaanSchema);
     const specialDataContainer = new SensorDataContainer(sensorSpeciaalSchema);
     const priorityVehicleDataContainer = new SensorDataContainer(priorityVehicleSchema, validSensorsSchema);
     const bridgeDataContainer = new SensorDataContainer(sensorBridgeSchema);
+    const timeContainer = new SensorDataContainer(timeSchema);
     
-    roadwayDataContainer.updateStatus({});
+    roadwayDataContainer.updateStatus(roadwaySensorStatus);
     specialDataContainer.updateStatus({
         "brug_wegdek": false,
         "brug_water": false,
@@ -47,36 +43,17 @@ async function main() {
     bridgeDataContainer.updateStatus({
         "81": { state: "closed" },
     });
+    timeContainer.updateStatus({
+        simulatie_tijd_ms: 0
+    })
     
-    const simulatorStatus = {
-        roadway: roadwayDataContainer.status,
-        special: specialDataContainer.status,
-        priority_vehicle: priorityVehicleDataContainer.status,
-        bridge: bridgeDataContainer.status,
-    }
     socketPub.send(["", "Controller connected"]);
-
-    setInterval(() => {
-
-        // updateTrafficLightStatus(
-        //     trafficLightStatus,
-        //     roadwayDataContainer.status,
-        //     specialDataContainer.status,
-        //     priorityVehicleDataContainer.status,
-        //     bridgeDataContainer.status,
-        //     Ncyclus,
-        //     passBoats
-        // );
-        Ncyclus = handleTrafficLightUpdate(simulatorStatus, trafficLightStatus, Ncyclus, passBoats)
-        socketPub.send(["stoplichten", JSON.stringify(trafficLightStatus)]);
-        // Ncyclus++;
-    }, process.env.DEFAULT_CYCLE_MS || 9000);
-    subscription.handleSubscription(passBoats, roadwayDataContainer, specialDataContainer, priorityVehicleDataContainer, bridgeDataContainer)
-
+    const containers = [roadwayDataContainer, specialDataContainer, priorityVehicleDataContainer, bridgeDataContainer, timeContainer]
+    Promise.all([
+        handleTrafficLightUpdate2.updateTrafficLights(containers, trafficLightStatus, socketPub),
+        subscription.handleSubscription(roadwayDataContainer, specialDataContainer, priorityVehicleDataContainer, bridgeDataContainer, timeContainer)
+    ])
 }
+
+
 main()
-
-
-
-
-

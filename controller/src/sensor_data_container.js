@@ -8,7 +8,7 @@ const Ajv = require("ajv")
 /**
  * This class is a sensor data container, which validates and keeps track of the sensor-status send by the simulator.
  */
-class SensorDataContainer {
+class SimulatorDataContainer {
     constructor(schema, refSchema) {
         const ajv = new Ajv({ $data: true })
         if (refSchema) {
@@ -26,16 +26,15 @@ class SensorDataContainer {
      * @param {object} newStatus sensor status send from simulator
      */
     updateStatus(newStatus) {
-        if(process.env.doValidateIncommingData == "true") {
+        if (process.env.doValidateIncommingData == "true") {
             const valid = this.validate(newStatus)
-            if(!valid) {
+            if (!valid) {
                 console.warn("Recieved data from simulator was not in the correct JSON-format:")
                 console.warn(this.validate.errors)
             }
 
         }
         this.#status = newStatus
-        console.warn(this.#status);
         
     }
 
@@ -47,4 +46,4 @@ class SensorDataContainer {
     }
 }
 
-module.exports = SensorDataContainer
+module.exports = SimulatorDataContainer
