@@ -4,16 +4,16 @@
  */
 const { PASS_BOAT_STATES, bridgeIdSet, barrierIdSet, boatIdSet, trafficGoingTobridgeIdSet, TRAFFIC_LIGHT_COLORS  } = require("./utils")
 
-const TimeForSingleBoatPass = 29000 // amount of time it takes for a single boat to pass the bridge to the other side
-const TimeToWaitForBoatToTurn = 10000 // amount of time it takes for any boat in the queue to wait until it gets to pass 
+const TimeForSingleBoatPass = 30000 // amount of time it takes for a single boat to pass the bridge to the other side
+const TimeToWaitForBoatToTurn = 15000 // amount of time it takes for any boat in the queue to wait until it gets to pass 
 const TimeToWaitForNewBoats = 5000 // amount of time boats get to reach the sensor, before the bridge really closes
 /**
  * update the bridge and waterway based on the simulator data
  * @param {{
-*  roadway:{}, special:{brug_wegdek:boolean, brug_water:boolean, brug_file:boolean}, priority_vehicle:{queue:Array<{baan:string, simulatie_tijd_ms:number, prioriteit:number}>}, bridge:{"81":{"state":"dicht"|"open"}}, time:{simulatie_tijd_ms:number}
-* }} simulatorStatus 
-* @param {object} trafficLightStatus 
-* @param {{ state: PASS_BOAT_STATES }} bridgeState 
+ *  roadway:{}, special:{brug_wegdek:boolean, brug_water:boolean, brug_file:boolean}, priority_vehicle:{queue:Array<{baan:string, simulatie_tijd_ms:number, prioriteit:number}>}, bridge:{"81":{"state":"dicht"|"open"}}, time:{simulatie_tijd_ms:number}
+ * }} simulatorStatus 
+ * @param {object} trafficLightStatus 
+ * @param {{ state: PASS_BOAT_STATES }} bridgeState 
  */
 function updateBridge(simulatorStatus, trafficLightStatus, bridgeState) {
     
@@ -79,7 +79,7 @@ function updateBridge(simulatorStatus, trafficLightStatus, bridgeState) {
             }
         }
     } else if (isBridgeOpen) {
-
+        boatIdSet.forEach(id=>trafficLightStatus[id] = TRAFFIC_LIGHT_COLORS.RED)
         if(shouldLetBoatsTurn) {
             if(!isAwaitingForState) {
                 if((bridgeState.state <= PASS_BOAT_STATES.OPEN_BRIDGE || [PASS_BOAT_STATES.PASS_BOAT_NORTH, PASS_BOAT_STATES.STOP_BOAT, PASS_BOAT_STATES.BRIDGE_TRAFFIC_GREEN].includes(bridgeState.state) ) && isSensorTriggeredNorth) {
@@ -113,6 +113,8 @@ function updateBridge(simulatorStatus, trafficLightStatus, bridgeState) {
                     bridgeState.state = PASS_BOAT_STATES.BRIDGE_TRAFFIC_GREEN
                     // bridgeState.state = PASS_BOAT_STATES.AWAITING_BRIDGE_TRAFFIC_GREEN
                     // setTimeout(()=>bridgeState.state=PASS_BOAT_STATES.BRIDGE_TRAFFIC_GREEN, TimeToWaitForNewBoats)
+                } else { // if (bridgeState.state >= PASS_BOAT_STATES.OPEN_BRIDGE) {
+                    bridgeState.state = PASS_BOAT_STATES.CLOSE_BRIDGE
                 }
             }
         }
