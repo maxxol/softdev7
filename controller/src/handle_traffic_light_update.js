@@ -15,7 +15,7 @@ const { PASS_BOAT_STATES, crossingPedNOTIslandIdSet, TRAFFIC_LIGHT_COLORS } = re
 * @param {object} trafficLightStatus
 */
 async function updateTrafficLights(containers, trafficLightStatus, socketPub) {
-    const passBoats = { isReady: PASS_BOAT_STATES.DEFAULT}
+    const bridgeState = { state: PASS_BOAT_STATES.DEFAULT}
     let simulatorStatus
     let idQueue = []
     let greenSet = new Set()
@@ -31,7 +31,7 @@ async function updateTrafficLights(containers, trafficLightStatus, socketPub) {
         }
         if(simulatorStatus) {
             ({ stage, greenSet, idQueue } = updateCrossing(simulatorStatus, trafficLightStatus, greenSet, stage, idQueue))
-            updateBridge(simulatorStatus, trafficLightStatus, passBoats)
+            updateBridge(simulatorStatus, trafficLightStatus, bridgeState)
         }
         socketPub.send(["stoplichten", JSON.stringify(trafficLightStatus)])
         const sleepForMS = getAmountToSleepFor()
@@ -49,9 +49,9 @@ async function updateTrafficLights(containers, trafficLightStatus, socketPub) {
         let sleepForMS
         // pedestrians can walk these long scretces, give them additional time
         if (greenSet.has(crossingPedNOTIslandIdSet[0]) || greenSet.has(crossingPedNOTIslandIdSet[0])) {
-            sleepForMS = 3600
+            sleepForMS = 3700
         } else {
-            sleepForMS = 3200
+            sleepForMS = 3300
         }
         if (stage == TRAFFIC_LIGHT_COLORS.ORANGE) {}
         const { simulatie_tijd_ms } = simulatorStatus.time

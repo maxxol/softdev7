@@ -35,7 +35,7 @@ describe('updateCrossing', () => {
     ...mapSensorData(green_sets[1], { voor: true })
     },
       special: { brug_file: false },
-      bridge: { "81": { state: "dicht" } },
+      bridge: { "81.1": { state: "dicht" } },
       priority_vehicle: { queue: [] }
     }
 
@@ -70,7 +70,7 @@ describe('updateCrossing', () => {
 
   test('priority vehicle 1 sets bridge light green and skips stage change', () => {
     simulatorStatus.priority_vehicle.queue = [{ prioriteit: 1, baan: "1.1" }]
-    simulatorStatus.bridge["81"].state = "dicht"
+    simulatorStatus.bridge["81.1"].state = "dicht"
     trafficLightStatus["1.1"] = TRAFFIC_LIGHT_COLORS.RED
 
     const result = updateCrossing(simulatorStatus, trafficLightStatus, greenSet, TRAFFIC_LIGHT_COLORS.RED, idQueue)

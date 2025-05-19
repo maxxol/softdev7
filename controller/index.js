@@ -41,7 +41,7 @@ async function main() {
         queue: [],
     });
     bridgeDataContainer.updateStatus({
-        "81": { state: "closed" },
+        "81.1": { state: "closed" },
     });
     timeContainer.updateStatus({
         simulatie_tijd_ms: 0
