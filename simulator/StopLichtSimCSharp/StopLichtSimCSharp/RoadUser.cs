@@ -8,13 +8,39 @@ namespace StopLichtSimCSharp
 {
     class RoadUser
     {
-        int[] mergeLanesFinalNodeIDs = [548];
+        Random random = new Random();
+        int[] mergePointNodeIDs = [548, 478,356];
 
         public int PosX, PosY, Speed, NodeTravelIterator, LaneID;
         public bool MoveToNextCheckNode(ref int posX, ref int posY, int roadUserSpeed, CheckPointNode[] checkPointNodes, Dictionary<string, string> nodeId, int iterator, RoadUser roaduser)
         {
             checkPointNodes[iterator].Occupied = true;
 
+
+
+            //-------------------------------------------------------------------lane diverging---------------------------------------------------------
+            if (checkPointNodes[iterator].NodeID == 206 && random.Next(20) == 0)
+            {
+                checkPointNodes[iterator].Occupied = false;
+                roaduser.LaneID = 5;
+                roaduser.NodeTravelIterator = 0;
+                return false;
+            }
+            if (checkPointNodes[iterator].NodeID == 263 && random.Next(20) == 0)
+            {
+                checkPointNodes[iterator].Occupied = false;
+                roaduser.LaneID = 6;
+                roaduser.NodeTravelIterator = 0;
+                return false;
+            }
+            if (checkPointNodes[iterator].NodeID == 218 && random.Next(20) == 0)
+            {
+                checkPointNodes[iterator].Occupied = false;
+                roaduser.LaneID = 3;
+                roaduser.NodeTravelIterator = 0;
+                return false;
+            }
+            //-------------------------------------------------------------------end diverge-------------------------------------------------------------
             //Console.WriteLine("iterator used: " + iterator); //+ " " + checkPointNodes.Length);
             try
             {
@@ -25,8 +51,10 @@ namespace StopLichtSimCSharp
                 //Console.WriteLine("car has reached final point");
 
                 checkPointNodes[iterator].Occupied = false;
+                //Console.WriteLine(checkPointNodes[iterator].NodeID);
+                //-------------------------------------------------------------------lane merging---------------------------------------------------------
 
-                if (mergeLanesFinalNodeIDs.Contains(checkPointNodes[iterator].NodeID))//if this lane needs to merge into another lane
+                if (mergePointNodeIDs.Contains(checkPointNodes[iterator].NodeID))//if this lane needs to merge into another lane
                 { 
                     if (checkPointNodes[iterator].NodeID == 548)
                     {
@@ -34,7 +62,21 @@ namespace StopLichtSimCSharp
                         roaduser.NodeTravelIterator = 70;
                         return false;
                     }
-                    Console.WriteLine("merge lane"); 
+
+                    if (checkPointNodes[iterator].NodeID == 478)
+                    {
+                        roaduser.LaneID = 2;
+                        roaduser.NodeTravelIterator = 20;
+                        return false;
+                    }
+                    if (checkPointNodes[iterator].NodeID == 356)
+                    {
+                        roaduser.LaneID = 2;
+                        roaduser.NodeTravelIterator = 20;
+                        return false;
+                    }
+                    //-------------------------------------------------------------------end merging-------------------------------------------------------------
+
                     return true; 
                 } 
 

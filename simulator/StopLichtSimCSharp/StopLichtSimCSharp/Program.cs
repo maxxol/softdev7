@@ -181,7 +181,7 @@ namespace StopLichtSimCSharp
                     {
                         foreach (var node in lane.CheckPointNodes)
                         {
-                            if (new[] { 9, 6, 36, 33, 70, 67, 158,161,231,234,277,280,312,315,348,351,369,372,406,409,439,442,466,469,485,488,555,558 }.Contains(node.NodeID))
+                            if (new[] { 9, 6, 36, 33, 67,70,158,161,231,234,277,280,312,315,348,351,369,372,406,409,439,442,466,469,485,488,555,558 }.Contains(node.NodeID))
                             {
                                 Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.DarkPurple);
                             }
