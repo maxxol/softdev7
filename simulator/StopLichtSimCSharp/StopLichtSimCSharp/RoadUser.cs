@@ -26,8 +26,21 @@ namespace StopLichtSimCSharp
 
                 checkPointNodes[iterator].Occupied = false;
 
-                if (mergeLanesFinalNodeIDs.Contains(checkPointNodes[iterator].NodeID))//merge lanes
-                { /*Console.WriteLine("merge lane");*/ return true; } 
+                if (mergeLanesFinalNodeIDs.Contains(checkPointNodes[iterator].NodeID))//if this lane needs to merge into another lane
+                { 
+                    if (checkPointNodes[iterator].NodeID == 548)
+                    {
+                        roaduser.LaneID = 2;
+                        roaduser.NodeTravelIterator = 70;
+                        return false;
+                    }
+                    Console.WriteLine("merge lane"); 
+                    return true; 
+                } 
+
+
+
+
                 else {return true;}
 
             }
