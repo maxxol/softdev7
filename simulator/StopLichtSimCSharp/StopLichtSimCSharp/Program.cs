@@ -172,7 +172,7 @@ namespace StopLichtSimCSharp
                 //        Raylib.DrawCircleV(new Vector2(node.X ,node.Y), 10, Raylib_cs.Color.Green);
                 //    }
 
-                if (false) //change to true if you want the nodes rendered
+                if (true) //change to true if you want the nodes rendered
                 {
                     foreach (Lane lane in Lanes)
                     {
