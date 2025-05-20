@@ -53,7 +53,13 @@ namespace StopLichtSimCSharp
             //trafficlightnodes = trafficlights;
             TrafficLightStatus something = new TrafficLightStatus();
             something.Traffic();
-            trythis = trafficlightnodes.Where(entry => TrafficLightStatus.trafficlights[entry.Value] != entry.Value).ToDictionary(entry => entry.Key, entry => TrafficLightStatus.trafficlights[entry.Value]);            
+            try
+            {
+                trythis = trafficlightnodes.Where(entry => something.trafficlights[entry.Value] != entry.Value).ToDictionary(entry => entry.Key, entry => something.trafficlights[entry.Value]);
+            }
+            catch 
+            {
+            }
         }
     }
 }

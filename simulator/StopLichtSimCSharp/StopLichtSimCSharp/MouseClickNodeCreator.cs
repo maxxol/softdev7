@@ -24,13 +24,12 @@ namespace StopLichtSimCSharp
                     //nodeIDIncrementor++;
 
                 }
-                    if (Raylib.IsMouseButtonPressed(rightClickButton))
-                    {
-                        File.AppendAllText("../../../../../TXTData/NodeData.txt", "LANE END" + "\n");
+                if (Raylib.IsMouseButtonPressed(rightClickButton))
+                {
+                    File.AppendAllText("../../../../../TXTData/NodeData.txt", "LANE END" + "\n");
 
-                    }
-                    //Console.WriteLine(mousePos);
-                
+                }
+                //Console.WriteLine(mousePos);                
             }
         }
     }

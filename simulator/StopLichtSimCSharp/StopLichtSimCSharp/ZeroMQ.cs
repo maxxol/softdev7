@@ -31,30 +31,29 @@ namespace StopLichtSimCSharp
                 throw new InvalidOperationException("Publisher not started. Call Start() first.");
             }
 
-                _sensorPublisher.SendMoreFrame("sensoren_rijbaan").SendFrame(message);
-                //Console.WriteLine($"Published: {message}");
+            _sensorPublisher.SendMoreFrame("sensoren_rijbaan").SendFrame(message);
+            //Console.WriteLine($"Published: {message}");
+        }
+
+        public static void PublishTimeData(int frame)
+        {
+            if (_sensorPublisher == null)
+            {
+                throw new InvalidOperationException("Publisher not started. Call Start() first.");
             }
 
-            public static void PublishTimeData(int frame)
-                {
-                    if (_sensorPublisher == null)
-                    {
-                        throw new InvalidOperationException("Publisher not started. Call Start() first.");
-                    }
+            //long currentTimeMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var payload = new
+            {
+                simulatie_tijd_ms = frame * 100
+            };
 
-                    //long currentTimeMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                    var payload = new
-                    {
-                        simulatie_tijd_ms = frame * 100
-                    };
+            string jsonMessage = JsonSerializer.Serialize(payload);
 
-                    string jsonMessage = JsonSerializer.Serialize(payload);
-
-                    _sensorPublisher.SendMoreFrame("tijd").SendFrame(jsonMessage);
-                        //Console.WriteLine(jsonMessage);
-                    //Console.WriteLine($"Published: {jsonMessage}");
-                }
-
+            _sensorPublisher.SendMoreFrame("tijd").SendFrame(jsonMessage);
+                //Console.WriteLine(jsonMessage);
+            //Console.WriteLine($"Published: {jsonMessage}");
+        }
 
 
         public static void StopSensorPub()
@@ -83,14 +82,16 @@ namespace StopLichtSimCSharp
 
 
         public static void StopStoplichtSub()
+        {
+            if (_stoplichtSubscriber != null)
             {
-                if (_stoplichtSubscriber != null)
-                {
-                    _stoplichtSubscriber.Dispose();
-                    _stoplichtSubscriber = null;
-                    Console.WriteLine("Stoplichten subscriber stopped.");
-                }
+                _stoplichtSubscriber.Dispose();
+                _stoplichtSubscriber = null;
+                Console.WriteLine("Stoplichten subscriber stopped.");
             }
+        }
+        public static string topic;
+        public static string message;
         public static void ListenLoop()
         {
             var poller = new NetMQPoller { _stoplichtSubscriber };
@@ -99,8 +100,8 @@ namespace StopLichtSimCSharp
             {
                 try
                 {
-                    var topic = a.Socket.ReceiveFrameString();
-                    var message = a.Socket.ReceiveFrameString();
+                    topic = a.Socket.ReceiveFrameString();
+                    message = a.Socket.ReceiveFrameString();
                     Console.WriteLine($"Received: {topic} - {message}");
                 }
                 catch (Exception ex)

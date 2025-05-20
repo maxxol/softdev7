@@ -17,20 +17,15 @@ namespace StopLichtSimCSharp
         {
             LaneID = laneID;
             CheckPointNodes = checkPointNodes;
-
-
         }
         public void AddRoadUserToLane(RoadUser roadUser)
         {
             LaneUsers.Add(roadUser);
         }
-
         public void addTrafficlight(int nodeId)
         {
             //TrafficNode = CheckPointNodes[nodeId];
             TrafficNode = CheckPointNodes.Where(X => Convert.ToInt32(X.NodeID) == nodeId).First();
-
-        }
-        
+        }        
     }
 }
