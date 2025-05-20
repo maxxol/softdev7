@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "simulatie_tijd_ms": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": ["simulatie_tijd_ms"],
+  "additionalProperties": false
+}
