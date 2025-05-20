@@ -19,7 +19,7 @@ namespace StopLichtSimCSharp
         static void Main()
         {
            
-            bool nodeDevMode = true;
+            bool nodeDevMode = false;
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
             Raylib.InitWindow(800, 800, "Raylib C# Example");
@@ -45,7 +45,7 @@ namespace StopLichtSimCSharp
             CheckPointNode[][] loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
             Lane[] Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
             RoadUser[] allRoadUsersArray = new RoadUser[0];
-            Raylib.SetTargetFPS(20);
+            Raylib.SetTargetFPS(30);
             // int scrollSpeed = 4;
             ZeroMqHandler.StartStoplichtSub();
             // var colour = Raylib_cs.Color.Red;
@@ -55,8 +55,12 @@ namespace StopLichtSimCSharp
             Task.Run(() => ZeroMqHandler.ListenLoop());
 
             int testit = 0;
+            TrafficLightStatus something = new TrafficLightStatus();
+            something.Traffic();
             while (!Raylib.WindowShouldClose())
             {
+                TrafficLights trafficlight = new TrafficLights();
+                trafficlight.CompareIdsAndLoadColors();
                 testit++;
                 //RoadSensors.checkRoadSensors(Lanes);
                 string rijbaan_sensor_json = RoadSensors.buildJson(Lanes);
@@ -72,10 +76,9 @@ namespace StopLichtSimCSharp
                 //Console.WriteLine(allRoadUsersArray.Length+ " after");
 
                 MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(nodeDevMode);
+
                 
-                TrafficLights trafficlight = new TrafficLights();
-                trafficlight.CompareIdsAndLoadColors();
-       
+
                 Dictionary<string,string> nodeIdToTrafficLightColor = TrafficLights.trythis;
                 if (!nodeDevMode)
                 {
@@ -129,7 +132,7 @@ namespace StopLichtSimCSharp
                 {
                     shouldBeRemoved = false;
                     Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 7, Raylib_cs.Color.Maroon);
-                     shouldBeRemoved = roaduser.MoveToNextCheckNode(ref roaduser.PosX, ref roaduser.PosY, roaduser.Speed, Lanes[roaduser.LaneID].CheckPointNodes, nodeIdToTrafficLightColor, roaduser.NodeTravelIterator, roaduser);
+                    shouldBeRemoved = roaduser.MoveToNextCheckNode(ref roaduser.PosX, ref roaduser.PosY, roaduser.Speed, Lanes[roaduser.LaneID].CheckPointNodes, nodeIdToTrafficLightColor, roaduser.NodeTravelIterator, roaduser);
                     if (shouldBeRemoved) {
                         //Console.WriteLine("removing");
                         allRoadUsersArrayCopyList.Remove(roaduser); 
@@ -172,7 +175,7 @@ namespace StopLichtSimCSharp
                 //        Raylib.DrawCircleV(new Vector2(node.X ,node.Y), 10, Raylib_cs.Color.Green);
                 //    }
 
-                if (true) //change to true if you want the nodes rendered
+                if (false) //change to true if you want the nodes rendered
                 {
                     foreach (Lane lane in Lanes)
                     {
