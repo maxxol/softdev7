@@ -8,6 +8,8 @@ namespace StopLichtSimCSharp
 {
     class RoadUser
     {
+        int[] mergeLanesFinalNodeIDs = [];
+
         public int PosX, PosY, Speed, NodeTravelIterator, LaneID;
         public bool MoveToNextCheckNode(ref int posX, ref int posY, int roadUserSpeed, CheckPointNode[] checkPointNodes, Dictionary<string, string> nodeId, int iterator, RoadUser roaduser)
         {
@@ -18,11 +20,16 @@ namespace StopLichtSimCSharp
             {
                 int testValue = checkPointNodes[iterator + 1].X;
             }
-            catch 
+            catch
             {
                 //Console.WriteLine("car has reached final point");
+
                 checkPointNodes[iterator].Occupied = false;
-                return true; 
+
+                if (mergeLanesFinalNodeIDs.Contains(checkPointNodes[iterator].NodeID))//merge lanes
+                { Console.WriteLine("merge lane"); } 
+                else {return true;}
+
             }
 
             if (checkPointNodes[iterator + 1].Occupied == true || (checkPointNodes[iterator + 1].TrafficLightColor == "rood")) { return false; }// if next node is occupied

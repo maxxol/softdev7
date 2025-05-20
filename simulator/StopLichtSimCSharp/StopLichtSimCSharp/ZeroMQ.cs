@@ -9,8 +9,8 @@ namespace StopLichtSimCSharp
     class ZeroMqHandler
     {
 
-        static string pubAdress = "tcp://localhost:5556"; //don't push your home wifi ip please thank you
-        static string subAdress = "tcp://localhost:5556"; //don't push your home wifi ip please thank you
+        static string pubAdress = "tcp://10.121.17.182:5556"; //don't push your home wifi ip please thank you
+        static string subAdress = "tcp://10.121.17.214:5555"; //don't push your home wifi ip please thank you
 
 
         private static PublisherSocket _sensorPublisher;
@@ -90,8 +90,8 @@ namespace StopLichtSimCSharp
                 Console.WriteLine("Stoplichten subscriber stopped.");
             }
         }
-        public static string topic;
-        public static string message;
+        public static string topic = "";
+        public static string receivedMessage = "";
         public static void ListenLoop()
         {
             var poller = new NetMQPoller { _stoplichtSubscriber };
@@ -101,8 +101,8 @@ namespace StopLichtSimCSharp
                 try
                 {
                     topic = a.Socket.ReceiveFrameString();
-                    message = a.Socket.ReceiveFrameString();
-                    Console.WriteLine($"Received: {topic} - {message}");
+                    receivedMessage = a.Socket.ReceiveFrameString();
+                    Console.WriteLine($"Received: {topic} - {receivedMessage}");
                 }
                 catch (Exception ex)
                 {

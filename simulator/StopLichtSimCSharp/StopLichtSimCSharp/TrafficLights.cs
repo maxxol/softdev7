@@ -36,7 +36,7 @@ namespace StopLichtSimCSharp
             {
                 TrafficLightColor = Color.Red;               
             }
-            if (givencolor == "geel")
+            if (givencolor == "oranje")
             {
                 TrafficLightColor = Color.Yellow;
             }

@@ -79,11 +79,15 @@ namespace StopLichtSimCSharp
             //{
             //    color = "9.1:rood";
             //}
-            string[] otherpart = controllermessage.Replace("'", "").Replace("{", "").Replace("}", "").Replace(" ", "").Split(',');
+            string[] otherpart = ZeroMqHandler.receivedMessage.Replace("'", "").Replace("{", "").Replace("}", "").Replace("\\", "").Replace("\"","").Replace(" ", "").Split(',');
             foreach (string stoplicht in otherpart)
             {
-                string[] part = stoplicht.Split(':');
-                trafficlights.TryAdd(part[0],part[1]); 
+                try
+                {
+                    string[] part = stoplicht.Split(':');
+                    trafficlights.TryAdd(part[0], part[1]);
+                }
+                catch { }
             }
             
                 
