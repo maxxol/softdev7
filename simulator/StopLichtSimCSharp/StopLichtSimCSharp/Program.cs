@@ -45,7 +45,7 @@ namespace StopLichtSimCSharp
             CheckPointNode[][] loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
             Lane[] Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
             RoadUser[] allRoadUsersArray = new RoadUser[0];
-            Raylib.SetTargetFPS(20);
+            Raylib.SetTargetFPS(120);
             // int scrollSpeed = 4;
             ZeroMqHandler.StartStoplichtSub();
             // var colour = Raylib_cs.Color.Red;
@@ -172,7 +172,7 @@ namespace StopLichtSimCSharp
                 //        Raylib.DrawCircleV(new Vector2(node.X ,node.Y), 10, Raylib_cs.Color.Green);
                 //    }
 
-                if (true) //change to true if you want the nodes rendered
+                if (false) //change to true if you want the nodes rendered
                 {
                     foreach (Lane lane in Lanes)
                     {
