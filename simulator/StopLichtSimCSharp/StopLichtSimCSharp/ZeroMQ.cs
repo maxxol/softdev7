@@ -10,7 +10,7 @@ namespace StopLichtSimCSharp
     {
 
         static string pubAdress = "tcp://10.121.17.182:5556"; //don't push your home wifi ip please thank you
-        static string subAdress = "tcp://10.121.17.214:5555"; //don't push your home wifi ip please thank you
+        static string subAdress = "tcp://10.121.17.182:5555"; //don't push your home wifi ip please thank you
 
 
         private static PublisherSocket _sensorPublisher;

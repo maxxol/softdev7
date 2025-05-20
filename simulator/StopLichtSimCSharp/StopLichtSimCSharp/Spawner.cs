@@ -13,12 +13,15 @@ namespace StopLichtSimCSharp
         int numberOfPedLanes = 0;
         int numberOfBoatLanes = 0;
 
+        int[] forbiddenSpawnLanes = [3, 5, 6];
         public RoadUser[] spawnRoaduser(Lane[] Lanes, RoadUser[] allRoadUsersArray)
         {
             List<RoadUser> allRoadUsersList = allRoadUsersArray.ToList();
             var rand = new Random();
             int chosenLaneNumber = rand.Next(Lanes.Length);
-            //chosenLaneNumber = 12;
+            if (forbiddenSpawnLanes.Contains(chosenLaneNumber)) { return allRoadUsersList.ToArray(); }
+
+            //chosenLaneNumber = 4;
             Lane chosenLane = Lanes[chosenLaneNumber]; //choose random lane to spawn a car
             if (rand.Next(10) == 0) { 
                 if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber, allRoadUsersList); } //car
