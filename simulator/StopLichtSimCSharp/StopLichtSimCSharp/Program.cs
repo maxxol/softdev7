@@ -45,7 +45,7 @@ namespace StopLichtSimCSharp
             CheckPointNode[][] loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
             Lane[] Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
             RoadUser[] allRoadUsersArray = new RoadUser[0];
-            Raylib.SetTargetFPS(30);
+            Raylib.SetTargetFPS(40);
             // int scrollSpeed = 4;
             ZeroMqHandler.StartStoplichtSub();
             // var colour = Raylib_cs.Color.Red;
@@ -131,7 +131,24 @@ namespace StopLichtSimCSharp
                 foreach(RoadUser roaduser in allRoadUsersArray)
                 {
                     shouldBeRemoved = false;
-                    Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 7, Raylib_cs.Color.Maroon);
+                    if (roaduser is Car)
+                    {
+                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 7, Raylib_cs.Color.Maroon);
+                    }
+                    else if(roaduser is Bike){
+                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 4, Raylib_cs.Color.Red);
+
+                    }
+                    else if (roaduser is Pedestrian)
+                    {
+                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 3, Raylib_cs.Color.Red);
+
+                    }
+                    else if (roaduser is Boat)
+                    {
+                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 10, Raylib_cs.Color.Red);
+
+                    }
                     shouldBeRemoved = roaduser.MoveToNextCheckNode(ref roaduser.PosX, ref roaduser.PosY, roaduser.Speed, Lanes[roaduser.LaneID].CheckPointNodes, nodeIdToTrafficLightColor, roaduser.NodeTravelIterator, roaduser);
                     if (shouldBeRemoved) {
                         //Console.WriteLine("removing");
@@ -175,7 +192,7 @@ namespace StopLichtSimCSharp
                 //        Raylib.DrawCircleV(new Vector2(node.X ,node.Y), 10, Raylib_cs.Color.Green);
                 //    }
 
-                if (true) //change to true if you want the nodes rendered
+                if (nodeDevMode) //change to true if you want the nodes rendered
                 {
                     foreach (Lane lane in Lanes)
                     {

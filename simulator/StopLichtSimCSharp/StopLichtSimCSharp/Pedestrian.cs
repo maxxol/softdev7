@@ -13,7 +13,7 @@ namespace StopLichtSimCSharp
             PosX = x;
             PosY = y;
             LaneID = laneid;
-            Speed = 2;
+            Speed = 1;
             NodeTravelIterator = 0;
         }
     }
