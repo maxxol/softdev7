@@ -58,6 +58,8 @@ namespace StopLichtSimCSharp
                 }
             }
         }
+
+        
         public static string buildJson(Lane[] lanes)
         {
             var result = new Dictionary<string, Dictionary<string, bool>>();
