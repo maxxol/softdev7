@@ -19,7 +19,10 @@ namespace StopLichtSimCSharp
                     {
 
                     }
-                    catch { }
+                    catch 
+                    {
+                    
+                    }
                 }
             }
         }

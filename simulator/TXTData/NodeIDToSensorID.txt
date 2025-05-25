@@ -26,3 +26,5 @@
 36:11.1.voor
 67:12.1.achter
 70:12.1.voor
+9999:81.1.brug_wegdek
+9998:81.1.brug_water

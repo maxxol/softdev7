@@ -19,7 +19,7 @@ namespace StopLichtSimCSharp
         static void Main()
         {
            
-            bool nodeDevMode = true;
+            bool nodeDevMode = false;
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
             Raylib.InitWindow(800, 800, "Raylib C# Example");
@@ -133,20 +133,20 @@ namespace StopLichtSimCSharp
                     shouldBeRemoved = false;
                     if (roaduser is Car)
                     {
-                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 7, Raylib_cs.Color.Maroon);
+                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 7, Raylib_cs.Color.Magenta);
                     }
                     else if(roaduser is Bike){
-                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 4, Raylib_cs.Color.Red);
+                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 4, Raylib_cs.Color.Magenta);
 
                     }
                     else if (roaduser is Pedestrian)
                     {
-                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 3, Raylib_cs.Color.Red);
+                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 3, Raylib_cs.Color.Magenta);
 
                     }
                     else if (roaduser is Boat)
                     {
-                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 10, Raylib_cs.Color.Red);
+                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 10, Raylib_cs.Color.Magenta);
 
                     }
                     shouldBeRemoved = roaduser.MoveToNextCheckNode(ref roaduser.PosX, ref roaduser.PosY, roaduser.Speed, Lanes[roaduser.LaneID].CheckPointNodes, nodeIdToTrafficLightColor, roaduser.NodeTravelIterator, roaduser);
@@ -198,7 +198,7 @@ namespace StopLichtSimCSharp
                     {
                         foreach (var node in lane.CheckPointNodes)
                         {
-                            if (new[] { 9, 6, 36, 33, 67,70,158,161,231,234,277,280,312,315,348,351,369,372,406,409,439,442,466,469,485,488,555,558 }.Contains(node.NodeID))
+                            if (new[] { 9, 6, 36, 33, 67,70,158,161,231,234,277,280,312,315,348,351,369,372,406,409,439,442,466,469,485,488,555,558, 1040, 9998, 9999 }.Contains(node.NodeID))
                             {
                                 Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.DarkPurple);
                             }

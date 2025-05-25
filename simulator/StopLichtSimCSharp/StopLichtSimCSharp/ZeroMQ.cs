@@ -9,7 +9,7 @@ namespace StopLichtSimCSharp
     class ZeroMqHandler
     {
 
-        static string pubAdress = "tcp://localhost:5556"; //don't push your home wifi ip please thank you
+        static string pubAdress = "tcp://localhost:5557"; //don't push your home wifi ip please thank you
         static string subAdress = "tcp://localhost:5555"; //don't push your home wifi ip please thank you
 
 
@@ -32,6 +32,8 @@ namespace StopLichtSimCSharp
             }
 
             _sensorPublisher.SendMoreFrame("sensoren_rijbaan").SendFrame(message);
+            _sensorPublisher.SendMoreFrame("sensoren_bruggen").SendFrame(message);
+
             //Console.WriteLine($"Published: {message}");
         }
 
