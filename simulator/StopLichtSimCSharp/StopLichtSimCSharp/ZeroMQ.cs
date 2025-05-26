@@ -9,8 +9,8 @@ namespace StopLichtSimCSharp
     class ZeroMqHandler
     {
 
-        static string pubAdress = "tcp://localhost:5557"; //don't push your home wifi ip please thank you
-        static string subAdress = "tcp://localhost:5555"; //don't push your home wifi ip please thank you
+        static string pubAdress = "tcp://10.121.17.182:5556"; //don't push your home wifi ip please thank you
+        static string subAdress = "tcp://10.121.17.182:5555"; //don't push your home wifi ip please thank you
 
 
         private static PublisherSocket _sensorPublisher;
@@ -104,7 +104,7 @@ namespace StopLichtSimCSharp
                 {
                     topic = a.Socket.ReceiveFrameString();
                     receivedMessage = a.Socket.ReceiveFrameString();
-                    Console.WriteLine($"Received: {topic} - {receivedMessage}");
+                    //Console.WriteLine($"Received: {topic} - {receivedMessage}");
                 }
                 catch (Exception ex)
                 {
