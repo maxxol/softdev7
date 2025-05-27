@@ -11,8 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ajv": "^8.17.1",
     "dotenv": "^16.4.7",
     "nodemon": "^3.1.9",
+    "schema-to-yup": "^1.12.18",
     "yup": "^1.6.1",
     "zeromq": "^6.3.0"
   },
