@@ -1,10 +1,8 @@
 const { updateCrossing } = require('../src/crossing')
 const {
   TRAFFIC_LIGHT_COLORS,
-  crossingPedNOTIslandIdSet,
-  crossingPedIslandIdSet,
-  green_sets,
-  crossingIdSet
+  GREEN_SETS,
+  ID_SETS
 } = require('../src/utils')
 
 describe('updateCrossing', () => {
@@ -17,30 +15,30 @@ describe('updateCrossing', () => {
     trafficLightStatus = {}
 
     // Initialize all green set lights to RED
-    Object.values(green_sets[1]).forEach(id => {
+    Object.values(GREEN_SETS[1]).forEach(id => {
       trafficLightStatus[id] = TRAFFIC_LIGHT_COLORS.RED
     })
 
     // Set all pedestrian lights to ORANGE
-    crossingPedNOTIslandIdSet.forEach(id => {
+    ID_SETS.crossing.pedNOTIsland.forEach(id => {
       trafficLightStatus[id] = TRAFFIC_LIGHT_COLORS.ORANGE
     })
-    crossingPedIslandIdSet.forEach(id => {
+    ID_SETS.crossing.pedIsland.forEach(id => {
       trafficLightStatus[id] = TRAFFIC_LIGHT_COLORS.ORANGE
     })
 
     simulatorStatus = {
       roadway: {
-    ...mapSensorData([...crossingIdSet], { voor: false }),
-    ...mapSensorData(green_sets[1], { voor: true })
+    ...mapSensorData([...ID_SETS.crossing.total], { voor: false }),
+    ...mapSensorData(GREEN_SETS[1], { voor: true })
     },
       special: { brug_file: false },
       bridge: { "81.1": { state: "dicht" } },
       priority_vehicle: { queue: [] }
     }
 
-    greenSet = new Set(green_sets[1])
-    idQueue = Object.values(green_sets[2]) // unused in GREEN stage but provided for shape
+    greenSet = new Set(GREEN_SETS[1])
+    idQueue = Object.values(GREEN_SETS[2]) // unused in GREEN stage but provided for shape
 
 
       function mapSensorData(ids, value) {
@@ -82,11 +80,11 @@ describe('updateCrossing', () => {
   test('pedestrians on NOT island turn green, island stays red during GREEN stage', () => {
     const result = updateCrossing(simulatorStatus, trafficLightStatus, greenSet, TRAFFIC_LIGHT_COLORS.GREEN, idQueue)
 
-    crossingPedNOTIslandIdSet.forEach(id => {
+    ID_SETS.crossing.pedNOTIsland.forEach(id => {
       expect(trafficLightStatus[id]).toBe(TRAFFIC_LIGHT_COLORS.GREEN)
     })
 
-    crossingPedIslandIdSet.forEach(id => {
+    ID_SETS.crossing.pedIsland.forEach(id => {
       expect(trafficLightStatus[id]).toBe(TRAFFIC_LIGHT_COLORS.RED)
     })
 
@@ -95,7 +93,7 @@ describe('updateCrossing', () => {
 
   test('traffic to bridge stays RED when brug_file is active', () => {
     simulatorStatus.special.brug_file = true
-    const bridgeTargetingSet = new Set(["1.1"]) // Assuming this one is in trafficGoingTobridgeIdSet
+    const bridgeTargetingSet = new Set(["1.1"]) // Assuming this one is in ID_SETS.crossing.pedIsland
     greenSet = bridgeTargetingSet
     trafficLightStatus["1.1"] = TRAFFIC_LIGHT_COLORS.RED
 
