@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace StopLichtSimCSharp
 {
     class Car : RoadUser
-    {   public Car(int x, int y, int laneid)
+    { 
+        public Car(int x, int y, int laneid)
         {
             PosX = x;
             PosY = y;

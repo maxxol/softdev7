@@ -20,15 +20,15 @@ namespace StopLichtSimCSharp
                     {
                         Console.WriteLine(mousePos);
 
-                        File.AppendAllText("../../../../../NodeData/NodeData.txt", mousePos.ToString() + ". " + nodeIDIncrementor.ToString()+ "\n");
-                        nodeIDIncrementor++;
+                      //  File.AppendAllText("../../../../../NodeData/TXTData.txt", mousePos.ToString() + ": " + nodeIDIncrementor.ToString()+ "\n");
+                     //   nodeIDIncrementor++;
 
                     }
                     if (Raylib.IsMouseButtonPressed(rightClickButton))
                     {
-                        File.AppendAllText("../../../../../NodeData/NodeData.txt", "LANE END" + "\n");
-
-                    }
+                      //  File.AppendAllText("../../../../../NodeData/TXTData.txt", "LANE END" + "\n");
+                       
+                    }                 
                     //Console.WriteLine(mousePos);
                 
             }
