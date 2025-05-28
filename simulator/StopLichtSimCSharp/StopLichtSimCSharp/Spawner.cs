@@ -8,16 +8,21 @@ namespace StopLichtSimCSharp
 {
     class Spawner
     {
-        int numberOfCarLanes = 3; //update manually when nodes have been set.
-        int numberOfBikeLanes = 0;
-        int numberOfPedLanes = 0;
-        int numberOfBoatLanes = 0;
+        int numberOfCarLanes = 13; //update manually when nodes have been set.
+        int numberOfBikeLanes = 9;
+        int numberOfPedLanes = 7;
+        int numberOfBoatLanes = 2;
 
+        int[] forbiddenSpawnLanes = [3, 5, 6,13,15,17,19,24,26];
         public RoadUser[] spawnRoaduser(Lane[] Lanes, RoadUser[] allRoadUsersArray)
         {
             List<RoadUser> allRoadUsersList = allRoadUsersArray.ToList();
             var rand = new Random();
             int chosenLaneNumber = rand.Next(Lanes.Length);
+            //chosenLaneNumber = 26;
+            if (forbiddenSpawnLanes.Contains(chosenLaneNumber)) { return allRoadUsersList.ToArray(); }
+            //if (chosenLaneNumber <= numberOfCarLanes+numberOfBikeLanes) { return allRoadUsersList.ToArray(); }
+            //chosenLaneNumber = 4;
             Lane chosenLane = Lanes[chosenLaneNumber]; //choose random lane to spawn a car
             if (rand.Next(10) == 0) { 
                 if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber, allRoadUsersList); } //car

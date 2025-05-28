@@ -1,6 +1,7 @@
 ﻿using Raylib_cs;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.OleDb;
 using System.Linq;
 using System.Text;
@@ -12,10 +13,13 @@ namespace StopLichtSimCSharp
     {
         public static Color TrafficLightColor;
         public static Dictionary<string, string> trafficlightnodes = new Dictionary<string, string>();
-        public static int TrafficLightID;
+       // public static int TrafficLightID;
+
+        public static Dictionary<string, string> trythis =  new Dictionary<string, string>();
+
         string[] trafficlightcoords = File.ReadAllLines("../../../../../NodeData/TrafficLightIDs.txt");
        
-        public Dictionary<string, string> TrafficLightSpawn()
+        public Dictionary<string, string> TrafficLightLoad()
         {
             //lane 1 node 10, lane 2 node 37, lane 3 node 72
             foreach (string node in trafficlightcoords)
@@ -26,42 +30,36 @@ namespace StopLichtSimCSharp
             return trafficlightnodes;
         }
 
-        public static void TrafficLightStatusChange(bool turnOnNodeCreationByClicking)
-        {                       
-            if (Raylib.IsMouseButtonPressed(MouseButton.Middle))
+        public static Color TrafficLightStatusIndividual(string givencolor)
+        {
+            if (givencolor == "rood")
+            {
+                TrafficLightColor = Color.Red;               
+            }
+            if (givencolor == "oranje")
             {
                 TrafficLightColor = Color.Yellow;
             }
-            if (Raylib.IsMouseButtonPressed(MouseButton.Left))
-            {
-                TrafficLightColor = Color.Red;
-            }
-            if (Raylib.IsMouseButtonPressed(MouseButton.Right))
+            if (givencolor == "groen")
             {
                 TrafficLightColor = Color.Green;
             }
+            return TrafficLightColor;
         }
-
         //Entry van TrafficLightStatus = key 10.1, value rood
         //Entry van TrafficlightNodes =  key 10, value 10.1
-        public void TrafficLightStatusChangeSingular(/*Dictionary<int,string> trafficlights*/)
+        public void CompareIdsAndLoadColors()
         {
             //trafficlightnodes = trafficlights;
             TrafficLightStatus something = new TrafficLightStatus();
             something.Traffic();
-            var lighttochange = trafficlightnodes.Where(entry => TrafficLightStatus.trafficlights[entry.Value] != entry.Value).ToDictionary(entry => entry.Key, entry => TrafficLightStatus.trafficlights[entry.Value]);
-            //foreach (var light in lighttochange)
-            //{
-
-            //}
-            //var 
-            //if (trafficlightnodes[value].Equals(TrafficLightStatus.trafficlights[value]))
-            //{
-            //    Console.Write(value);
-            //}
-          
-           // TrafficLightID = Convert.ToInt32(lighttochange.Value);
-            //output: 10            
+            try
+            {
+                trythis = trafficlightnodes.Where(entry => something.trafficlights[entry.Value] != entry.Value).ToDictionary(entry => entry.Key, entry => something.trafficlights[entry.Value]);
+            }
+            catch 
+            {
+            }
         }
     }
 }
