@@ -20,6 +20,7 @@ namespace StopLichtSimCSharp
         {
            
             bool nodeDevMode = true;
+            bool nodeDevMode = true;
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
             Raylib.InitWindow(800, 800, "Terrible trafficlight sim, omg why is this a thing");
@@ -118,7 +119,7 @@ namespace StopLichtSimCSharp
                                 node.TrafficLightColor = Convert.ToString(nodeIdToTrafficLightColor.FirstOrDefault(x => x.Key == Convert.ToString(node.NodeID)).Value);
                                // Lanes[Convert.ToInt32(lane.LaneID)].addTrafficlight(Convert.ToInt32(nodeIdToTrafficLightColor.FirstOrDefault(x => x.Key == Convert.ToString(node.NodeID)).Key));
                                 Color color = TrafficLights.TrafficLightStatusIndividual(node.TrafficLightColor); 
-                                Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, color);
+                                Raylib.DrawCircleV(new Vector2(node.X, node.Y), 4, color);
                             }
                         }
                         catch 
@@ -160,11 +161,11 @@ namespace StopLichtSimCSharp
 
                 allRoadUsersArray = allRoadUsersArrayCopyList.ToArray();
 
-                if (nodeDevMode)
-                {
-                    loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
-                    Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
-                }
+                //if (nodeDevMode)
+                //{
+                //    loadedNodesArrayArray = TXTFileNodeLoader.LoadNodesFromTXT();
+                //    Lanes = LaneCreator.CreateLanesFrom2dArray(loadedNodesArrayArray);
+                //}
 
                 //foreach (Lane lane in Lanes)
                 //{
@@ -202,16 +203,16 @@ namespace StopLichtSimCSharp
                         {
                             if (new[] { 9, 6, 36, 33, 67,70,158,161,231,234,277,280,312,315,348,351,369,372,406,409,439,442,466,469,485,488,555,558, 636, 641, 642, 656, 688, 689, 747, 748,749,753,754, 862, 927, 928, 933, 934, 940, 941, 968, 975, 1032, 1033,1036,1037,1040,1049,9998,9999 }.Contains(node.NodeID))
                             {
-                                Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.DarkPurple);
+                                Raylib.DrawCircleV(new Vector2(node.X, node.Y), 2, Raylib_cs.Color.DarkPurple);
                             }
                             
                             else if (node.Occupied)
                             {
-                                Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Yellow);
+                                Raylib.DrawCircleV(new Vector2(node.X, node.Y), 2, Raylib_cs.Color.Yellow);
                             }
                             else if (!node.Occupied)
                             {
-                                Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.Green);
+                                Raylib.DrawCircleV(new Vector2(node.X, node.Y), 2, Raylib_cs.Color.Green);
                             }
                             
                             else
