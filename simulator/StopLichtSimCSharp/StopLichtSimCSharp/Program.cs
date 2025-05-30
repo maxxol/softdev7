@@ -1,5 +1,4 @@
-
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Raylib_cs;
 using System.Numerics;
@@ -19,7 +18,6 @@ namespace StopLichtSimCSharp
         static void Main()
         {
            
-            bool nodeDevMode = true;
             bool nodeDevMode = true;
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
