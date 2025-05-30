@@ -9,34 +9,29 @@ namespace StopLichtSimCSharp
 {
     internal class TrafficLightStatus
     {
-        // public string[] array = { "rood", "oranje", "groen" };
-        public static Dictionary<string, string> trafficlights = new Dictionary<string, string>();
-        
-        public string Traffic()
+        public Dictionary<string, string> trafficlights = new Dictionary<string, string>();
+        public void Traffic()
         {
-            Console.WriteLine("write the colorname");
-            string color = "";// Console.ReadLine();
-            for (int i = 0; i < 3; i++)
-            {
-                if (i == 0)
-                {
-                    color = "10.1:rood";
-                }
-                else if (i == 1)
-                {
-                    color = "12.1:geel";
-                    
-                }
-                else
-                {
-                    color = "11.1:groen";
-                }
-                string[] part = color.Split(':');
-                trafficlights.TryAdd(part[0], part[1]);  //10.1:rood
-            }
+            //Console.WriteLine("write the colorname");
+            // string message = "";
 
-            // Raylib.Color
-            return color;
+            Random randy = new Random();
+            int randycolor = randy.Next(0, 3);
+            string[] color = { "rood", "groen", "geel" };
+            
+
+            string controllermessage = $"'1.1': {color[randycolor]}, '2.1': {color[randycolor]}, '10.1': {color[randycolor]}, '11.1':{color[randycolor]}, '12.1': {color[randycolor]}, '3.1': {color[randycolor]}, '4.1': {color[randycolor]}, '5.1': {color[randycolor]}, '2.2': {color[randycolor]}, '6.1': {color[randycolor]}, '7.1': {color[randycolor]}, '8.1': {color[randycolor]}, '8.2': {color[randycolor]}, '9.1': {color[randycolor]}";
+
+            string[] otherpart = ZeroMqHandler.receivedMessage.Replace("'", "").Replace("{", "").Replace("}", "").Replace("\\", "").Replace("\"", "").Replace(" ", "").Split(',');
+            foreach (string stoplicht in otherpart)
+            {
+                try
+                {
+                    string[] part = stoplicht.Split(':');
+                    trafficlights.TryAdd(part[0], part[1]);
+                }
+                catch { }
+            }
         }
     }
 }
