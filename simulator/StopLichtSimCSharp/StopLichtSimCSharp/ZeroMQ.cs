@@ -2,90 +2,124 @@
 using System.Threading;
 using NetMQ;
 using NetMQ.Sockets;
+using System.Text.Json; // Make sure you have this using directive
 
 namespace StopLichtSimCSharp
 {
     class ZeroMqHandler
     {
 
-        static string communicationIPAddress = "tcp://localhost:5555"; //don't push your home wifi ip please thank you
+        static string pubAdress = "tcp://localhost:5556"; //don't push your home wifi ip please thank you
+        static string subAdress = "tcp://localhost:5555"; //don't push your home wifi ip please thank you
 
 
+        private static PublisherSocket _sensorPublisher;
 
-
-            private static PublisherSocket _sensorPublisher;
-
-            public static void StartSensorPub()
-            {
-                if (_sensorPublisher != null) return;
+        public static void StartSensorPub()
+        {
+            if (_sensorPublisher != null) return;
 
                 _sensorPublisher = new PublisherSocket();
-                _sensorPublisher.Bind(communicationIPAddress);
+                _sensorPublisher.Bind(pubAdress);
                 Console.WriteLine("Publisher started.");
+        }
+
+        public static void PublishSensorData(string roadmessage, string bridgemessage, string specialmessage)
+        {
+            if (_sensorPublisher == null)
+            {
+                throw new InvalidOperationException("Publisher not started. Call Start() first.");
             }
 
-            public static void PublishSensorData(string message)
-            {
-                if (_sensorPublisher == null)
-                {
-                    throw new InvalidOperationException("Publisher not started. Call Start() first.");
-                }
+            _sensorPublisher.SendMoreFrame("sensoren_rijbaan").SendFrame(roadmessage);
+            _sensorPublisher.SendMoreFrame("sensoren_bruggen").SendFrame(bridgemessage);
+            _sensorPublisher.SendMoreFrame("sensoren_speciaal").SendFrame(specialmessage);
 
-                _sensorPublisher.SendMoreFrame("sensor").SendFrame(message);
-                //Console.WriteLine($"Published: {message}");
+            //Console.WriteLine($"Published: {message}");
+        }
+
+        public static void PublishTimeData(int frame)
+        {
+            if (_sensorPublisher == null)
+            {
+                throw new InvalidOperationException("Publisher not started. Call Start() first.");
             }
 
-            public static void StopSensorPub()
+            //long currentTimeMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var payload = new
             {
-                if (_sensorPublisher != null)
-                {
-                    _sensorPublisher.Dispose();
-                    _sensorPublisher = null;
-                    Console.WriteLine("Publisher stopped.");
-                }
-            }
+                simulatie_tijd_ms = frame * 100
+            };
 
-        
-            private static SubscriberSocket _stoplichtSubscriber;
+            string jsonMessage = JsonSerializer.Serialize(payload);
 
-            public static void StartStoplichtSub()
+            _sensorPublisher.SendMoreFrame("tijd").SendFrame(jsonMessage);
+                //Console.WriteLine(jsonMessage);
+            //Console.WriteLine($"Published: {jsonMessage}");
+        }
+
+
+        public static void StopSensorPub()
+        {
+            if (_sensorPublisher != null)
             {
-                if (_stoplichtSubscriber != null) return;
-
-                _stoplichtSubscriber = new SubscriberSocket();
-                _stoplichtSubscriber.Connect(communicationIPAddress);
-                _stoplichtSubscriber.Subscribe("sensor");
-
-                Console.WriteLine("Stoplichten subscriber started.");
-            }
-
-            public static void ListenStoplichtSub()
-            {
-                if (_stoplichtSubscriber == null)
-                {
-                    throw new InvalidOperationException("Subscriber not started. Call Start() first.");
-                }
-
-                
-                    string topic = _stoplichtSubscriber.ReceiveFrameString();
-                    string message = _stoplichtSubscriber.ReceiveFrameString();
-
-                    Console.WriteLine($"Received: {topic} - {message}");
-                
-            }
-
-            public static void StopStoplichtSub()
-            {
-                if (_stoplichtSubscriber != null)
-                {
-                    _stoplichtSubscriber.Dispose();
-                    _stoplichtSubscriber = null;
-                    Console.WriteLine("Stoplichten subscriber stopped.");
-                }
+                _sensorPublisher.Dispose();
+                _sensorPublisher = null;
+                Console.WriteLine("Publisher stopped.");
             }
         }
 
+        
+        private static SubscriberSocket _stoplichtSubscriber;
+
+        public static void StartStoplichtSub()
+        {
+            if (_stoplichtSubscriber != null) return;
+
+                _stoplichtSubscriber = new SubscriberSocket();
+                _stoplichtSubscriber.Connect(subAdress);
+                _stoplichtSubscriber.Subscribe("");
+
+            Console.WriteLine("Stoplichten subscriber started.");
+        }
+
+
+        public static void StopStoplichtSub()
+        {
+            if (_stoplichtSubscriber != null)
+            {
+                _stoplichtSubscriber.Dispose();
+                _stoplichtSubscriber = null;
+                Console.WriteLine("Stoplichten subscriber stopped.");
+            }
+        }
+        public static string topic = "";
+        public static string receivedMessage = "";
+        public static void ListenLoop()
+        {
+            var poller = new NetMQPoller { _stoplichtSubscriber };
+
+            _stoplichtSubscriber.ReceiveReady += (s, a) =>
+            {
+                try
+                {
+                    topic = a.Socket.ReceiveFrameString();
+                    receivedMessage = a.Socket.ReceiveFrameString();
+                    Console.WriteLine($"Received: {topic} - {receivedMessage}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error receiving message: {ex.Message}");
+                }
+            };
+
+            Console.WriteLine("Starting subscriber poller...");
+            poller.Run();
+        }
+
     }
+
+}
 
     
 

@@ -92,7 +92,7 @@ def get_problem_layer(e, key_name, schema):
     elif e.validator == "type":
         problem = get_type_problem_message(key_name, schema["type"])
     elif e.validator == "enum":
-        problem = f"'{key_name}' must be one of the following: {schema["enum"]}"
+        problem = f"'{key_name}' must be one of the following: {schema['enum']}"
     elif e.validator == "minimum":
         problem = f"the value of 'simulatie_tijd_ms' must be higher than 0"
     else:

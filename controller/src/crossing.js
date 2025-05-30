@@ -123,7 +123,7 @@ function updateCrossing(simulatorStatus, trafficLightStatus, greenSet, stage, id
                 ID_SETS.crossing.total.forEach(id => {
                     if (simulatorStatus.roadway[id].voor == true) {
                         updatedIdQueue.push(id)
-                    }
+                   // }
                 })
             }
             return updatedIdQueue
