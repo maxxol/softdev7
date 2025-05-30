@@ -19,10 +19,10 @@ namespace StopLichtSimCSharp
         static void Main()
         {
            
-            bool nodeDevMode = false;
+            bool nodeDevMode = true;
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
-            Raylib.InitWindow(800, 800, "Raylib C# Example");
+            Raylib.InitWindow(800, 800, "Terrible trafficlight sim, omg why is this a thing");
             Raylib.SetWindowState(ConfigFlags.MaximizedWindow);
             Raylib.SetWindowMinSize(screenWidth, screenHeight/2);
             //Raylib.image imblank = GenImageColor(1024, 1024, Color.blank);
@@ -64,10 +64,12 @@ namespace StopLichtSimCSharp
                 testit++;
                 //RoadSensors.checkRoadSensors(Lanes);
                 string rijbaan_sensor_json = RoadSensors.buildJson(Lanes);
+                string brug_sensor_json = " \"81.1\": {\r\n    \"state\": dicht\r\n  }";//SensorenSpeciaal.buildJson(Lanes);
+                string speciaal_sensor_json = " \"brug_wegdek\": true,\r\n    \"brug_water\": false,\r\n    \"brug_file\": false\r\n ";
                 // Publish a message
                 if (testit % 10 == 0)
                 {
-                    ZeroMqHandler.PublishSensorData(rijbaan_sensor_json);
+                    ZeroMqHandler.PublishSensorData(rijbaan_sensor_json, brug_sensor_json, speciaal_sensor_json);
                     ZeroMqHandler.PublishTimeData(testit);
 
                 }
@@ -198,7 +200,7 @@ namespace StopLichtSimCSharp
                     {
                         foreach (var node in lane.CheckPointNodes)
                         {
-                            if (new[] { 9, 6, 36, 33, 67,70,158,161,231,234,277,280,312,315,348,351,369,372,406,409,439,442,466,469,485,488,555,558, 1040, 9998, 9999 }.Contains(node.NodeID))
+                            if (new[] { 9, 6, 36, 33, 67,70,158,161,231,234,277,280,312,315,348,351,369,372,406,409,439,442,466,469,485,488,555,558, 636, 641, 642, 656, 688, 689, 747, 748,749,753,754, 862, 927, 928, 933, 934, 940, 941, 968, 975, 1032, 1033,1036,1037,1040,1049,9998,9999 }.Contains(node.NodeID))
                             {
                                 Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, Raylib_cs.Color.DarkPurple);
                             }

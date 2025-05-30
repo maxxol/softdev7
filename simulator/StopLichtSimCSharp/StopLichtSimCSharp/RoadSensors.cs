@@ -85,11 +85,13 @@ namespace StopLichtSimCSharp
                                 };
                             }
                             result[groupID][position] = node.Occupied;
+                           
                         }
                     }
                 }
             }
             string json = JsonConvert.SerializeObject(result, Formatting.Indented);
+            Console.WriteLine(json);
             return json;
             //Console.WriteLine(json);
         }

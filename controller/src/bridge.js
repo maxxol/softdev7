@@ -16,7 +16,7 @@ const TimeToWaitForNewBoats = 5000 // amount of time boats get to reach the sens
  * @param {{ state: PASS_BOAT_STATES }} bridgeState 
  */
 function updateBridge(simulatorStatus, trafficLightStatus, bridgeState) {
-    
+    console.log(simulatorStatus)
     const { queue } = simulatorStatus.priority_vehicle
     const prioVehOne = queue.find(prioVeh => prioVeh.prioriteit==1)
     const idPrioVehicleOne = prioVehOne?.baan ?? ""
