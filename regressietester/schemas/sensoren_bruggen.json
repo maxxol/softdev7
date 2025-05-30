@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "properties": {
+    "81.1": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["dicht", "open"]
+        }
+      },
+      "required": ["state"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["81.1"],
+  "additionalProperties": false
+}
