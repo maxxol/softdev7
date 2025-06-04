@@ -1,5 +1,3 @@
-import json
-
 import jsonschema
 
 
@@ -38,11 +36,11 @@ def print_topic_sensoren_id_errors(schema, e, topic_name="sensoren_rijbaan"):
     print(f"Topic '{topic_name}' | {problem}")
 
 
-def print_topic_sensor_bruggen_errors(schema, e: jsonschema.exceptions.ValidationError, topic_name="sensor_bruggen"):
+def print_topic_sensoren_bruggen_errors(schema, e: jsonschema.exceptions.ValidationError, topic_name="sensoren_bruggen"):
     path_list = e.path
     match len(path_list):
         case 0 | 1:
-            print_topic_errors(schema, e, "sensor_bruggen")
+            print_topic_errors(schema, e, "sensoren_bruggen")
             return
         case 2:
             key_name = path_list[1]

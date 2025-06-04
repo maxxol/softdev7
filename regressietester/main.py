@@ -1,12 +1,14 @@
 import argparse
 import json
+from datetime import datetime
+
 import zmq
 
 from handle_validation import validate_topic
 from handle_validation_errors import (
     print_topic_errors,
     print_topic_sensoren_id_errors,
-    print_topic_sensor_bruggen_errors,
+    print_topic_sensoren_bruggen_errors,
     print_topic_voorrangsvoertuig_errors
 )
 
@@ -15,7 +17,7 @@ SCHEMA_FILE_PATHS = {
     "sensoren_rijbaan": "./schemas/sensoren_rijbaan.json",
     "sensoren_speciaal": "./schemas/sensoren_speciaal.json",
     "voorrangsvoertuig": "./schemas/voorrangsvoertuig.json",
-    "sensor_bruggen": "./schemas/sensor_bruggen.json",
+    "sensoren_bruggen": "./schemas/sensoren_bruggen.json",
     "stoplichten": "./schemas/stoplichten.json"
 }
 
@@ -100,40 +102,51 @@ def main():
             raise Exception("While '--do-local-mode'=false, the --sim-host-id cannot be the same as the --con-host-id")
 
     sim_ip = f"tcp://127.0.0.1:{sim_port_number}" if do_local_mode else f"tcp://10.121.17.{sim_host_id}:5556"
-    con_ip = f"tcp://127.0.0.1:{con_port_number}" if do_local_mode else f"tcp://10.121.17.{con_host_id}:5556"
+    con_ip = f"tcp://127.0.0.1:{con_port_number}" if do_local_mode else f"tcp://10.121.17.{con_host_id}:5555"
 
     sim_socket = setup_socket(sim_ip, {"tijd", "sensoren_rijbaan", "sensoren_speciaal", "sensoren_bruggen", "voorrangsvoertuig"})
     con_socket = setup_socket(con_ip, {"stoplichten"})
+    poller = zmq.Poller()
+    poller.register(sim_socket, zmq.POLLIN)
+    poller.register(con_socket, zmq.POLLIN)
+
+    log_file = open(f"logs/log_{datetime.now().strftime('%Y%m%d-%H%M%S')}.txt", "x")
 
     try:
         while True:
-            sim_topic_encoded, sim_msg_encoded = sim_socket.recv_multipart()
-            sim_topic = sim_topic_encoded.decode("utf-8")
-            sim_msg_object = sim_msg_encoded.decode("utf-8")
+            socks = dict(poller.poll())
 
-            match sim_topic:
-                case "tijd" | "sensoren_speciaal":
-                    print_function = print_topic_errors
-                case "sensoren_rijbaan":
-                    print_function = print_topic_sensoren_id_errors
-                case "sensoren_bruggen":
-                    print_function = print_topic_sensor_bruggen_errors
-                case "voorrangsvoertuig":
-                    print_function = print_topic_voorrangsvoertuig_errors
-                case _:
-                    print_function = print_topic_errors
+            if sim_socket in socks:
+                sim_topic_encoded, sim_msg_encoded = sim_socket.recv_multipart()
+                sim_topic = sim_topic_encoded.decode("utf-8")
+                sim_msg_object = sim_msg_encoded.decode("utf-8")
+                match sim_topic:
+                    case "tijd":
+                        print_function = print_topic_errors
+                    case "sensoren_speciaal":
+                        print_function = print_topic_errors
+                    case "sensoren_rijbaan":
+                        print_function = print_topic_sensoren_id_errors
+                    case "sensoren_bruggen":
+                        print_function = print_topic_sensoren_bruggen_errors
+                    case "voorrangsvoertuig":
+                        print_function = print_topic_voorrangsvoertuig_errors
+                    case _:
+                        print_function = print_topic_errors
 
-            con_topic_encoded, con_msg_encoded = con_socket.recv_multipart()
-            con_topic = con_topic_encoded.decode("utf-8")
-            con_msg_object = con_msg_encoded.decode("utf-8")
+                log_file.write(f"received topic '{sim_topic}', from the simulator at: {datetime.now().strftime('%Y-%m-%d - %H:%M:%S.%f')[:-3]}\n")
+                log_file.flush()
+                validate_topic(
+                    SCHEMA_FILE_PATHS[sim_topic],
+                    json.loads(sim_msg_object),
+                    print_function,
+                    sim_topic
+                )
+            if con_socket in socks:
+                con_topic_encoded, con_msg_encoded = con_socket.recv_multipart()
+                con_topic = con_topic_encoded.decode("utf-8")
+                con_msg_object = con_msg_encoded.decode("utf-8")
 
-            validate_topic(
-                SCHEMA_FILE_PATHS[sim_topic],
-                json.loads(sim_msg_object),
-                print_function,
-                sim_topic
-            )
-            if con_topic:
                 print_function = print_topic_sensoren_id_errors
                 validate_topic(
                     SCHEMA_FILE_PATHS[con_topic],
@@ -141,9 +154,14 @@ def main():
                     print_function,
                     con_topic
                 )
+                log_file.write(
+                    f"received topic '{con_topic}', from the controller at: {datetime.now().strftime('%Y-%m-%d - %H:%M:%S.%f')[:-3]}\n"
+                )
+                log_file.flush()
     except KeyboardInterrupt:
         pass
     print("Klaar")
+    log_file.close()
 
 
 if __name__ == '__main__':
