@@ -5,10 +5,9 @@
 const { PASS_BOAT_STATES, ID_SETS, TRAFFIC_LIGHT_COLORS  } = require("./utils")
 
 const TimeForSingleBoatPass = 5000 // amount of time it takes for a single boat to pass from the "brug_water" sensor to the other side (may vary between simulators)
-const TimeToWaitForBoatToTurn = 15000 // amount of time it takes for any boat in the queue to wait until it gets to pass 
-const TimeToWaitForNewBoats = 5000 // amount of time boats get to reach the sensor and re-trigger the cyclus, before the bridge really closes
+const TimeToWaitForBoatToTurn = 18000 // amount of time it takes for any boat in the queue to wait until it gets to pass 
 const SENSOR_TRIGGER_PERSISTENCE_TIME = 10000
-const SENSOR_TRIGGER_WATER_PERSISTENCE_TIME = 10000
+const SENSOR_TRIGGER_WATER_PERSISTENCE_TIME = 5000
 /**
  * update the bridge and waterway based on the simulator data
  * @param {{
@@ -103,12 +102,14 @@ function updateBridge(simulatorStatus, trafficLightStatus, bridgeState, lastUpda
             }
         }
     } else if (isBridgeOpen) {
-        ID_SETS.boat.forEach(id=>trafficLightStatus[id] = TRAFFIC_LIGHT_COLORS.RED)
         if(shouldLetBoatsTurn) {
-            if(!isAwaitingForState) {
+            // is awaiting for a state and no boat ferries under the bridge
+            if(!isAwaitingForState && !isTriggeredBrugWaterSensor) {
+                // is in any stage after open bridge, or in the stage where boats from north can ferry, or the boats were about to get told to stop. And is sensor north is triggered
                 if((bridgeState.state <= PASS_BOAT_STATES.OPEN_BRIDGE || [PASS_BOAT_STATES.PASS_BOAT_NORTH, PASS_BOAT_STATES.STOP_BOAT, PASS_BOAT_STATES.BRIDGE_TRAFFIC_GREEN].includes(bridgeState.state) ) && isSensorTriggeredNorth) {
                     letBoatNorthPass()
                     bridgeState.state = PASS_BOAT_STATES.PASS_BOAT_NORTH
+                    // is in any stage after open bridge, or in the stage where boats from south can ferry, or the boats were about to get told to stop. And is sensor south is triggered
                 } else if ((bridgeState.state <= PASS_BOAT_STATES.OPEN_BRIDGE || [PASS_BOAT_STATES.PASS_BOAT_SOUTH, PASS_BOAT_STATES.STOP_BOAT, PASS_BOAT_STATES.BRIDGE_TRAFFIC_GREEN].includes(bridgeState.state)) && isSensorTriggeredSouth) {
                     letBoatSouthPass()
                     bridgeState.state = PASS_BOAT_STATES.PASS_BOAT_SOUTH
@@ -130,10 +131,11 @@ function updateBridge(simulatorStatus, trafficLightStatus, bridgeState, lastUpda
                     setTimeout(()=>bridgeState.state=PASS_BOAT_STATES.STOP_BOAT, TimeForSingleBoatPass)
                 } else if (bridgeState.state == PASS_BOAT_STATES.STOP_BOAT) {
                     ID_SETS.boat.forEach(id=>trafficLightStatus[id] = TRAFFIC_LIGHT_COLORS.RED)
-                    bridgeState.state = PASS_BOAT_STATES.AWAITING_CLOSE_BRIDGE
-                    setTimeout(()=>bridgeState.state=PASS_BOAT_STATES.CLOSE_BRIDGE, 8000)
-                } else if (bridgeState.state == PASS_BOAT_STATES.CLOSE_BRIDGE) {
-                    trafficLightStatus["81.1"] = TRAFFIC_LIGHT_COLORS.RED
+                    // bridgeState.state = PASS_BOAT_STATES.AWAITING_CLOSE_BRIDGE
+                    // setTimeout(()=>bridgeState.state=PASS_BOAT_STATES.CLOSE_BRIDGE, 8000)
+                    bridgeState.state = PASS_BOAT_STATES.CLOSE_BRIDGE
+                } else if (bridgeState.state == PASS_BOAT_STATES.CLOSE_BRIDGE && !isTriggeredBrugWaterSensor) {
+                    trafficLightStatus["81.1"] = TRAFFIC_LIGHT_COLORS.RED // close the bridge
                     bridgeState.state = PASS_BOAT_STATES.BRIDGE_TRAFFIC_GREEN
                     // bridgeState.state = PASS_BOAT_STATES.AWAITING_BRIDGE_TRAFFIC_GREEN
                     // setTimeout(()=>bridgeState.state=PASS_BOAT_STATES.BRIDGE_TRAFFIC_GREEN, TimeToWaitForNewBoats)
