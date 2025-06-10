@@ -116,7 +116,7 @@ namespace StopLichtSimCSharp
                 {
                     topic = a.Socket.ReceiveFrameString();
                     receivedMessage = a.Socket.ReceiveFrameString();
-                    Console.WriteLine($"Received: {topic} - {receivedMessage}");
+                    //Console.WriteLine($"Received: {topic} - {receivedMessage}");
                 }
                 catch (Exception ex)
                 {

@@ -5,7 +5,7 @@ from contextlib import redirect_stdout
 
 from handle_validation import validate_topic
 from handle_validation_errors import print_topic_errors, print_topic_sensoren_id_errors, \
-    print_topic_sensor_bruggen_errors, print_topic_voorrangsvoertuig_errors
+    print_topic_sensoren_bruggen_errors, print_topic_voorrangsvoertuig_errors
 from main import SCHEMA_FILE_PATHS
 
 
@@ -60,10 +60,10 @@ class HandleValidationErrorsTestShowCase(unittest.TestCase):
     def test_sensor_bruggen_topic_validation(self):
         test_cases = [
             ({"81.1": {"state": "open"}}, ""),  # valid
-            ({"81.1": {"state": "groen"}}, "Topic 'sensor_bruggen' | '81.1->state' must be one of the following: ['dicht', 'open']"),
-            ({}, "Topic 'sensor_bruggen' | all these properties are missing:"),
+            ({"81.1": {"state": "groen"}}, "Topic 'sensoren_bruggen' | '81.1->state' must be one of the following: ['dicht', 'open']"),
+            ({}, "Topic 'sensoren_bruggen' | all these properties are missing:"),
         ]
-        self.run_topic_validation_tests("sensor_bruggen", test_cases, print_topic_sensor_bruggen_errors)
+        self.run_topic_validation_tests("sensoren_bruggen", test_cases, print_topic_sensoren_bruggen_errors)
 
 
     def test_voorrangsvoertuig_topic_validation(self):

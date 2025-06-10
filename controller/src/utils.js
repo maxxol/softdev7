@@ -1,41 +1,50 @@
-const green_sets = require("../config/green_sets.json")
+const GREEN_SETS = require("../config/green_sets.json")
 
-const bridgeIdSet = ["41.1", "42.1", "51.1", "52.1", "53.1", "54.1"]
-const barrierIdSet = ["61.1", "62.1", "63.1", "64.1"]
-const boatIdSet = ["71.1", "72.1"]
-const bridgeBoatIdSet = [...boatIdSet, ...bridgeIdSet]
-const trafficGoingTobridgeIdSet = new Set(["12.1", "8.1", "8.2", "4.1"])
-const crossingCarIdSet = ["1.1", "2.1", "2.2", "3.1", "5.1", "6.1", "7.1", "9.1", "10.1", "11.1", ...trafficGoingTobridgeIdSet]
-// const crossingPedIdSet = ["31.1", "31.2", "32.1", "32.2", "33.1", "33.2", "34.1", "34.2", "35.1", "35.2", "36.1", "37.1", "37.2", "38.1", "38.2"]
-const crossingPedIslandIdSet = ["31.2", "32.1", "33.2", "34.1", "35.2", "36.1", "37.2", "38.1"]
-const crossingPedNOTIslandIdSet = ["31.1", "32.2", "33.1", "34.2", "35.1", "36.2", "37.1", "38.2"]
-const crossingPedIdSet = [...crossingPedIslandIdSet, ...crossingPedNOTIslandIdSet]
-const crossingCyclerIdSet = ["21.1", "22.1", "23.1", "24.1", "25.1", "26.1", "27.1", "28.1"]
-const crossingIdSet = new Set([...crossingCarIdSet, ...crossingCyclerIdSet, ...crossingPedIdSet])
-const totalIdSet = [...crossingIdSet, ...bridgeBoatIdSet]
-const greenSetsEntries = Object.entries(green_sets)
+const ID_SETS = {
+    bridge: ["41.1", "42.1", "51.1", "52.1", "53.1", "54.1"],
+    boat: ["71.1", "72.1"],
+    bridgeBoat: [],
+    crossing: {
+        car: [],
+        carsHeadingToBridge: ["12.1", "8.1", "8.2", "4.1"],
+        peds: [],
+        pedIsland: ["31.2", "32.1", "33.2", "34.1", "35.2", "36.1", "37.2", "38.1"],
+        pedNOTIsland: ["31.1", "32.2", "33.1", "34.2", "35.1", "36.2", "37.1", "38.2"],
+        cycler: ["21.1", "22.1", "23.1", "24.1", "25.1", "26.1", "27.1", "28.1"],
+        total: []
+    },
+    total: []
+}
+ID_SETS.bridgeBoat = [...ID_SETS.bridge, ...ID_SETS.boat]
+ID_SETS.crossing.car = ["1.1", "2.1", "2.2", "3.1", "5.1", "6.1", "7.1", "9.1", "10.1", "11.1", ...ID_SETS.crossing.carsHeadingToBridge]
+ID_SETS.crossing.peds = [...ID_SETS.crossing.pedIsland, ...ID_SETS.crossing.pedNOTIsland]
+ID_SETS.crossing.total = [...ID_SETS.crossing.car, ...ID_SETS.crossing.cycler, ...ID_SETS.crossing.peds]
+ID_SETS.total = [...ID_SETS.bridgeBoat, ...ID_SETS.crossing.total]
+
+const GREEN_SETS_ENTRIES = Object.entries(GREEN_SETS)
 const TRAFFIC_LIGHT_COLORS = Object.freeze({
     GREEN: "groen",
     ORANGE: "oranje",
     RED: "rood"
 })
 
-const PASS_BOAT_STATES = Object.freeze({
+const PASS_BOAT_STATES = Object.freeze({ // trafficlights(TL)
+                                 // in this stage we...
     DEFAULT:                  0, // no boats to be processed
     AWAITING_CLEAR_BRIDGE:    1, // wait before we can clear the bridge
-    CLEAR_BRIDGE:             2, // clear the bridge(bridge lights on red)
+    CLEAR_BRIDGE:             2, // clear the bridge(bridge TL on red)
     AWAITING_OPEN_BRIDGE:     3, // wait before we can open the bridge
-    OPEN_BRIDGE:              4, // bridge can be told to open
+    OPEN_BRIDGE:              4, // tell the bridge to open
     AWAITING_PASS_BOAT_NORTH: 5, // wait before we can put north to green
-    PASS_BOAT_NORTH:          6, // north can become green
+    PASS_BOAT_NORTH:          6, // put TL boat from north to green
     AWAITING_PASS_BOAT_SOUTH: 7, // wait before we can put south to green
-    PASS_BOAT_SOUTH:          8, // south can become green
-    AWAITING_STOP_BOAT:       9, // wait before we can put boat lights to red
-    STOP_BOAT:                10,// boat can become red
+    PASS_BOAT_SOUTH:          8, // put TL boat from south to green
+    AWAITING_STOP_BOAT:       9, // wait before we can put boat TL to red
+    STOP_BOAT:                10,// put boats TL to red
     AWAITING_CLOSE_BRIDGE:    11,// wait before we can tell the bridge close
     CLOSE_BRIDGE:             12,// bridge can be told to close
     AWAITING_BRIDGE_TRAFFIC_GREEN: 13,// wait before we can allow bridge traffic to pass
-    BRIDGE_TRAFFIC_GREEN: 14,// allow bridge traffic to pass
+    BRIDGE_TRAFFIC_GREEN: 14,// allow bridge traffic to pass(bridge TL on green)
 
 })
 
@@ -91,20 +100,9 @@ module.exports = {
     shouldLetPriorityVehicleTrough,
     onSensorsRoadWay,
     findSensorIdPriorityVehicle,
-    barrierIdSet,
-    bridgeIdSet,
-    boatIdSet,
-    bridgeBoatIdSet,
-    trafficGoingTobridgeIdSet,
-    crossingIdSet,
-    crossingCyclerIdSet,
-    crossingCarIdSet,
-    crossingPedIdSet,
-    crossingPedIslandIdSet,
-    crossingPedNOTIslandIdSet,
-    totalIdSet,
+    ID_SETS,
     PASS_BOAT_STATES,
     TRAFFIC_LIGHT_COLORS,
-    green_sets,
-    greenSetsEntries
+    GREEN_SETS,
+    GREEN_SETS_ENTRIES
 }

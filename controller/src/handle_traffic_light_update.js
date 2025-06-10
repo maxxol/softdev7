@@ -6,7 +6,7 @@
 const { updateBridge } = require("./bridge")
 const { updateCrossing } = require("./crossing")
 const SimulatorDataContainer = require("./sensor_data_container")
-const { PASS_BOAT_STATES, crossingPedNOTIslandIdSet, TRAFFIC_LIGHT_COLORS } = require("./utils")
+const { PASS_BOAT_STATES, ID_SETS, TRAFFIC_LIGHT_COLORS } = require("./utils")
 
 
 /**
@@ -21,6 +21,12 @@ async function updateTrafficLights(containers, trafficLightStatus, socketPub) {
     let greenSet = new Set()
     let stage = TRAFFIC_LIGHT_COLORS.RED
     let oldTime = 0
+    let lastUpdate = {
+        brug_wegdekTrue: null,
+        brug_wegdekFalse: null,
+        brug_waterFalse: null,
+        brug_FileTrue: null
+    }
     while (true) {
         simulatorStatus = {
             roadway: containers[0].status,
@@ -29,9 +35,10 @@ async function updateTrafficLights(containers, trafficLightStatus, socketPub) {
             bridge: containers[3].status,
             time: containers[4].status
         }
+        setLastUpdate()
         if(simulatorStatus) {
-            ({ stage, greenSet, idQueue } = updateCrossing(simulatorStatus, trafficLightStatus, greenSet, stage, idQueue))
-            updateBridge(simulatorStatus, trafficLightStatus, bridgeState)
+            ({ stage, greenSet, idQueue } = updateCrossing(simulatorStatus, trafficLightStatus, greenSet, stage, idQueue, lastUpdate))
+            updateBridge(simulatorStatus, trafficLightStatus, bridgeState, lastUpdate)
         }
         socketPub.send(["stoplichten", JSON.stringify(trafficLightStatus)])
         const sleepForMS = getAmountToSleepFor()
@@ -48,7 +55,7 @@ async function updateTrafficLights(containers, trafficLightStatus, socketPub) {
     function getAmountToSleepFor() {
         let sleepForMS
         // pedestrians can walk these long scretces, give them additional time
-        if (greenSet.has(crossingPedNOTIslandIdSet[0]) || greenSet.has(crossingPedNOTIslandIdSet[0])) {
+        if (greenSet.has(ID_SETS.crossing.pedNOTIsland[0]) || greenSet.has(ID_SETS.crossing.pedNOTIsland[0])) {
             sleepForMS = 3700
         } else {
             sleepForMS = 3300
@@ -65,6 +72,32 @@ async function updateTrafficLights(containers, trafficLightStatus, socketPub) {
     }
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms))
+    }
+
+    function setLastUpdate() {
+        const { simulatie_tijd_ms } = simulatorStatus.time
+
+        if(simulatorStatus.special.brug_wegdek) {
+            if(lastUpdate.brug_wegdekTrue == null)
+                lastUpdate.brug_wegdekTrue = simulatie_tijd_ms
+            lastUpdate.brug_wegdekFalse = null
+        } else {
+            if(lastUpdate.brug_wegdekFalse == null) 
+                lastUpdate.brug_wegdekFalse = simulatie_tijd_ms
+            lastUpdate.brug_wegdekTrue = null
+        }
+        if(!simulatorStatus.special.brug_water) {
+            if(lastUpdate.brug_waterFalse == null)
+                lastUpdate.brug_waterFalse = simulatie_tijd_ms
+        } else {
+            lastUpdate.brug_waterFalse = null
+        }
+        if(simulatorStatus.special.brug_file) {
+            if(lastUpdate.brug_FileTrue == null)
+                lastUpdate.brug_FileTrue = simulatie_tijd_ms
+        } else {
+            lastUpdate.brug_FileTrue = null
+        }
     }
 }
 
