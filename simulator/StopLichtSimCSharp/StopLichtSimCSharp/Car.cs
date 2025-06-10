@@ -15,7 +15,6 @@ namespace StopLichtSimCSharp
             LaneID = laneid;
             Speed = 6;
             NodeTravelIterator = 0;
-
         }
         //public void DriveManual(char dir)
         //{

@@ -15,7 +15,6 @@ namespace StopLichtSimCSharp
             LaneID = laneid;
             Speed = 3;
             NodeTravelIterator = 0;
-
         }
     }
 }

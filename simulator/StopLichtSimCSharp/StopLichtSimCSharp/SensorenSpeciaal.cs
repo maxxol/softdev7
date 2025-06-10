@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,6 +61,42 @@ namespace StopLichtSimCSharp
                     }
                 }
             }
+        }
+
+        public static string buildJson(Lane[] lanes)
+        {
+            var result = new Dictionary<string, Dictionary<string, bool>>();
+
+            foreach (Lane lane in lanes)
+            {
+                foreach (CheckPointNode node in lane.CheckPointNodes)
+                {
+                    if (brugNodes.TryGetValue(node.NodeID, out string sensorID))
+                    {
+                        string[] parts = sensorID.Split('.');
+                        if (parts.Length == 3)
+                        {
+                            string groupID = $"{parts[0]}.{parts[1]}"; // e.g., "1.1"
+                            string position = parts[2]; // "voor" or "achter"
+
+                            if (!result.ContainsKey(groupID))
+                            {
+                                result[groupID] = new Dictionary<string, bool>
+                                {
+                                    { "voor", false },
+                                    { "achter", false }
+                                };
+                            }
+                            result[groupID][position] = node.Occupied;
+
+                        }
+                    }
+                }
+            }
+            string json = JsonConvert.SerializeObject(result, Formatting.Indented);
+            Console.WriteLine(json);
+            return json;
+            //Console.WriteLine(json);
         }
     }
 }

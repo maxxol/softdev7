@@ -62,24 +62,27 @@ namespace StopLichtSimCSharp
                 TrafficLights trafficlight = new TrafficLights();
                 trafficlight.CompareIdsAndLoadColors();
                 testit++;
+                
+                allRoadUsersArray = spawner.spawnRoaduser(Lanes, allRoadUsersArray);
+                List<RoadUser> allRoadUsersArrayCopyList = new List<RoadUser>();
+                allRoadUsersArrayCopyList = allRoadUsersArray.ToList();
                 //RoadSensors.checkRoadSensors(Lanes);
                 string rijbaan_sensor_json = RoadSensors.buildJson(Lanes);
                 string brug_sensor_json = " \"81.1\": {\r\n    \"state\": dicht\r\n  }";//SensorenSpeciaal.buildJson(Lanes);
                 string speciaal_sensor_json = " \"brug_wegdek\": true,\r\n    \"brug_water\": false,\r\n    \"brug_file\": false\r\n ";
+                string priority_vehicle_json = Spawner.buildJson(Lanes, allRoadUsersArrayCopyList, testit);
                 // Publish a message
                 if (testit % 10 == 0)
                 {
-                    ZeroMqHandler.PublishSensorData(rijbaan_sensor_json, brug_sensor_json, speciaal_sensor_json);
+                    ZeroMqHandler.PublishSensorData(rijbaan_sensor_json, brug_sensor_json, speciaal_sensor_json);                    
+                    ZeroMqHandler.PublishPriorityVehicle(priority_vehicle_json);
                     ZeroMqHandler.PublishTimeData(testit);
-
                 }
                 //Console.WriteLine(allRoadUsersArray.Length+" before");
-                allRoadUsersArray = spawner.spawnRoaduser(Lanes, allRoadUsersArray);
+                
                 //Console.WriteLine(allRoadUsersArray.Length+ " after");
 
-                MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(nodeDevMode);
-
-                
+                MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(nodeDevMode);                
 
                 Dictionary<string,string> nodeIdToTrafficLightColor = TrafficLights.trythis;
                 if (!nodeDevMode)
@@ -116,7 +119,7 @@ namespace StopLichtSimCSharp
                             if (nodeIdToTrafficLightColor[Convert.ToString(node.NodeID)] != null)
                             {
                                 node.TrafficLightColor = Convert.ToString(nodeIdToTrafficLightColor.FirstOrDefault(x => x.Key == Convert.ToString(node.NodeID)).Value);
-                               // Lanes[Convert.ToInt32(lane.LaneID)].addTrafficlight(Convert.ToInt32(nodeIdToTrafficLightColor.FirstOrDefault(x => x.Key == Convert.ToString(node.NodeID)).Key));
+                                //Lanes[Convert.ToInt32(lane.LaneID)].addTrafficlight(Convert.ToInt32(nodeIdToTrafficLightColor.FirstOrDefault(x => x.Key == Convert.ToString(node.NodeID)).Key));
                                 Color color = TrafficLights.TrafficLightStatusIndividual(node.TrafficLightColor); 
                                 Raylib.DrawCircleV(new Vector2(node.X, node.Y), 3, color);
                             }
@@ -127,8 +130,7 @@ namespace StopLichtSimCSharp
                     }
                 }
 
-                List<RoadUser> allRoadUsersArrayCopyList= new List<RoadUser>();
-                allRoadUsersArrayCopyList = allRoadUsersArray.ToList();
+                
                 bool shouldBeRemoved;
                 foreach(RoadUser roaduser in allRoadUsersArray)
                 {

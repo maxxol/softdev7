@@ -38,6 +38,16 @@ namespace StopLichtSimCSharp
             //Console.WriteLine($"Published: {message}");
         }
 
+        public static void PublishPriorityVehicle(string priorityvehicle)
+        {
+            if (_sensorPublisher == null)
+            { 
+                throw new InvalidOperationException("Publisher not started.Call Start() first.");            
+            }
+
+            _sensorPublisher.SendMoreFrame("voorrangsvoertuig").SendFrame(priorityvehicle);
+        }
+
         public static void PublishTimeData(int frame)
         {
             if (_sensorPublisher == null)
@@ -93,6 +103,7 @@ namespace StopLichtSimCSharp
                 Console.WriteLine("Stoplichten subscriber stopped.");
             }
         }
+
         public static string topic = "";
         public static string receivedMessage = "";
         public static void ListenLoop()

@@ -98,7 +98,7 @@ function updateCrossing(simulatorStatus, trafficLightStatus, greenSet, stage, id
                    // if (simulatorStatus.roadway[id].voor == true) {
                         updatedIdQueue.push(id)
                    // }
-                })
+                }})
             }
             return updatedIdQueue
         }
