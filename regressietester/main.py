@@ -136,24 +136,30 @@ def main():
 
                 log_file.write(f"received topic '{sim_topic}', from the simulator at: {datetime.now().strftime('%Y-%m-%d - %H:%M:%S.%f')[:-3]}\n")
                 log_file.flush()
-                validate_topic(
-                    SCHEMA_FILE_PATHS[sim_topic],
-                    json.loads(sim_msg_object),
-                    print_function,
-                    sim_topic
-                )
+                try:
+                    validate_topic(
+                        SCHEMA_FILE_PATHS[sim_topic],
+                        json.loads(sim_msg_object),
+                        print_function,
+                        sim_topic
+                    )
+                except:
+                    print(f"Incorrect json formatting on topic '{sim_topic}'")
             if con_socket in socks:
                 con_topic_encoded, con_msg_encoded = con_socket.recv_multipart()
                 con_topic = con_topic_encoded.decode("utf-8")
                 con_msg_object = con_msg_encoded.decode("utf-8")
 
                 print_function = print_topic_sensoren_id_errors
-                validate_topic(
-                    SCHEMA_FILE_PATHS[con_topic],
-                    json.loads(con_msg_object),
-                    print_function,
-                    con_topic
-                )
+                try:
+                    validate_topic(
+                        SCHEMA_FILE_PATHS[con_topic],
+                        json.loads(con_msg_object),
+                        print_function,
+                        con_topic
+                    )
+                except:
+                    print(f"Incorrect json formatting on topic '{con_topic}'")
                 log_file.write(
                     f"received topic '{con_topic}', from the controller at: {datetime.now().strftime('%Y-%m-%d - %H:%M:%S.%f')[:-3]}\n"
                 )

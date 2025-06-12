@@ -25,17 +25,10 @@ namespace StopLichtSimCSharp
             //if (chosenLaneNumber <= numberOfCarLanes+numberOfBikeLanes) { return allRoadUsersList.ToArray(); }
             //chosenLaneNumber = 4;
             Lane chosenLane = Lanes[chosenLaneNumber]; //choose random lane to spawn a car
-            if (rand.Next(21) == 0) {
-                if (chosenLaneNumber <= numberOfCarLanes)
-                {
-                    spawnCar(chosenLane, chosenLaneNumber, allRoadUsersList);
-
-                } //car
-                else if (chosenLaneNumber <= numberOfCarLanes) { spawnBus(chosenLane, chosenLaneNumber, allRoadUsersList); }
-                else if (chosenLaneNumber <= numberOfCarLanes)
-                {
-                    spawnPolice(chosenLane, chosenLaneNumber, allRoadUsersList);
-                }
+            if (rand.Next(1) == 0) {
+                if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber, allRoadUsersList); spawnBus(chosenLane, chosenLaneNumber, allRoadUsersList); spawnPolice(chosenLane, chosenLaneNumber, allRoadUsersList); } //car
+                //else if (chosenLaneNumber <= numberOfCarLanes) {  }
+                //else if (chosenLaneNumber <= numberOfCarLanes) {  }
                 else if (chosenLaneNumber <= numberOfBikeLanes + numberOfCarLanes) { spawnBike(chosenLane, chosenLaneNumber, allRoadUsersList); } //bike
                 else if (chosenLaneNumber <= numberOfPedLanes + numberOfCarLanes + numberOfBikeLanes) { spawnPed(chosenLane, chosenLaneNumber, allRoadUsersList); } //ped
                 else if (chosenLaneNumber <= numberOfBoatLanes + numberOfCarLanes + numberOfBikeLanes + numberOfPedLanes) { spawnBoat(chosenLane, chosenLaneNumber, allRoadUsersList); } //boat
@@ -75,24 +68,30 @@ namespace StopLichtSimCSharp
             allRoadUsersList.Add(new VoorrangsVoertuigen(chosenLane.CheckPointNodes[0].X, chosenLane.CheckPointNodes[0].Y, chosenLaneNumber));
         }
 
-        public static string buildJson(Lane[] lanes, List<RoadUser> allRoadUsersList, int testit)
+        public static void buildJson(Lane[] lanes, List<RoadUser> allRoadUsersList, int testit)
         {
-            if (allRoadUsersList.Count == 0)
-                return "";
-
-            var result = new Dictionary<string, List<VoorangVoertuigTopic>>();
-            result.Add("queue", new List<VoorangVoertuigTopic>());
-
-            foreach (var roadUser in allRoadUsersList )
+            if (allRoadUsersList.Count > 0)
             {
-                VoorangVoertuigTopic voertuig = new VoorangVoertuigTopic();
-                voertuig.baan = roadUser.LaneID.ToString();
-                voertuig.simulatie_tijd_ms = testit.ToString();
-                voertuig.prioriteit = roadUser.VehiclePriority;
+                //return "";
 
-                result["queue"].Add(voertuig);
+                var result = new Dictionary<string, List<VoorangVoertuigTopic>>();
+                result.Add("queue", new List<VoorangVoertuigTopic>());
+
+                foreach (var roadUser in allRoadUsersList)
+                {
+                    if (roadUser.VehiclePriority > 0)
+                    {
+                        VoorangVoertuigTopic voertuig = new VoorangVoertuigTopic();
+                        voertuig.baan = roadUser.LaneID.ToString();
+                        voertuig.simulatie_tijd_ms = testit.ToString();
+                        voertuig.prioriteit = roadUser.VehiclePriority;
+                        result["queue"].Add(voertuig);
+                        string json = JsonConvert.SerializeObject(result, Formatting.Indented);
+                        //Console.WriteLine(json);
+                        ZeroMqHandler.PublishPriorityVehicle(json);
+                    }
+                }
             }
-
             //foreach (Lane lane in lanes)
             //{
             //    foreach (CheckPointNode node in lane.CheckPointNodes)
@@ -109,9 +108,8 @@ namespace StopLichtSimCSharp
             //        }
             //    }
             //}
-            string json = JsonConvert.SerializeObject(result, Formatting.Indented);
-            Console.WriteLine(json);
-            return json;
+            
+           // return json;
             //Console.WriteLine(json);
         }
     }

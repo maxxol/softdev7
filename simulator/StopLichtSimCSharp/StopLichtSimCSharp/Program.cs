@@ -1,10 +1,11 @@
 
+using Raylib_cs;
 ﻿using System;
 using System.Collections.Generic;
-using Raylib_cs;
-using System.Numerics;
-using System.IO;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
@@ -19,7 +20,6 @@ namespace StopLichtSimCSharp
         static void Main()
         {
            
-            bool nodeDevMode = true;
             bool nodeDevMode = true;
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
@@ -71,12 +71,17 @@ namespace StopLichtSimCSharp
                 string rijbaan_sensor_json = RoadSensors.buildJson(Lanes);
                 string brug_sensor_json = " \"81.1\": {\r\n    \"state\": dicht\r\n  }";//SensorenSpeciaal.buildJson(Lanes);
                 string speciaal_sensor_json = " \"brug_wegdek\": true,\r\n    \"brug_water\": false,\r\n    \"brug_file\": false\r\n ";
-                string priority_vehicle_json = Spawner.buildJson(Lanes, allRoadUsersArrayCopyList, testit);
+               
                 // Publish a message
                 if (testit % 10 == 0)
                 {
-                    ZeroMqHandler.PublishSensorData(rijbaan_sensor_json, brug_sensor_json, speciaal_sensor_json);                    
-                    ZeroMqHandler.PublishPriorityVehicle(priority_vehicle_json);
+                    ZeroMqHandler.PublishSensorData(rijbaan_sensor_json, brug_sensor_json, speciaal_sensor_json);
+                    
+                    Spawner.buildJson(Lanes, allRoadUsersArrayCopyList, testit);
+                    //if (allRoadUsersArrayCopyList.Where)
+                    //{
+                        
+                    //}
                     ZeroMqHandler.PublishTimeData(testit);
                 }
                 //Console.WriteLine(allRoadUsersArray.Length+" before");
@@ -203,7 +208,9 @@ namespace StopLichtSimCSharp
                     {
                         foreach (var node in lane.CheckPointNodes)
                         {
-                            if (new[] { 9, 6, 36, 33, 67,70,158,161,231,234,277,280,312,315,348,351,369,372,406,409,439,442,466,469,485,488,555,558, 636, 641, 642, 656, 688, 689, 747, 748,749,753,754, 862, 927, 928, 933, 934, 940, 941, 968, 975, 1032, 1033,1036,1037,1040,1049,9998,9999 }.Contains(node.NodeID))
+                            //820:52.1.voor, 822:52.1.achter
+
+                            if (new[] { 9, 6, 36, 33, 67,70,158,161,231,234,277,280,312,315,348,351,369,372,406,409,439,442,466,469,485,488,555,558, 636, 641, 642, 656, 681,682,684,685,688, 689, 747, 748,749,753,754, 820, 822, 862, 915, 916, 920, 921, 927, 928, 931,933, 934, 940, 941, 968, 975, 981,  1032, 1033, 1035,1036, 1037,1040,1049,9998,9999 }.Contains(node.NodeID))
                             {
                                 Raylib.DrawCircleV(new Vector2(node.X, node.Y), 2, Raylib_cs.Color.DarkPurple);
                             }
