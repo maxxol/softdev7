@@ -89,7 +89,7 @@ namespace StopLichtSimCSharp
                 if (result.Count > 0)
                 {
                     string json = JsonConvert.SerializeObject(result, Formatting.Indented);
-                    Console.WriteLine(json);
+                    //Console.WriteLine(json);
                     ZeroMqHandler.PublishPriorityVehicle(json);
                 }
             }
