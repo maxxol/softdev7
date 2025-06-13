@@ -26,9 +26,7 @@ namespace StopLichtSimCSharp
             //chosenLaneNumber = 4;
             Lane chosenLane = Lanes[chosenLaneNumber]; //choose random lane to spawn a car
             if (rand.Next(1) == 0) {
-                if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber, allRoadUsersList); spawnBus(chosenLane, chosenLaneNumber, allRoadUsersList); spawnPolice(chosenLane, chosenLaneNumber, allRoadUsersList); } //car
-                //else if (chosenLaneNumber <= numberOfCarLanes) {  }
-                //else if (chosenLaneNumber <= numberOfCarLanes) {  }
+                if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber, allRoadUsersList); spawnBus(chosenLane, chosenLaneNumber, allRoadUsersList); spawnPriorityVehicle(chosenLane, chosenLaneNumber, allRoadUsersList); } //car, bus and priority vehicles
                 else if (chosenLaneNumber <= numberOfBikeLanes + numberOfCarLanes) { spawnBike(chosenLane, chosenLaneNumber, allRoadUsersList); } //bike
                 else if (chosenLaneNumber <= numberOfPedLanes + numberOfCarLanes + numberOfBikeLanes) { spawnPed(chosenLane, chosenLaneNumber, allRoadUsersList); } //ped
                 else if (chosenLaneNumber <= numberOfBoatLanes + numberOfCarLanes + numberOfBikeLanes + numberOfPedLanes) { spawnBoat(chosenLane, chosenLaneNumber, allRoadUsersList); } //boat
@@ -63,7 +61,7 @@ namespace StopLichtSimCSharp
         {
             allRoadUsersList.Add(new Bus(chosenLane.CheckPointNodes[0].X, chosenLane.CheckPointNodes[0].Y, chosenLaneNumber));       
         }
-        public void spawnPolice(Lane chosenLane, int chosenLaneNumber, List<RoadUser> allRoadUsersList)
+        public void spawnPriorityVehicle(Lane chosenLane, int chosenLaneNumber, List<RoadUser> allRoadUsersList)
         {
             allRoadUsersList.Add(new VoorrangsVoertuigen(chosenLane.CheckPointNodes[0].X, chosenLane.CheckPointNodes[0].Y, chosenLaneNumber));
         }
@@ -85,11 +83,14 @@ namespace StopLichtSimCSharp
                         voertuig.baan = roadUser.LaneID.ToString();
                         voertuig.simulatie_tijd_ms = testit.ToString();
                         voertuig.prioriteit = roadUser.VehiclePriority;
-                        result["queue"].Add(voertuig);
-                        string json = JsonConvert.SerializeObject(result, Formatting.Indented);
-                        //Console.WriteLine(json);
-                        ZeroMqHandler.PublishPriorityVehicle(json);
+                        result["queue"].Add(voertuig);                        
                     }
+                }
+                if (result.Count > 0)
+                {
+                    string json = JsonConvert.SerializeObject(result, Formatting.Indented);
+                    Console.WriteLine(json);
+                    ZeroMqHandler.PublishPriorityVehicle(json);
                 }
             }
             //foreach (Lane lane in lanes)
