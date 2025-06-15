@@ -69,12 +69,13 @@ namespace StopLichtSimCSharp
                 allRoadUsersArrayCopyList = allRoadUsersArray.ToList();
                 //RoadSensors.checkRoadSensors(Lanes);
                 string rijbaan_sensor_json = RoadSensors.buildJson(Lanes);
-                string brug_sensor_json = " \"81.1\": {\r\n    \"state\": dicht\r\n  }";//SensorenSpeciaal.buildJson(Lanes);
-                string speciaal_sensor_json = " \"brug_wegdek\": true,\r\n    \"brug_water\": false,\r\n    \"brug_file\": false\r\n ";
+                string brug_sensor_json = BridgeStatus.buildJson();//" \"81.1\": {\r\n    \"state\": dicht\r\n  }";//SensorenSpeciaal.buildJson(Lanes);
+                string speciaal_sensor_json = SensorenSpeciaal.bridgeSensors(Lanes);// " \"brug_wegdek\": true,\r\n    \"brug_water\": false,\r\n    \"brug_file\": false\r\n ";
                
                 // Publish a message
                 if (testit % 10 == 0)
                 {
+
                     ZeroMqHandler.PublishSensorData(rijbaan_sensor_json, brug_sensor_json, speciaal_sensor_json);
                     
                     Spawner.buildJson(Lanes, allRoadUsersArrayCopyList, testit);

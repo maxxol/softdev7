@@ -1,4 +1,3 @@
-9999:81.1.brug_wegdek
-1040:81.1.brug_water
-1053:81.1.brug_water
-1040:81.1.brug_file
+9999:brug_wegdek
+9998:brug_water
+1040:brug_file

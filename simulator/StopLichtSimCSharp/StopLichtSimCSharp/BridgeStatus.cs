@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace StopLichtSimCSharp
@@ -23,6 +25,33 @@ namespace StopLichtSimCSharp
                 currentstatus = false;
             }
             //ZeroMqHandler.receivedMessage();
+        }
+
+        public static string buildJson()
+        {
+            var result = new Dictionary<string, Dictionary<string, bool>>();
+            string status = "";
+            if (currentstatus == false)
+            {
+                status = "dicht";
+            }
+            else if (currentstatus == true)
+            {
+                status = "open";
+                //var result = new Dictionary<string, Dictionary<string, bool>>();
+            }
+            else
+            {
+                status = "onbekend";
+            }
+
+            string tosend = $" \"81.1\": {{\r\n    \"state\": {status}\r\n  }}";
+
+
+
+            //string json = JsonConvert.SerializeObject(tosend, Formatting.Indented);
+            //Console.WriteLine(tosend);
+            return tosend;
         }
     }
 }

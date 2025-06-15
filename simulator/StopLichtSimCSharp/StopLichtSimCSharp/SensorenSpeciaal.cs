@@ -25,7 +25,7 @@ namespace StopLichtSimCSharp
             }        
         }
 
-        public static void bridgeSensors(Lane[] lanes)
+        public static string bridgeSensors(Lane[] lanes)
         {
             var result = new Dictionary<string, Dictionary<string, bool>>();
             foreach (Lane lane in lanes)
@@ -39,8 +39,8 @@ namespace StopLichtSimCSharp
                             string[] parts = sensorID.Split('.');
                             if (parts.Length == 3)
                             {
-                                string groupID = $"{parts[0]}.{parts[1]}"; // e.g., "1.1"
-                                string position = parts[2]; // "voor" or "achter"
+                                string groupID = $"{parts[0]}"; // e.g., "1.1"
+                                string position = parts[1]; // "voor" or "achter"
 
                                 if (!result.ContainsKey(groupID))
                                 {
@@ -61,6 +61,9 @@ namespace StopLichtSimCSharp
                     }
                 }
             }
+            string json = JsonConvert.SerializeObject(result, Formatting.Indented);
+            Console.WriteLine(json);
+            return json;
         }
 
         public static string buildJson(Lane[] lanes)
