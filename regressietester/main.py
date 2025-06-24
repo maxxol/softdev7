@@ -96,10 +96,6 @@ def main():
         if sim_port_number == con_port_number:
             parser.print_help()
             raise Exception("While '--do-local-mode'=true, the --sim-port-number cannot be the same as the --con-port-number")
-    # else:
-        # if sim_host_id == con_host_id:
-        #     parser.print_help()
-        #     raise Exception("While '--do-local-mode'=false, the --sim-host-id cannot be the same as the --con-host-id")
 
     sim_ip = f"tcp://127.0.0.1:{sim_port_number}" if do_local_mode else f"tcp://10.121.17.{sim_host_id}:5556"
     con_ip = f"tcp://127.0.0.1:{con_port_number}" if do_local_mode else f"tcp://10.121.17.{con_host_id}:5555"
