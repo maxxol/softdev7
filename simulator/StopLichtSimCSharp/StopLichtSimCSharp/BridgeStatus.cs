@@ -45,12 +45,12 @@ namespace StopLichtSimCSharp
                 status = "onbekend";
             }
 
-            string tosend = $" \"81.1\": {{\r\n    \"state\": {status}\r\n  }}";
+            string tosend = $"{{\n \"81.1\":{{\r\n    \"state\": \"{status}\"\r\n  }}\n}}";
 
 
 
             //string json = JsonConvert.SerializeObject(tosend, Formatting.Indented);
-            //Console.WriteLine(tosend);
+           // Console.WriteLine(tosend);
             return tosend;
         }
     }

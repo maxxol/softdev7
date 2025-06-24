@@ -77,10 +77,10 @@ namespace StopLichtSimCSharp
                 if (!result.ContainsKey(groupID))
                 {
                     result[groupID] = new Dictionary<string, bool>
-            {
-                { "voor", false },
-                { "achter", false }
-            };
+                    {
+                        { "voor", false },
+                        { "achter", false }
+                    };
                 }
             }
             //end mocked sensors
