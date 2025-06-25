@@ -28,11 +28,23 @@ namespace StopLichtSimCSharp
             //chosenLaneNumber = 4;
             Lane chosenLane = Lanes[chosenLaneNumber]; //choose random lane to spawn a car
             if (rand.Next(21) == 0) {
-                if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber, allRoadUsersList); spawnBus(chosenLane, chosenLaneNumber, allRoadUsersList); spawnPriorityVehicle(chosenLane, chosenLaneNumber, allRoadUsersList); } //car, bus and priority vehicles
+                if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber, allRoadUsersList); spawnBus(chosenLane, chosenLaneNumber, allRoadUsersList);  } //car, bus and priority vehicles
+               
+         
                 else if (chosenLaneNumber <= numberOfBikeLanes + numberOfCarLanes) { spawnBike(chosenLane, chosenLaneNumber, allRoadUsersList); } //bike
                 else if (chosenLaneNumber <= numberOfPedLanes + numberOfCarLanes + numberOfBikeLanes) { spawnPed(chosenLane, chosenLaneNumber, allRoadUsersList); } //ped
                 else if (chosenLaneNumber <= numberOfBoatLanes + numberOfCarLanes + numberOfBikeLanes + numberOfPedLanes) { spawnBoat(chosenLane, chosenLaneNumber, allRoadUsersList); } //boat
                 else { }//number outside of array count (should be impossible)
+            }
+            if(rand.Next(31) == 0)
+            {   
+                if (chosenLaneNumber <= numberOfCarLanes) { spawnBus(chosenLane, chosenLaneNumber, allRoadUsersList); }
+                else { }                
+            }
+            if (rand.Next(35) == 0)
+            {
+                if (chosenLaneNumber <= numberOfCarLanes) { spawnPriorityVehicle(chosenLane, chosenLaneNumber, allRoadUsersList); }
+                else { }
             }
             return allRoadUsersList.ToArray();
         }
