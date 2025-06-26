@@ -79,6 +79,7 @@ namespace StopLichtSimCSharp
 
                     ZeroMqHandler.PublishSensorData(rijbaan_sensor_json, brug_sensor_json, speciaal_sensor_json);
                     
+                    
                     Spawner.buildJson(Lanes, allRoadUsersArrayCopyList, testit);
                     //if (allRoadUsersArrayCopyList.Where)
                     //{
