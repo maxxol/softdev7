@@ -28,7 +28,7 @@ namespace StopLichtSimCSharp
             //chosenLaneNumber = 4;
             Lane chosenLane = Lanes[chosenLaneNumber]; //choose random lane to spawn a car
             if (rand.Next(21) == 0) {
-                if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber, allRoadUsersList); spawnBus(chosenLane, chosenLaneNumber, allRoadUsersList);  } //car, bus and priority vehicles
+                if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber, allRoadUsersList);} //car
                
          
                 else if (chosenLaneNumber <= numberOfBikeLanes + numberOfCarLanes) { spawnBike(chosenLane, chosenLaneNumber, allRoadUsersList); } //bike
@@ -104,18 +104,27 @@ namespace StopLichtSimCSharp
                     if (roadUser.VehiclePriority > 0)
                     {
                         VoorangVoertuigTopic voertuig = new VoorangVoertuigTopic();
-                        //trythisagain = herebelanes.Where(entry => roadUser.LaneID[entry.Value] != entry.Value).ToDictionary(entry => entry.Key, entry => roadUser.LaneID[entry.Value]);
-                        herebelanes.Equals(roadUser.LaneID);
-                        voertuig.baan = roadUser.LaneID.ToString();
-                        voertuig.simulatie_tijd_ms = testit.ToString();
-                        voertuig.prioriteit = roadUser.VehiclePriority;
-                        result["queue"].Add(voertuig);                        
+                        var aaah = roadUser.LaneID.ToString();
+                        //trythisagain = allRoadUsersList.Where(entry => herebelanes[entry.LaneID] != entry.).ToDictionary(entry => entry.Key, entry => roadUser.LaneID[entry.Value]);
+                        // trythisagain = 
+                       // try
+                        //{
+                            var josh = herebelanes.Where(entry => roadUser.LaneID.ToString() == herebelanes[entry.Value]).ToDictionary(entry => entry.Key, entry => roadUser.LaneID.ToString());
+                            voertuig.baan = josh.ToString(); // roadUser.LaneID.ToString();
+                            voertuig.simulatie_tijd_ms = testit.ToString();
+                            voertuig.prioriteit = roadUser.VehiclePriority;
+                            result["queue"].Add(voertuig);
+                        //}//Console.WriteLine(josh);
+                        //catch (Exception e)
+                        //{
+                        //}
+                                       
                     }
                 }
                 if (result.Count > 0)
                 {
                     string json = JsonConvert.SerializeObject(result, Formatting.Indented);
-                    //Console.WriteLine(json);
+                    Console.WriteLine(json);
                     ZeroMqHandler.PublishPriorityVehicle(json);
                 }
             }
