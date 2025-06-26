@@ -20,7 +20,6 @@ SCHEMA_FILE_PATHS = {
     "sensoren_speciaal": "./schemas/sensoren_speciaal.json",
     "voorrangsvoertuig": "./schemas/voorrangsvoertuig.json",
     "sensoren_bruggen": "./schemas/sensoren_bruggen.json",
-    "sensoren_bruggen": "./schemas/sensoren_bruggen.json",
     "stoplichten": "./schemas/stoplichten.json"
 }
 
