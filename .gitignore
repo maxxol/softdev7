@@ -3,10 +3,6 @@
 
 raylib/
 
-# Build c-executables
-controller/build
-controller/src/out/
-
 
 # Compiled Object files
 *.slo
@@ -442,3 +438,8 @@ FodyWeavers.xsd
 # intelliJ
 .idea/
 *.iml
+*.iws
+out/
+
+# regressiontester
+/logs

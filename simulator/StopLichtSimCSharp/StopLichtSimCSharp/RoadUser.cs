@@ -11,7 +11,8 @@ namespace StopLichtSimCSharp
         Random random = new Random();
         int[] mergePointNodeIDs = [548, 478,356];
 
-        public int PosX, PosY, Speed, NodeTravelIterator, LaneID;
+        public int PosX, PosY, Speed, NodeTravelIterator, LaneID, VehiclePriority;
+        
         public bool MoveToNextCheckNode(ref int posX, ref int posY, int roadUserSpeed, CheckPointNode[] checkPointNodes, Dictionary<string, string> nodeId, int iterator, RoadUser roaduser)
         {
             checkPointNodes[iterator].Occupied = true;
@@ -79,9 +80,6 @@ namespace StopLichtSimCSharp
 
                     return true; 
                 } 
-
-
-
 
                 else {return true;}
 

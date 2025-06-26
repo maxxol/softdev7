@@ -64,6 +64,27 @@ namespace StopLichtSimCSharp
         {
             var result = new Dictionary<string, Dictionary<string, bool>>();
 
+            //start mocked sensors
+            string[] staticSensorGroups = new string[]
+            {
+                "37.1", "37.2", "38.2", "38.1", "31.1", "31.2", "32.1",
+                "22.1", "23.1", "33.1", "33.2", "34.1", "34.2", "24.1",
+                "25.1", "35.1", "36.1", "35.2"
+            };
+
+            foreach (var groupID in staticSensorGroups)
+            {
+                if (!result.ContainsKey(groupID))
+                {
+                    result[groupID] = new Dictionary<string, bool>
+                    {
+                        { "voor", false },
+                        { "achter", false }
+                    };
+                }
+            }
+            //end mocked sensors
+
             foreach (Lane lane in lanes)
             {
                 foreach (CheckPointNode node in lane.CheckPointNodes)
@@ -84,8 +105,7 @@ namespace StopLichtSimCSharp
                                     { "achter", false }
                                 };
                             }
-                            result[groupID][position] = node.Occupied;
-                           
+                            result[groupID][position] = node.Occupied;                           
                         }
                     }
                 }

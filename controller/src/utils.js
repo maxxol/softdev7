@@ -28,22 +28,23 @@ const TRAFFIC_LIGHT_COLORS = Object.freeze({
     RED: "rood"
 })
 
-const PASS_BOAT_STATES = Object.freeze({
+const PASS_BOAT_STATES = Object.freeze({ // trafficlights(TL)
+                                 // in this stage we...
     DEFAULT:                  0, // no boats to be processed
     AWAITING_CLEAR_BRIDGE:    1, // wait before we can clear the bridge
-    CLEAR_BRIDGE:             2, // clear the bridge(bridge lights on red)
+    CLEAR_BRIDGE:             2, // clear the bridge(bridge TL on red)
     AWAITING_OPEN_BRIDGE:     3, // wait before we can open the bridge
-    OPEN_BRIDGE:              4, // bridge can be told to open
+    OPEN_BRIDGE:              4, // tell the bridge to open
     AWAITING_PASS_BOAT_NORTH: 5, // wait before we can put north to green
-    PASS_BOAT_NORTH:          6, // north can become green
+    PASS_BOAT_NORTH:          6, // put TL boat from north to green
     AWAITING_PASS_BOAT_SOUTH: 7, // wait before we can put south to green
-    PASS_BOAT_SOUTH:          8, // south can become green
-    AWAITING_STOP_BOAT:       9, // wait before we can put boat lights to red
-    STOP_BOAT:                10,// boat can become red
+    PASS_BOAT_SOUTH:          8, // put TL boat from south to green
+    AWAITING_STOP_BOAT:       9, // wait before we can put boat TL to red
+    STOP_BOAT:                10,// put boats TL to red
     AWAITING_CLOSE_BRIDGE:    11,// wait before we can tell the bridge close
     CLOSE_BRIDGE:             12,// bridge can be told to close
     AWAITING_BRIDGE_TRAFFIC_GREEN: 13,// wait before we can allow bridge traffic to pass
-    BRIDGE_TRAFFIC_GREEN: 14,// allow bridge traffic to pass
+    BRIDGE_TRAFFIC_GREEN: 14,// allow bridge traffic to pass(bridge TL on green)
 
 })
 

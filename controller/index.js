@@ -12,10 +12,10 @@ const SensorDataContainer = require("./src/sensor_data_container")
 
 
 const validSensorsSchema = require("./config/topic_schemas/valid_sensors.json")
-const sensorRijbaanSchema = require("./config/topic_schemas/sensor_rijbaan.json")
-const sensorSpeciaalSchema = require("./config/topic_schemas/sensor_speciaal.json")
+const sensorRijbaanSchema = require("./config/topic_schemas/sensoren_rijbaan.json")
+const sensorSpeciaalSchema = require("./config/topic_schemas/sensoren_speciaal.json")
 const priorityVehicleSchema = require("./config/topic_schemas/voorrangsvoertuig.json");
-const sensorBridgeSchema = require("./config/topic_schemas/sensor_bruggen.json")
+const sensorBridgeSchema = require("./config/topic_schemas/sensoren_bruggen.json")
 const timeSchema = require("./config/topic_schemas/tijd.json")
 let trafficLightStatus = require("./config/misc/trafficlight_status_initial.json");
 const roadwaySensorStatus = require("./config/misc/roadway_sensor_status_initial.json");

@@ -51,7 +51,7 @@ function updateCrossing(simulatorStatus, trafficLightStatus, greenSet, stage, id
         const { queue } = simulatorStatus.priority_vehicle
         const isProrityVehicle = queue.length > 0
         // can we select a greenSet for the crossing, based on the idQueue
-        let doSelectGreenSet = false
+        let doSelectGreenSet = true
         // can we progress to the next stage, thus not freeze on stage red
         // this is the case when a priority vehicle with priority 1 is waiting to cross the crossing, we don't want to overwrite with a greenSet
         let doProgressStage = true
@@ -59,25 +59,28 @@ function updateCrossing(simulatorStatus, trafficLightStatus, greenSet, stage, id
         if (isProrityVehicle) {
             for (const priorityVehicle of queue) {
                 const isHeadingToBridge = ["41.1", "42.1"].includes(priorityVehicle.baan)
-                // if the priority vehicle is heading to the bridge, we can select a greenSet for the crossing, based on the idQueue
-                doSelectGreenSet = isHeadingToBridge
+                // if it is false, we cannot set it back to true. So priority vehicles later in the queue cannot overwrite
+                if(doSelectGreenSet) {
+                    // if the priority vehicle is heading to the bridge, we can select a greenSet for the crossing, based on the idQueue
+                    doSelectGreenSet = isHeadingToBridge
+                }
+                // is the particular vehicle with prio 1, from the last 12 seconds
                 if (priorityVehicle.prioriteit == 1 && simulatie_tijd_ms - priorityVehicle.simulatie_tijd_ms <= 12000) {
-                    doProgressStage = isHeadingToBridge
+                    // if it is false, we cannot set it back to true. So priority vehicles later in the queue cannot overwrite
+                    if(doProgressStage) {
+                        // if the priority vehicle is heading to the bridge, we can progress to the green-stage
+                        doProgressStage = isHeadingToBridge
+                    }
                     updateToPriorityVehicleOne(isHeadingToBridge, priorityVehicle.baan)
-                    // if we don't break here, a priority vehicle with priority 2 will potentially overwrite with doProgressStage = true
-                    break;
                 } else if (priorityVehicle.prioriteit == 2) {
-                    doProgressStage = true
                     greenSet = selectGreenSet(priorityVehicle.baan)
                 }
             }
-        } else {
-            doSelectGreenSet = true
         }
         if (doSelectGreenSet) {
             let id = 1
-            // the brug surface has been triggered for an extended period. Since the east will always flow through, 
-            // that means the traffic going north is stuck. The fix is choosing the greenSet with ID "2.1". This might clear the road heading west to the crossing.
+            // the brug surface has been triggered for an extended period. Since the traffic heading east will always flow through, 
+            // that means the traffic going west is likely stuck. The fix is assembling a custom greenSet with the relevant IDs. This might clear the road heading west to the crossing.
             if(isTriggeredBrugSurfaceSensor) {
                 greenSet = new Set(["1.1", "2.1", "2.2", "3.1"])
             } else {
@@ -85,7 +88,6 @@ function updateCrossing(simulatorStatus, trafficLightStatus, greenSet, stage, id
                 id = idQueue.shift()
                 greenSet = selectGreenSet(id)
             }
-            // greenSet = selectGreenSet(id)
         }
         // when priority vehicle 1 needs to drive over the crossing, we don't need to update the stage nor use greenSet
         if (doProgressStage) { 
@@ -124,7 +126,7 @@ function updateCrossing(simulatorStatus, trafficLightStatus, greenSet, stage, id
                     if (simulatorStatus.roadway[id].voor == true) {
                         updatedIdQueue.push(id)
                    // }
-                })
+                }})
             }
             return updatedIdQueue
         }
@@ -158,12 +160,18 @@ function updateCrossing(simulatorStatus, trafficLightStatus, greenSet, stage, id
         }
     }
 
+    /**
+     * set trafficlights on the entire crossing to red
+     */
     function onStageOrange() {
         ID_SETS.crossing.total.forEach(id => {
             trafficLightStatus[id] = TRAFFIC_LIGHT_COLORS.RED
         })
     }
 
+    /**
+     * set every trafficlight in greenset to orange, with exeptions
+     */
     function onStageGreen() {
         greenSet.forEach(id => {
             // if there is a file in front of the bridge, keep all traffic lights going to the bridge red

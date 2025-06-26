@@ -2,6 +2,8 @@ import argparse
 import json
 from datetime import datetime
 
+from datetime import datetime
+
 import zmq
 
 from handle_validation import validate_topic
@@ -17,6 +19,7 @@ SCHEMA_FILE_PATHS = {
     "sensoren_rijbaan": "./schemas/sensoren_rijbaan.json",
     "sensoren_speciaal": "./schemas/sensoren_speciaal.json",
     "voorrangsvoertuig": "./schemas/voorrangsvoertuig.json",
+    "sensoren_bruggen": "./schemas/sensoren_bruggen.json",
     "sensoren_bruggen": "./schemas/sensoren_bruggen.json",
     "stoplichten": "./schemas/stoplichten.json"
 }
@@ -96,13 +99,9 @@ def main():
         if sim_port_number == con_port_number:
             parser.print_help()
             raise Exception("While '--do-local-mode'=true, the --sim-port-number cannot be the same as the --con-port-number")
-    else:
-        if sim_host_id == con_host_id:
-            parser.print_help()
-            raise Exception("While '--do-local-mode'=false, the --sim-host-id cannot be the same as the --con-host-id")
 
     sim_ip = f"tcp://127.0.0.1:{sim_port_number}" if do_local_mode else f"tcp://10.121.17.{sim_host_id}:5556"
-    con_ip = f"tcp://127.0.0.1:{con_port_number}" if do_local_mode else f"tcp://10.121.17.{con_host_id}:5556"
+    con_ip = f"tcp://127.0.0.1:{con_port_number}" if do_local_mode else f"tcp://10.121.17.{con_host_id}:5555"
 
     sim_socket = setup_socket(sim_ip, {"tijd", "sensoren_rijbaan", "sensoren_speciaal", "sensoren_bruggen", "voorrangsvoertuig"})
     con_socket = setup_socket(con_ip, {"stoplichten"})
@@ -110,7 +109,7 @@ def main():
     poller.register(sim_socket, zmq.POLLIN)
     poller.register(con_socket, zmq.POLLIN)
 
-    log_file = open("logs.txt", "a")
+    log_file = open(f"logs/log_{datetime.now().strftime('%Y%m%d-%H%M%S')}.txt", "x")
 
     try:
         while True:
@@ -134,31 +133,40 @@ def main():
                     case _:
                         print_function = print_topic_errors
 
-                log_file.write(f"received topic '{sim_topic}', from the simulator at: {datetime.now().isoformat()}\n")
+                log_file.write(f"received topic '{sim_topic}', from the simulator at: {datetime.now().strftime('%Y-%m-%d - %H:%M:%S.%f')[:-3]}\n")
                 log_file.flush()
-                validate_topic(
-                    SCHEMA_FILE_PATHS[sim_topic],
-                    json.loads(sim_msg_object),
-                    print_function,
-                    sim_topic
-                )
+                try:
+                    validate_topic(
+                        SCHEMA_FILE_PATHS[sim_topic],
+                        json.loads(sim_msg_object),
+                        print_function,
+                        sim_topic
+                    )
+                except:
+                    print(f"Incorrect json formatting on topic '{sim_topic}'")
             if con_socket in socks:
                 con_topic_encoded, con_msg_encoded = con_socket.recv_multipart()
                 con_topic = con_topic_encoded.decode("utf-8")
                 con_msg_object = con_msg_encoded.decode("utf-8")
 
                 print_function = print_topic_sensoren_id_errors
-                validate_topic(
-                    SCHEMA_FILE_PATHS[con_topic],
-                    json.loads(con_msg_object),
-                    print_function,
-                    con_topic
+                try:
+                    validate_topic(
+                        SCHEMA_FILE_PATHS[con_topic],
+                        json.loads(con_msg_object),
+                        print_function,
+                        con_topic
+                    )
+                except:
+                    print(f"Incorrect json formatting on topic '{con_topic}'")
+                log_file.write(
+                    f"received topic '{con_topic}', from the controller at: {datetime.now().strftime('%Y-%m-%d - %H:%M:%S.%f')[:-3]}\n"
                 )
-                log_file.write(f"received topic '{con_topic}', from the controller at: {datetime.now().isoformat()}\n")
                 log_file.flush()
     except KeyboardInterrupt:
         pass
     print("Klaar")
+    log_file.close()
     log_file.close()
 
 

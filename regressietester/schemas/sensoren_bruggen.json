@@ -6,7 +6,7 @@
       "properties": {
         "state": {
           "type": "string",
-          "enum": ["dicht", "open"]
+          "enum": ["dicht", "open", "onbekend"]
         }
       },
       "required": ["state"],

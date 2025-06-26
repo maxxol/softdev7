@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Raylib_cs;
-using System.Numerics;
-using System.IO;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
@@ -56,29 +56,40 @@ namespace StopLichtSimCSharp
             int testit = 0;
             TrafficLightStatus something = new TrafficLightStatus();
             something.Traffic();
+            var herelanes = spawner.LanesLoad(Lanes);
             while (!Raylib.WindowShouldClose())
             {
                 TrafficLights trafficlight = new TrafficLights();
                 trafficlight.CompareIdsAndLoadColors();
                 testit++;
+                
+                allRoadUsersArray = spawner.spawnRoaduser(Lanes, allRoadUsersArray);
+                List<RoadUser> allRoadUsersArrayCopyList = new List<RoadUser>();
+                allRoadUsersArrayCopyList = allRoadUsersArray.ToList();
                 //RoadSensors.checkRoadSensors(Lanes);
                 string rijbaan_sensor_json = RoadSensors.buildJson(Lanes);
-                string brug_sensor_json = " \"81.1\": {\r\n    \"state\": dicht\r\n  }";//SensorenSpeciaal.buildJson(Lanes);
-                string speciaal_sensor_json = " \"brug_wegdek\": true,\r\n    \"brug_water\": false,\r\n    \"brug_file\": false\r\n ";
+                string brug_sensor_json = BridgeStatus.buildJson();//" \"81.1\": {\r\n    \"state\": dicht\r\n  }";//SensorenSpeciaal.buildJson(Lanes);
+                string speciaal_sensor_json = SensorenSpeciaal.bridgeSensors(Lanes);// " \"brug_wegdek\": true,\r\n    \"brug_water\": false,\r\n    \"brug_file\": false\r\n ";
+                
                 // Publish a message
                 if (testit % 10 == 0)
                 {
-                    ZeroMqHandler.PublishSensorData(rijbaan_sensor_json, brug_sensor_json, speciaal_sensor_json);
-                    ZeroMqHandler.PublishTimeData(testit);
 
+                    ZeroMqHandler.PublishSensorData(rijbaan_sensor_json, brug_sensor_json, speciaal_sensor_json);
+                    
+                    
+                    Spawner.buildJson(Lanes, allRoadUsersArrayCopyList, testit);
+                    //if (allRoadUsersArrayCopyList.Where)
+                    //{
+                        
+                    //}
+                    ZeroMqHandler.PublishTimeData(testit);
                 }
                 //Console.WriteLine(allRoadUsersArray.Length+" before");
-                allRoadUsersArray = spawner.spawnRoaduser(Lanes, allRoadUsersArray);
+                
                 //Console.WriteLine(allRoadUsersArray.Length+ " after");
 
-                MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(nodeDevMode);
-
-                
+                MouseClickNodeCreator.AddCoordinateToNodeFileByClicking(nodeDevMode);                
 
                 Dictionary<string,string> nodeIdToTrafficLightColor = TrafficLights.trythis;
                 if (!nodeDevMode)
@@ -115,7 +126,7 @@ namespace StopLichtSimCSharp
                             if (nodeIdToTrafficLightColor[Convert.ToString(node.NodeID)] != null)
                             {
                                 node.TrafficLightColor = Convert.ToString(nodeIdToTrafficLightColor.FirstOrDefault(x => x.Key == Convert.ToString(node.NodeID)).Value);
-                               // Lanes[Convert.ToInt32(lane.LaneID)].addTrafficlight(Convert.ToInt32(nodeIdToTrafficLightColor.FirstOrDefault(x => x.Key == Convert.ToString(node.NodeID)).Key));
+                                //Lanes[Convert.ToInt32(lane.LaneID)].addTrafficlight(Convert.ToInt32(nodeIdToTrafficLightColor.FirstOrDefault(x => x.Key == Convert.ToString(node.NodeID)).Key));
                                 Color color = TrafficLights.TrafficLightStatusIndividual(node.TrafficLightColor); 
                                 Raylib.DrawCircleV(new Vector2(node.X, node.Y), 4, color);
                             }
@@ -126,8 +137,7 @@ namespace StopLichtSimCSharp
                     }
                 }
 
-                List<RoadUser> allRoadUsersArrayCopyList= new List<RoadUser>();
-                allRoadUsersArrayCopyList = allRoadUsersArray.ToList();
+                
                 bool shouldBeRemoved;
                 foreach(RoadUser roaduser in allRoadUsersArray)
                 {
@@ -199,7 +209,10 @@ namespace StopLichtSimCSharp
                     {
                         foreach (var node in lane.CheckPointNodes)
                         {
-                            if (new[] { 9, 6, 36, 33, 67,70,158,161,231,234,277,280,312,315,348,351,369,372,406,409,439,442,466,469,485,488,555,558, 636, 641, 642, 656, 688, 689, 747, 748,749,753,754, 862, 927, 928, 933, 934, 940, 941, 968, 975, 1032, 1033,1036,1037,1040,1049,9998,9999 }.Contains(node.NodeID))
+                            //820:52.1.voor, 822:52.1.achter
+                            //683:33.2.voor, 683.33.2.achter
+                            //963
+                            if (new[] { 9, 6, 36, 33, 67,70,158,161,231,234,277,280,312,315,348,351,369,372,406,409,439,442,466,469,485,488,555,558, 626, 627, 638, 639,  642,  656, 681,682,684,685,688, 689,  753,754, 792, 811,820, 822, 862, 916, 920, 921, 928, 931,933, 934, 940, 941, 967, 968, 975, 987, 1032, 1033, 1035,1036, 1037,1040,1049,1100, 1101,1111, 1113, 1200, 1201,1483, 1683,1685, 1978, 9998,9999, 10032 }.Contains(node.NodeID))
                             {
                                 Raylib.DrawCircleV(new Vector2(node.X, node.Y), 2, Raylib_cs.Color.DarkPurple);
                             }
