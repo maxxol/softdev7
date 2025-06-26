@@ -111,7 +111,8 @@ def main():
     try:
         while True:
             socks = dict(poller.poll())
-
+            sim_topic_encoded, sim_msg_encoded = sim_socket.recv_multipart()
+            print("Here")
             if sim_socket in socks:
                 sim_topic_encoded, sim_msg_encoded = sim_socket.recv_multipart()
                 sim_topic = sim_topic_encoded.decode("utf-8")
