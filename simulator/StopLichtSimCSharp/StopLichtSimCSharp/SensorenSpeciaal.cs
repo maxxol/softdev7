@@ -40,7 +40,7 @@ namespace StopLichtSimCSharp
                            // if (parts.Length == 3)
                             //{
                                 string groupID = sensorID; // e.g., "1.1"
-                                                                // string position = parts[1]; // "voor" or "achter"
+                              //132,138                   // string position = parts[1]; // "voor" or "achter"
 
                                 if (!result.ContainsKey(groupID))
                                 {
@@ -51,7 +51,7 @@ namespace StopLichtSimCSharp
                                         { "brug_file", false }
                                     };
                                 }
-                               // result[groupID] = node.Occupied;
+                              // result[groupID] = node.Occupied;
                             //}
                         }
                     }
@@ -93,7 +93,6 @@ namespace StopLichtSimCSharp
                                 };
                             }
                             result[groupID][position] = node.Occupied;
-
                         }
                     }
                 }

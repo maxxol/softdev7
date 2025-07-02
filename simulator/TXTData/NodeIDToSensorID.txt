@@ -48,12 +48,12 @@
 11901:31.2.achter
 1111:32.2.voor
 928:32.2.achter
-685:33.1.voor
-862:33.1.achter
+11401:33.1.voor
+16085:33.1.achter
 1401:33.2.voor
 684:33.2.achter
-1484:34.1.voor
-1483:34.1.achter
+16093:34.1.voor
+16103:34.1.achter
 1681:34.2.achter
 1600:34.2.voor
 10034:35.1.voor
@@ -84,8 +84,8 @@
 819:52.1.achter
 627:53.1.voor
 626:53.1.achter
-941:54.1.achter
-940:54.1.voor
+795:54.1.achter
+2020:54.1.voor
 1036:71.1.voor
 1037:71.1.achter
 1040:72.1.voor

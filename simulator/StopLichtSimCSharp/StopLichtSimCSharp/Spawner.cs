@@ -11,14 +11,14 @@ namespace StopLichtSimCSharp
     class Spawner
     {
         int numberOfCarLanes = 13; //update manually when nodes have been set.
-        int numberOfBikeLanes = 12;
+        int numberOfBikeLanes = 13;
         int numberOfPedLanes = 11;
         int numberOfBoatLanes = 2;
         public static Dictionary<string, string> herebelanes = new Dictionary<string, string>();
         public static Dictionary<string, string> trythisagain = new Dictionary<string, string>();
        
         string[] lanesbeloaded = File.ReadAllLines("../../../../../TXTData/Lanenumber.txt");
-        int[] forbiddenSpawnLanes = [3, 5, 6,13,15,17,19,24,26];
+        int[] forbiddenSpawnLanes = [];// [3, 5, 6,13,15,17,19,24,26];
         public RoadUser[] spawnRoaduser(Lane[] Lanes, RoadUser[] allRoadUsersArray)
         {
             List<RoadUser> allRoadUsersList = allRoadUsersArray.ToList();
@@ -29,7 +29,7 @@ namespace StopLichtSimCSharp
             //if (chosenLaneNumber <= numberOfCarLanes+numberOfBikeLanes) { return allRoadUsersList.ToArray(); }
             //chosenLaneNumber = 4;
             Lane chosenLane = Lanes[chosenLaneNumber]; //choose random lane to spawn a car
-            if (rand.Next(21) == 0) {
+            if (rand.Next(01) == 0) {
                 if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber, allRoadUsersList);} //car
                
          
@@ -106,15 +106,15 @@ namespace StopLichtSimCSharp
                     if (roadUser.VehiclePriority > 0)
                     {
                         VoorangVoertuigTopic voertuig = new VoorangVoertuigTopic();
-                    //    var aaah = roadUser.LaneID.ToString();
+                        //var aaah = roadUser.LaneID.ToString();
                         //trythisagain = allRoadUsersList.Where(entry => herebelanes[entry.LaneID] != entry.).ToDictionary(entry => entry.Key, entry => roadUser.LaneID[entry.Value]);
                         // trythisagain = 
                         // try
                         //{
                         //temporarystorageforlanes.Add(i.ToString(),roadUser.LaneID.ToString());
-                        trythisagain = herebelanes.Where(entry => roadUser.LaneID.ToString() != herebelanes[entry.Key]).ToDictionary(entry => entry.Value, entry => roadUser.LaneID.ToString());
+                        trythisagain = herebelanes.Where(entry => roadUser.LaneID.ToString() == entry.Key).ToDictionary(entry => roadUser.LaneID.ToString(), entry => entry.Value);
                         //trythisagain = herebelanes.Where(entry => roadUser.LaneID.ToString() != herebelanes[entry.Key]).ToDictionary(entry => entry.Value, entry => roadUser.LaneID.ToString());
-                        voertuig.baan = Convert.ToString(trythisagain.FirstOrDefault(x => x.Value == Convert.ToString(roadUser.LaneID)).Key); // roadUser.LaneID.ToString();
+                        voertuig.baan = Convert.ToString(trythisagain.FirstOrDefault(x => x.Value != Convert.ToString(roadUser.LaneID)).Value); // roadUser.LaneID.ToString();
                              // Convert.ToString(trythisagain.FirstOrDefault(x => x.Key == Convert.ToString(roadUser.LaneID)).Value);
                         voertuig.simulatie_tijd_ms = testit.ToString();
                         voertuig.prioriteit = roadUser.VehiclePriority;
