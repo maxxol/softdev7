@@ -11,7 +11,7 @@ namespace StopLichtSimCSharp
     class Spawner
     {
         int numberOfCarLanes = 13; //update manually when nodes have been set.
-        int numberOfBikeLanes = 13;
+        int numberOfBikeLanes = 14;
         int numberOfPedLanes = 11;
         int numberOfBoatLanes = 2;
         public static Dictionary<string, string> herebelanes = new Dictionary<string, string>();

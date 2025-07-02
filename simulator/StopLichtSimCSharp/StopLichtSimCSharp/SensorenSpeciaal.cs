@@ -40,7 +40,8 @@ namespace StopLichtSimCSharp
                            // if (parts.Length == 3)
                             //{
                                 string groupID = sensorID; // e.g., "1.1"
-                              //132,138                   // string position = parts[1]; // "voor" or "achter"
+                              //132,138                   
+                              // string position = parts[1]; // "voor" or "achter"
 
                                 if (!result.ContainsKey(groupID))
                                 {
