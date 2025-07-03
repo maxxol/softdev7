@@ -11,8 +11,8 @@ namespace StopLichtSimCSharp
     class Spawner
     {
         int numberOfCarLanes = 13; //update manually when nodes have been set.
-        int numberOfBikeLanes = 14;
-        int numberOfPedLanes = 11;
+        int numberOfBikeLanes = 13;
+        int numberOfPedLanes = 12;
         int numberOfBoatLanes = 2;
         public static Dictionary<string, string> herebelanes = new Dictionary<string, string>();
         public static Dictionary<string, string> trythisagain = new Dictionary<string, string>();
@@ -38,12 +38,12 @@ namespace StopLichtSimCSharp
                 else if (chosenLaneNumber <= numberOfBoatLanes + numberOfCarLanes + numberOfBikeLanes + numberOfPedLanes) { spawnBoat(chosenLane, chosenLaneNumber, allRoadUsersList); } //boat
                 else { }//number outside of array count (should be impossible)
             }
-            if(rand.Next(31) == 0)
+            if(rand.Next(810)== 0)
             {   
                 if (chosenLaneNumber <= numberOfCarLanes) { spawnBus(chosenLane, chosenLaneNumber, allRoadUsersList); }
                 else { }                
             }
-            if (rand.Next(35) == 0)
+            if (rand.Next(900) == 0)
             {
                 if (chosenLaneNumber <= numberOfCarLanes) { spawnPriorityVehicle(chosenLane, chosenLaneNumber, allRoadUsersList); }
                 else { }

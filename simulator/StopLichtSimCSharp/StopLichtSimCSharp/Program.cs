@@ -162,6 +162,16 @@ namespace StopLichtSimCSharp
                         Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 10, Raylib_cs.Color.Magenta);
 
                     }
+                    else if (roaduser is Bus)
+                    {
+                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 10, Raylib_cs.Color.Orange);
+
+                    }
+                    else if (roaduser is VoorrangsVoertuigen)
+                    {
+                        Raylib.DrawCircleV(new Vector2(roaduser.PosX, roaduser.PosY), 10, Raylib_cs.Color.Blue);
+
+                    }
                     shouldBeRemoved = roaduser.MoveToNextCheckNode(ref roaduser.PosX, ref roaduser.PosY, roaduser.Speed, Lanes[roaduser.LaneID].CheckPointNodes, nodeIdToTrafficLightColor, roaduser.NodeTravelIterator, roaduser);
                     if (shouldBeRemoved) {
                         //Console.WriteLine("removing");

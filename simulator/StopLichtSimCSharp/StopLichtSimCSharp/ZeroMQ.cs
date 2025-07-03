@@ -58,7 +58,7 @@ namespace StopLichtSimCSharp
             //long currentTimeMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             var payload = new
             {
-                simulatie_tijd_ms = frame * 100
+                simulatie_tijd_ms = frame * 1
             };
 
             string jsonMessage = JsonSerializer.Serialize(payload);
