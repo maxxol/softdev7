@@ -24,7 +24,7 @@ namespace StopLichtSimCSharp
     class VoorangVoertuigTopic
     {
         public string? baan { get; set; }
-        public string? simulatie_tijd_ms { get; set; }
+        public int? simulatie_tijd_ms { get; set; }
         public int prioriteit { get; set; }
     };
 }
