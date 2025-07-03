@@ -18,18 +18,18 @@ namespace StopLichtSimCSharp
         public static Dictionary<string, string> trythisagain = new Dictionary<string, string>();
        
         string[] lanesbeloaded = File.ReadAllLines("../../../../../TXTData/Lanenumber.txt");
-        int[] forbiddenSpawnLanes = [];// [3, 5, 6,13,15,17,19,24,26];
+        int[] forbiddenSpawnLanes = [3,5,6,15,16,18,19,21,22,28,29,31,36,37,38];// [3, 5, 6,13,15,17,19,24,26];
         public RoadUser[] spawnRoaduser(Lane[] Lanes, RoadUser[] allRoadUsersArray)
         {
             List<RoadUser> allRoadUsersList = allRoadUsersArray.ToList();
             var rand = new Random();
             int chosenLaneNumber = rand.Next(Lanes.Length);
-            //chosenLaneNumber = 26;
+            //chosenLaneNumber = 41;
             if (forbiddenSpawnLanes.Contains(chosenLaneNumber)) { return allRoadUsersList.ToArray(); }
             //if (chosenLaneNumber <= numberOfCarLanes+numberOfBikeLanes) { return allRoadUsersList.ToArray(); }
             //chosenLaneNumber = 4;
             Lane chosenLane = Lanes[chosenLaneNumber]; //choose random lane to spawn a car
-            if (rand.Next(01) == 0) {
+            if (rand.Next(2) == 0) {
                 if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber, allRoadUsersList);} //car
                
          
