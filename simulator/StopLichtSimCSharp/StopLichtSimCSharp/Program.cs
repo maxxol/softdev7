@@ -23,7 +23,7 @@ namespace StopLichtSimCSharp
             bool nodeDevMode = false;
             int screenWidth = 1920, screenHeight = 1080;
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow| ConfigFlags.VSyncHint);
-            Raylib.InitWindow(800, 800, "Terrible trafficlight sim, omg why is this a thing");
+            Raylib.InitWindow(800, 800, "like honestly pretty alright trafficlight sim, definitely one of the most simulators of all time");
             Raylib.SetWindowState(ConfigFlags.MaximizedWindow);
             Raylib.SetWindowMinSize(screenWidth, screenHeight/2);
             //Raylib.image imblank = GenImageColor(1024, 1024, Color.blank);

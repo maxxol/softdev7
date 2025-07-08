@@ -111,7 +111,7 @@ namespace StopLichtSimCSharp
                 }
             }
             string json = JsonConvert.SerializeObject(result, Formatting.Indented);
-            Console.WriteLine(json);
+            //Console.WriteLine(json);
             return json;
             //Console.WriteLine(json);
         }

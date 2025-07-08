@@ -24,12 +24,12 @@ namespace StopLichtSimCSharp
             List<RoadUser> allRoadUsersList = allRoadUsersArray.ToList();
             var rand = new Random();
             int chosenLaneNumber = rand.Next(Lanes.Length);
-            //chosenLaneNumber = 41;
+            //chosenLaneNumber = 27;
             if (forbiddenSpawnLanes.Contains(chosenLaneNumber)) { return allRoadUsersList.ToArray(); }
             //if (chosenLaneNumber <= numberOfCarLanes+numberOfBikeLanes) { return allRoadUsersList.ToArray(); }
             //chosenLaneNumber = 4;
             Lane chosenLane = Lanes[chosenLaneNumber]; //choose random lane to spawn a car
-            if (rand.Next(21) == 0) {
+            if (rand.Next(1) == 0) {
                 if (chosenLaneNumber <= numberOfCarLanes) { spawnCar(chosenLane, chosenLaneNumber, allRoadUsersList);} //car
                
          
@@ -122,7 +122,7 @@ namespace StopLichtSimCSharp
                 if (result.Count > 0)
                 {
                     string json = JsonConvert.SerializeObject(result, Formatting.Indented);
-                    Console.WriteLine(json);
+                    //Console.WriteLine(json);
                     ZeroMqHandler.PublishPriorityVehicle(json);
                 }
             }

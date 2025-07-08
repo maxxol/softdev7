@@ -65,7 +65,7 @@ namespace StopLichtSimCSharp
 
             string newjs = $"{{\n \"brug_wegdek\":  false,\n  \"brug_water\": false,\n  \"brug_file\": true\n}}";
             string json = JsonConvert.SerializeObject(result, Formatting.Indented);
-            Console.WriteLine(newjs);
+            //Console.WriteLine(newjs);
             return newjs;
         }
 

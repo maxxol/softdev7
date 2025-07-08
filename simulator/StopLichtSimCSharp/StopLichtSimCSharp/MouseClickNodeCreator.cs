@@ -26,7 +26,7 @@ namespace StopLichtSimCSharp
                 }
                 if (Raylib.IsMouseButtonPressed(rightClickButton))
                 {
-                    File.AppendAllText("../../../../../TXTData/NodeData.txt", "LANE END" + "\n");
+                    //File.AppendAllText("../../../../../TXTData/NodeData.txt", "LANE END" + "\n");
 
                 }
                 //Console.WriteLine(mousePos);                

@@ -9,7 +9,6 @@ namespace StopLichtSimCSharp
     class RoadUser
     {
         Random random = new Random();
-        int[] mergePointNodeIDs = [548, 478,356];
 
         public int PosX, PosY, Speed, NodeTravelIterator, LaneID, VehiclePriority;
         
@@ -20,27 +19,57 @@ namespace StopLichtSimCSharp
 
 
             //-------------------------------------------------------------------lane diverging---------------------------------------------------------
-            if (checkPointNodes[iterator].NodeID == 206 && random.Next(20) == 0)
+            if (checkPointNodes[iterator].NodeID == 206 && random.Next(20) == 0) //autoweg van brug naar kruispunt boven
             {
                 checkPointNodes[iterator].Occupied = false;
                 roaduser.LaneID = 5;
                 roaduser.NodeTravelIterator = 0;
                 return false;
             }
-            if (checkPointNodes[iterator].NodeID == 263 && random.Next(20) == 0)
+            if (checkPointNodes[iterator].NodeID == 263 && random.Next(20) == 0) //autoweg van brug naar kruispunt rechtdoor-onder
             {
                 checkPointNodes[iterator].Occupied = false;
                 roaduser.LaneID = 6;
                 roaduser.NodeTravelIterator = 0;
                 return false;
             }
-            if (checkPointNodes[iterator].NodeID == 218 && random.Next(20) == 0)
+            if (checkPointNodes[iterator].NodeID == 218 && random.Next(20) == 0) //autoweg van brug naar kruispunt onder
             {
                 checkPointNodes[iterator].Occupied = false;
                 roaduser.LaneID = 3;
                 roaduser.NodeTravelIterator = 0;
                 return false;
             }
+
+            if (checkPointNodes[iterator].NodeID == 1010 && random.Next(30) == 0) //voetpad van linksmiddenonder naar boven
+            {
+                checkPointNodes[iterator].Occupied = false;
+                roaduser.LaneID = 36;
+                roaduser.NodeTravelIterator = 0;
+                return false;
+            }
+            if (checkPointNodes[iterator].NodeID == 1010 && random.Next(30) == 0) //voetpad van linksmiddenonder naar brug
+            {
+                checkPointNodes[iterator].Occupied = false;
+                roaduser.LaneID = 37;
+                roaduser.NodeTravelIterator = 0;
+                return false;
+            }
+            if (checkPointNodes[iterator].NodeID == 888 && random.Next(30) == 0) //voetpad van linksmiddenonder naar brug
+            {
+                checkPointNodes[iterator].Occupied = false;
+                roaduser.LaneID = 28;
+                roaduser.NodeTravelIterator = 0;
+                return false;
+            }
+            if (checkPointNodes[iterator].NodeID == 888 && random.Next(30) == 0) //voetpad van linksmiddenonder naar brug
+            {
+                checkPointNodes[iterator].Occupied = false;
+                roaduser.LaneID = 38;
+                roaduser.NodeTravelIterator = 0;
+                return false;
+            }
+
             //-------------------------------------------------------------------end diverge-------------------------------------------------------------
             //Console.WriteLine("iterator used: " + iterator); //+ " " + checkPointNodes.Length);
             try
@@ -55,8 +84,7 @@ namespace StopLichtSimCSharp
                 //Console.WriteLine(checkPointNodes[iterator].NodeID);
                 //-------------------------------------------------------------------lane merging---------------------------------------------------------
 
-                if (mergePointNodeIDs.Contains(checkPointNodes[iterator].NodeID))//if this lane needs to merge into another lane
-                { 
+                
                     if (checkPointNodes[iterator].NodeID == 548)
                     {
                         roaduser.LaneID = 2;
@@ -76,12 +104,30 @@ namespace StopLichtSimCSharp
                         roaduser.NodeTravelIterator = 20;
                         return false;
                     }
+
+                    if (checkPointNodes[iterator].NodeID == 685)
+                    {
+                        roaduser.LaneID = 27;
+                        roaduser.NodeTravelIterator = 10;
+                        return false;
+                    }
+                    if (checkPointNodes[iterator].NodeID == 931)
+                    {
+                        roaduser.LaneID = 30;
+                        roaduser.NodeTravelIterator = 34;
+                        return false;
+                    }
+                    if (checkPointNodes[iterator].NodeID == 16081)
+                    {
+                        roaduser.LaneID = 33;
+                        roaduser.NodeTravelIterator = 10;
+                        return false;
+                    }
+
                     //-------------------------------------------------------------------end merging-------------------------------------------------------------
 
                     return true; 
-                } 
-
-                else {return true;}
+                
 
             }
 
